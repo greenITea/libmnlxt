@@ -1,0 +1,4 @@
+1) ./autogen.sh
+2) ./configure or ./configure --enable-tests
+3) make
+4) make install

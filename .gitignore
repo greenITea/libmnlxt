@@ -1,0 +1,23 @@
+*.o
+*.lo
+*.la
+.*
+!.gitignore !.clang-format
+config.*
+*.in
+Makefile
+.deps
+aclocal.m4
+autom4te.cache
+autoscan.log
+compile
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+tests/rtnl_*
+tests/xfrm_*
+m4
