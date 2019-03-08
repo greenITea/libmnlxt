@@ -1,10 +1,13 @@
 #ifndef INCLUDE_LIBMNLXT_RT_ADDR_H_
 #define INCLUDE_LIBMNLXT_RT_ADDR_H_
 
+#include <linux/if_addr.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
 #include "data.h"
+
+#define MNLXT_RT_ADDR_LIFE_TIME_INFINITY 0xFFFFFFFFU
 
 typedef enum {
 	MNLXT_RT_ADDR_FAMILY = 0,
@@ -14,8 +17,9 @@ typedef enum {
 	MNLXT_RT_ADDR_IFINDEX,
 	MNLXT_RT_ADDR_ADDR,
 	MNLXT_RT_ADDR_LOCAL,
-	MNLXT_RT_ADDR_LABEL
-#define MNLXT_RT_ADDR_MAX MNLXT_RT_ADDR_LABEL + 1
+	MNLXT_RT_ADDR_LABEL,
+	MNLXT_RT_ADDR_CACHEINFO
+#define MNLXT_RT_ADDR_MAX MNLXT_RT_ADDR_CACHEINFO + 1
 } mnlxt_rt_addr_data_t;
 
 typedef union {
@@ -25,7 +29,7 @@ typedef union {
 
 typedef struct {
 	/** Properties flags */
-	uint8_t prop_flags;
+	uint16_t prop_flags;
 	/** AF_INET6 or AF_INET */
 	uint8_t family;
 	/** IPv4/IPv6 prefix length */
@@ -55,6 +59,8 @@ typedef struct {
 	inet_addr_t addr_local;
 	/** Address label, IPv4 only */
 	char *label;
+	/** Cache Info like valid life time */
+	struct ifa_cacheinfo cacheinfo;
 } mnlxt_rt_addr_t;
 
 /**
@@ -188,6 +194,54 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label);
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, char **label);
+
+/**
+ * Get valid lifetime from address information cache
+ * @param addr pointer at address information structure
+ * @param valid_lft pointer at buffer to store time
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_addr_get_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t *valid_lft);
+
+/**
+ * Set valid lifetime on address information cache
+ * @param addr pointer at address information structure
+ * @param valid_lft time
+ * @return 0 on success, 1 on not set, else -1
+ */
+int mnlxt_rt_addr_set_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t valid_lft);
+
+/**
+ * Get preferred lifetime from address information cache
+ * @param addr pointer at address information structure
+ * @param preferred_lft pointer at buffer to store time
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_addr_get_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t *preferred_lft);
+
+/**
+ * Set preferred lifetime on address information cache
+ * @param addr pointer at address information structure
+ * @param preferred_lft time
+ * @return 0 on success, 1 on not set, else -1
+ */
+int mnlxt_rt_addr_set_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t preferred_lft);
+
+/**
+ * Get create time from address information cache
+ * @param addr pointer at address information structure
+ * @param create_time pointer at buffer to store time
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time);
+
+/**
+ * Get update time from address information cache
+ * @param addr pointer at address information structure
+ * @param update_time pointer at buffer to store time
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_addr_get_last_update_time(mnlxt_rt_addr_t *addr, uint32_t *update_time);
 
 /**
  * Checks if an address information matches another one

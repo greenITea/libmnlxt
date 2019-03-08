@@ -6,7 +6,12 @@
 #include "../../include/mnlxt_tools.h"
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_new() {
-	return calloc(1, sizeof(mnlxt_rt_addr_t));
+	mnlxt_rt_addr_t *addr = calloc(1, sizeof(mnlxt_rt_addr_t));
+	if (addr) {
+		addr->cacheinfo.ifa_prefered = MNLXT_RT_ADDR_LIFE_TIME_INFINITY;
+		addr->cacheinfo.ifa_valid = MNLXT_RT_ADDR_LIFE_TIME_INFINITY;
+	}
+	return addr;
 }
 
 void mnlxt_rt_addr_free(mnlxt_rt_addr_t *addr) {
@@ -258,6 +263,90 @@ int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, char **label) {
 	if (addr && label) {
 		if (addr->label) {
 			*label = addr->label;
+			rc = 0;
+		} else {
+			rc = 1;
+		}
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_get_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t *valid_lft) {
+	int rc = -1;
+	if (addr && valid_lft) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+			*valid_lft = addr->cacheinfo.ifa_valid;
+			rc = 0;
+		} else {
+			rc = 1;
+		}
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_set_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t valid_lft) {
+	int rc = -1;
+	if (addr) {
+		addr->cacheinfo.ifa_valid = valid_lft;
+		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
+		rc = 0;
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_get_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t *preferred_lft) {
+	int rc = -1;
+	if (addr && preferred_lft) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+			*preferred_lft = addr->cacheinfo.ifa_prefered;
+			rc = 0;
+		} else {
+			rc = 1;
+		}
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_set_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t preferred_lft) {
+	int rc = -1;
+	if (addr) {
+		addr->cacheinfo.ifa_prefered = preferred_lft;
+		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
+		rc = 0;
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time) {
+	int rc = -1;
+	if (addr && create_time) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+			*create_time = addr->cacheinfo.cstamp;
+			rc = 0;
+		} else {
+			rc = 1;
+		}
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_get_last_update_time(mnlxt_rt_addr_t *addr, uint32_t *update_time) {
+	int rc = -1;
+	if (addr && update_time) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+			*update_time = addr->cacheinfo.tstamp;
 			rc = 0;
 		} else {
 			rc = 1;
