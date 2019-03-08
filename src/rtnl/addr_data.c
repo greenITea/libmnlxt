@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../../include/libmnlxt/rt.h"
+#include "../../include/mnlxt_tools.h"
 
 int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 	int i = -1;
@@ -19,13 +20,13 @@ int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 							goto failed;
 						}
 						break;
-					case MNLXT_RT_ADDR_IFINDEX:
-						if (addr->if_index != match->if_index) {
+					case MNLXT_RT_ADDR_PREFIXLEN:
+						if (addr->prefixlen != match->prefixlen) {
 							goto failed;
 						}
 						break;
-					case MNLXT_RT_ADDR_PREFIXLEN:
-						if (addr->prefixlen != match->prefixlen) {
+					case MNLXT_RT_ADDR_FLAGS:
+						if (addr->flags != match->flags) {
 							goto failed;
 						}
 						break;
@@ -34,8 +35,18 @@ int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 							goto failed;
 						}
 						break;
+					case MNLXT_RT_ADDR_IFINDEX:
+						if (addr->if_index != match->if_index) {
+							goto failed;
+						}
+						break;
 					case MNLXT_RT_ADDR_ADDR:
 						if (0 != memcmp(&addr->addr, &match->addr, addr_size)) {
+							goto failed;
+						}
+						break;
+					case MNLXT_RT_ADDR_LOCAL:
+						if (0 != memcmp(&addr->addr_local, &match->addr_local, addr_size)) {
 							goto failed;
 						}
 						break;
@@ -44,8 +55,8 @@ int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 							goto failed;
 						}
 						break;
-					case MNLXT_RT_ADDR_LOCAL:
-						if (0 != memcmp(&addr->addr_local, &match->addr_local, addr_size)) {
+					case MNLXT_RT_ADDR_CACHEINFO:
+						if (0 != memcmp(&addr->cacheinfo, &match->cacheinfo, sizeof(addr->cacheinfo))) {
 							goto failed;
 						}
 						break;
@@ -88,23 +99,32 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr) {
 				case MNLXT_RT_ADDR_FAMILY:
 					ifam->ifa_family = addr->family;
 					break;
-				case MNLXT_RT_ADDR_IFINDEX:
-					ifam->ifa_index = addr->if_index;
-					break;
 				case MNLXT_RT_ADDR_PREFIXLEN:
 					ifam->ifa_prefixlen = addr->prefixlen;
+					break;
+				case MNLXT_RT_ADDR_FLAGS:
+					ifam->ifa_flags = (uint8_t)addr->flags;
+#if 0
+					mnl_attr_put_u32(nlh, IFA_FLAGS, addr->flags);
+#endif
 					break;
 				case MNLXT_RT_ADDR_SCOPE:
 					ifam->ifa_scope = addr->scope;
 					break;
+				case MNLXT_RT_ADDR_IFINDEX:
+					ifam->ifa_index = addr->if_index;
+					break;
 				case MNLXT_RT_ADDR_ADDR:
 					mnl_attr_put(nlh, IFA_ADDRESS, addr_size, &addr->addr);
+					break;
+				case MNLXT_RT_ADDR_LOCAL:
+					mnl_attr_put(nlh, IFA_LOCAL, addr_size, &addr->addr_local);
 					break;
 				case MNLXT_RT_ADDR_LABEL:
 					mnl_attr_put_str(nlh, IFA_LABEL, addr->label);
 					break;
-				case MNLXT_RT_ADDR_LOCAL:
-					mnl_attr_put(nlh, IFA_LOCAL, addr_size, &addr->addr_local);
+				case MNLXT_RT_ADDR_CACHEINFO:
+					mnl_attr_put(nlh, IFA_CACHEINFO, sizeof(addr->cacheinfo), &addr->cacheinfo);
 					break;
 				}
 			}
@@ -222,6 +242,12 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		case IFA_ANYCAST:
 			break;
 		case IFA_CACHEINFO:
+			if (0 > mnl_attr_validate2(attr, MNL_TYPE_BINARY, sizeof(struct ifa_cacheinfo))) {
+				data->error_str = "IFA_CACHEINFO validation failed";
+				goto end;
+			}
+			memcpy(&addr->cacheinfo, mnl_attr_get_payload(attr), sizeof(struct ifa_cacheinfo));
+			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
 			break;
 		case IFA_MULTICAST:
 			break;
