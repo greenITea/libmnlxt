@@ -35,7 +35,9 @@ AC_ARG_ENABLE(tests,
 	no) AC_MSG_RESULT(no) ;;
 	*)  AC_MSG_RESULT(yes)
 		AC_SUBST([build_tests],[tests])
-		AC_CONFIG_FILES([tests/Makefile])
+		AC_CONFIG_FILES([tests/Makefile
+		                 tests/rtnl/Makefile
+		                 tests/xfrm/Makefile])
 	;;
 	esac],
   AC_MSG_RESULT(no))

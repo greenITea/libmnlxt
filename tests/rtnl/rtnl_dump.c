@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 
-#include "../include/libmnlxt/mnlxt.h"
+#include <libmnlxt/mnlxt.h>
 
 static int test_addr_dump() {
 	printf("\nmnlxt_rt_addr_dump test\n");
