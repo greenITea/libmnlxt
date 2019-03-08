@@ -88,6 +88,33 @@ int mnlxt_rt_addr_get_prefixlen(mnlxt_rt_addr_t *addr, uint8_t *prefixlen) {
 	return rc;
 }
 
+int mnlxt_rt_addr_set_flags(mnlxt_rt_addr_t *addr, uint32_t flags) {
+	int rc = -1;
+	if (addr) {
+		addr->flags = flags;
+		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_FLAGS);
+		rc = 0;
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
+int mnlxt_rt_addr_get_flags(mnlxt_rt_addr_t *addr, uint32_t *flags) {
+	int rc = -1;
+	if (addr && flags) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FLAGS)) {
+			*flags = addr->flags;
+			rc = 0;
+		} else {
+			rc = 1;
+		}
+	} else {
+		errno = EINVAL;
+	}
+	return rc;
+}
+
 int mnlxt_rt_addr_set_scope(mnlxt_rt_addr_t *addr, uint8_t scope) {
 	int rc = -1;
 	if (addr) {

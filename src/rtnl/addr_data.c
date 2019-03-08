@@ -173,6 +173,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	msg->nlmsg_type = nlh->nlmsg_type;
 
 	mnlxt_rt_addr_set_prefixlen(addr, ifam->ifa_prefixlen);
+	mnlxt_rt_addr_set_flags(addr, ifam->ifa_flags);
 	mnlxt_rt_addr_set_ifindex(addr, ifam->ifa_index);
 	mnlxt_rt_addr_set_scope(addr, ifam->ifa_scope);
 
@@ -222,6 +223,13 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		case IFA_CACHEINFO:
 			break;
+		case IFA_MULTICAST:
+			break;
+#if 0
+		case IFA_FLAGS:
+			/* u32 attribute that extends the u8 field ifa_flags */
+			break;
+#endif
 		default:
 			break;
 		}
