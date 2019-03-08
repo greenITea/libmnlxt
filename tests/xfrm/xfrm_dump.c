@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 
-#include "../include/libmnlxt/mnlxt.h"
+#include <libmnlxt/mnlxt.h>
 
 static const char *xfrm_dir[] = {[XFRM_POLICY_IN] = "in", [XFRM_POLICY_OUT] = "out", [XFRM_POLICY_FWD] = "fwd"};
 
