@@ -99,6 +99,12 @@ void mnlxt_rt_link_free(mnlxt_rt_link_t *link);
  */
 void mnlxt_rt_link_FREE(void *link);
 /**
+ * Revoke link type data on link information
+ * @param link pointer at link information structure
+ * @param index one of MNLXT_RT_LINK_*
+ */
+void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index);
+/**
  * Gets link type from link information
  * @param link pointer at link information structure
  * @param type pointer at buffer to save link type

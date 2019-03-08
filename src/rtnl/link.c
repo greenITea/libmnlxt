@@ -24,6 +24,12 @@ void mnlxt_rt_link_FREE(void *link) {
 	mnlxt_rt_link_free((mnlxt_rt_link_t *)link);
 }
 
+void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index) {
+	if (link && MNLXT_RT_LINK_MAX > index) {
+		MNLXT_UNSET_PROP_FLAG(link, index);
+	}
+}
+
 int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t info_kind) {
 	int rc = -1;
 	if (link) {
