@@ -177,7 +177,7 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *b
 			size_t len = sizeof(addr->addr);
 			if (AF_INET == family) {
 				len = sizeof(struct in_addr);
-				if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR)) {
+				if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
 					MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL);
 					memcpy(&addr->addr_local, buf, len);
 				}
