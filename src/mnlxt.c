@@ -87,6 +87,7 @@ int mnlxt_receive(mnlxt_handle_t *handle, mnlxt_buffer_t *buffer) {
 		buffer->buf = malloc(len);
 		if (!buffer->buf) {
 			handle->error_str = "malloc failed";
+			goto end;
 		}
 
 		memcpy(buffer->buf, buf, len);
