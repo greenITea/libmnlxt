@@ -9,6 +9,7 @@
 typedef enum {
 	MNLXT_RT_ADDR_FAMILY = 0,
 	MNLXT_RT_ADDR_PREFIXLEN,
+	MNLXT_RT_ADDR_FLAGS,
 	MNLXT_RT_ADDR_SCOPE,
 	MNLXT_RT_ADDR_IFINDEX,
 	MNLXT_RT_ADDR_ADDR,
@@ -29,6 +30,13 @@ typedef struct {
 	uint8_t family;
 	/** IPv4/IPv6 prefix length */
 	uint8_t prefixlen;
+	/** Interface address flags
+	 * IFA_F_TEMPORARY
+	 * IFA_F_DEPRECATED
+	 * IFA_F_TENTATIVE
+	 * IFA_F_PERMANENT
+	 */
+	uint32_t flags;
 	/**
 	 * 1 - 199 are user defined
 	 * RT_SCOPE_UNIVERSE
@@ -92,6 +100,20 @@ int mnlxt_rt_addr_set_prefixlen(mnlxt_rt_addr_t *addr, uint8_t prefixlen);
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_addr_get_prefixlen(mnlxt_rt_addr_t *addr, uint8_t *prefixlen);
+/**
+ * Set flags on address information
+ * @param addr pointer at address information structure
+ * @param flags flags to set
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_addr_set_flags(mnlxt_rt_addr_t *addr, uint32_t flags);
+/**
+ * Get flags from address information
+ * @param addr pointer at address information structure
+ * @param flags pointer at buffer to copy flags into
+ * @return 0 on success, 1 on not set, else -1
+ */
+int mnlxt_rt_addr_get_flags(mnlxt_rt_addr_t *addr, uint32_t *flags);
 /**
  * Sets scope on address information
  * @param addr pointer at address information structure
