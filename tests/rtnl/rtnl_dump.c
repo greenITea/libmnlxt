@@ -28,7 +28,7 @@ static int test_addr_dump() {
 			inet_addr_t *buf = NULL;
 			ret = mnlxt_rt_addr_get_ifindex(addr, &u32);
 			if (0 == ret) {
-				printf("\nif_index: %d\n", u32);
+				printf("\nif_index: %u\n", u32);
 			} else {
 				printf("\nmissing if_index, %m\n");
 				continue;
@@ -52,6 +52,12 @@ static int test_addr_dump() {
 				continue;
 			}
 			prefixlen = u8;
+			ret = mnlxt_rt_addr_get_flags(addr, &u32);
+			if (0 == ret) {
+				printf("flags: %u\n", u32);
+			} else if (-1 == ret) {
+				printf("mnlxt_rt_addr_get_flags failed, %m\n");
+			}
 			ret = mnlxt_rt_addr_get_scope(addr, &u8);
 			if (0 == ret) {
 				printf("scope: %d\n", u8);
@@ -81,6 +87,20 @@ static int test_addr_dump() {
 				printf("label: %s\n", label);
 			} else if (-1 == ret) {
 				printf("mnlxt_rt_addr_get_label failed, %m\n");
+			}
+
+			ret = mnlxt_rt_addr_get_valid_lifetime(addr, &u32);
+			if (0 == ret) {
+				printf("valid_lft: %u\n", u32);
+			} else if (-1 == ret) {
+				printf("mnlxt_rt_addr_get_valid_lifetime failed, %m\n");
+			}
+
+			ret = mnlxt_rt_addr_get_preferred_lifetime(addr, &u32);
+			if (0 == ret) {
+				printf("preferred_lft: %u\n", u32);
+			} else if (-1 == ret) {
+				printf("mnlxt_rt_addr_get_preferred_lifetime failed, %m\n");
 			}
 		}
 		if (data.error_str) {
