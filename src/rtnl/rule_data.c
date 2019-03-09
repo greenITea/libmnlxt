@@ -206,20 +206,11 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	msg = mnlxt_message_new();
-	if (!msg) {
-		data->error_str = "mnlxt_message_new failed";
-		goto end;
-	}
-
 	rule = mnlxt_rt_rule_new();
 	if (!rule) {
 		data->error_str = "mnlxt_rt_rule_new failed";
 		goto end;
 	}
-
-	msg->datatype = MNLXT_DATATYPE_RT_RULE;
-	msg->nlmsg_type = nlh->nlmsg_type;
 
 	mnlxt_rt_rule_set_table(rule, rule_hdr->table);
 	mnlxt_rt_rule_set_action(rule, rule_hdr->action);
@@ -312,7 +303,13 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		}
 	}
-	msg->payload = rule;
+
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, rule);
+	if (!msg) {
+		data->error_str = "mnlxt_rt_message_new failed";
+		goto end;
+	}
+
 	mnlxt_data_add(data, msg);
 	rule = NULL;
 	msg = NULL;
@@ -358,11 +355,8 @@ mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type) {
 	if (!rule || !*rule || !(RTM_NEWRULE == type || RTM_DELRULE == type)) {
 		errno = EINVAL;
 	} else {
-		message = mnlxt_message_new();
+		message = mnlxt_rt_message_new(type, *rule);
 		if (message) {
-			message->nlmsg_type = MNLXT_DATATYPE_RT_RULE;
-			message->nlmsg_type = type;
-			message->payload = *rule;
 			*rule = NULL;
 		}
 	}

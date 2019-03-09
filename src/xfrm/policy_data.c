@@ -305,20 +305,11 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	msg = mnlxt_message_new();
-	if (!msg) {
-		data->error_str = "mnlxt_message_new failed";
-		goto end;
-	}
-
 	policy = mnlxt_xfrm_policy_new();
 	if (!policy) {
 		data->error_str = "mnlxt_xfrm_policy_new failed";
 		goto end;
 	}
-
-	msg->datatype = MNLXT_DATATYPE_XFRM_POLICY;
-	msg->nlmsg_type = nlh->nlmsg_type;
 
 	if (xpinfo) {
 		mnlxt_xfrm_policy_selector_set(policy, &xpinfo->sel);
@@ -378,7 +369,13 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		}
 	}
-	msg->payload = policy;
+
+	msg = mnlxt_xfrm_message_new(nlh->nlmsg_type, policy);
+	if (!msg) {
+		data->error_str = "mnlxt_xfrm_message_new failed";
+		goto end;
+	}
+
 	mnlxt_data_add(data, msg);
 	policy = NULL;
 	msg = NULL;
@@ -418,11 +415,8 @@ mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_
 			|| !(XFRM_MSG_NEWPOLICY == type || XFRM_MSG_UPDPOLICY == type || XFRM_MSG_DELPOLICY == type)) {
 		errno = EINVAL;
 	} else {
-		message = mnlxt_message_new();
+		message = mnlxt_xfrm_message_new(type, *policy);
 		if (message) {
-			message->nlmsg_type = MNLXT_DATATYPE_XFRM_POLICY;
-			message->nlmsg_type = type;
-			message->payload = *policy;
 			*policy = NULL;
 		}
 	}

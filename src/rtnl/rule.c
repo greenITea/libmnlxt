@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../../include/libmnlxt/rt_rule.h"
-#include "../../include/mnlxt_tools.h"
+#include "../internal.h"
 
 mnlxt_rt_rule_t *mnlxt_rt_rule_new() {
 	return calloc(1, sizeof(mnlxt_rt_rule_t));

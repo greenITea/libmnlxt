@@ -3,17 +3,23 @@
 
 #include <libmnl/libmnl.h>
 
+typedef struct mnlxt_data_cb_s mnlxt_data_cb_t;
+
 typedef struct {
 	int portid;
 	char *buf;
 	size_t len;
 	int seq;
+	const mnlxt_data_cb_t *data_handlers;
+	size_t data_nhandlers;
 } mnlxt_buffer_t;
 
 typedef struct {
 	struct mnl_socket *nl;
 	uint32_t seq;
-	char *error_str;
+	const char *error_str;
+	const mnlxt_data_cb_t *data_handlers;
+	size_t data_nhandlers;
 } mnlxt_handle_t;
 
 /**

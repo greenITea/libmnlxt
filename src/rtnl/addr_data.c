@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "../../include/libmnlxt/rt.h"
-#include "../../include/mnlxt_tools.h"
+#include "../internal.h"
 
 int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 	int i = -1;
@@ -177,20 +177,11 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	msg = mnlxt_message_new();
-	if (!msg) {
-		data->error_str = "mnlxt_message_new failed";
-		goto end;
-	}
-
 	addr = mnlxt_rt_addr_new();
 	if (!addr) {
 		data->error_str = "mnlxt_rt_addr_new failed";
 		goto end;
 	}
-
-	msg->datatype = MNLXT_DATATYPE_RT_ADDR;
-	msg->nlmsg_type = nlh->nlmsg_type;
 
 	mnlxt_rt_addr_set_prefixlen(addr, ifam->ifa_prefixlen);
 	mnlxt_rt_addr_set_flags(addr, ifam->ifa_flags);
@@ -260,7 +251,13 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		}
 	}
-	msg->payload = addr;
+
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, addr);
+	if (!msg) {
+		data->error_str = "mnlxt_rt_message_new failed";
+		goto end;
+	}
+
 	mnlxt_data_add(data, msg);
 	addr = NULL;
 	msg = NULL;
@@ -306,11 +303,8 @@ mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type) {
 	if (!addr || !*addr || !(RTM_NEWADDR == type || RTM_DELADDR == type)) {
 		errno = EINVAL;
 	} else {
-		message = mnlxt_message_new();
+		message = mnlxt_rt_message_new(type, *addr);
 		if (message) {
-			message->nlmsg_type = MNLXT_DATATYPE_RT_ADDR;
-			message->nlmsg_type = type;
-			message->payload = *addr;
 			*addr = NULL;
 		}
 	}

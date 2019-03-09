@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../../include/libmnlxt/rt_addr.h"
-#include "../../include/mnlxt_tools.h"
+#include "../internal.h"
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_new() {
 	mnlxt_rt_addr_t *addr = calloc(1, sizeof(mnlxt_rt_addr_t));
