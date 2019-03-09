@@ -3,28 +3,21 @@
 
 #include "core.h"
 
-/* supported data types */
-typedef enum {
-	MNLXT_DATATYPE_UNDEFINED = 0,
-	MNLXT_DATATYPE_RT_LINK,
-	MNLXT_DATATYPE_RT_ADDR,
-	MNLXT_DATATYPE_RT_ROUTE,
-	MNLXT_DATATYPE_RT_RULE,
-	MNLXT_DATATYPE_XFRM_POLICY
-} mnlxt_datatype_t;
-
 typedef struct mnlxt_message_s {
 	struct mnlxt_message_s *next;
 	/** NETLINK-Message type, which it was part of */
 	uint16_t nlmsg_type;
-	mnlxt_datatype_t datatype;
 	/** Message body */
 	void *payload;
+	/** Message data handler */
+	const mnlxt_data_cb_t *handler;
 } mnlxt_message_t;
 
 typedef struct {
 	mnlxt_message_t *first, *last;
-	char *error_str;
+	const char *error_str;
+	const mnlxt_data_cb_t *handlers;
+	size_t nhandlers;
 } mnlxt_data_t;
 
 /**

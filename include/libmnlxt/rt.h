@@ -37,4 +37,12 @@ int mnlxt_rt_data_dump(mnlxt_data_t *data, int type, unsigned char family);
  */
 int mnlxt_rt_message_request(mnlxt_message_t *message);
 
+/**
+ * Create a mnlxt routing message
+ * @param type rtnetlink message type (RTM_GET* see linux/rtnetlink.h)
+ * @param payload structure of mnlxt_rt_*_new
+ * @return pointer at dynamic allocated mnlxt_message_t structure
+ */
+mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, void *payload);
+
 #endif /* INCLUDE_LIBMNLXT_RT_H_ */

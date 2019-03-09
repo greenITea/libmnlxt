@@ -199,20 +199,11 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	msg = mnlxt_message_new();
-	if (!msg) {
-		data->error_str = "mnlxt_message_new failed";
-		goto end;
-	}
-
 	route = mnlxt_rt_route_new();
 	if (!route) {
 		data->error_str = "mnlxt_rt_route_new failed";
 		goto end;
 	}
-
-	msg->nlmsg_type = MNLXT_DATATYPE_RT_ROUTE;
-	msg->nlmsg_type = nlh->nlmsg_type;
 
 	mnlxt_rt_route_set_family(route, rtm->rtm_family);
 	mnlxt_rt_route_set_protocol(route, rtm->rtm_protocol);
@@ -296,7 +287,13 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		}
 	}
-	msg->payload = route;
+
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, route);
+	if (!msg) {
+		data->error_str = "mnlxt_rt_message_new failed";
+		goto end;
+	}
+
 	mnlxt_data_add(data, msg);
 	route = NULL;
 	msg = NULL;
@@ -341,11 +338,8 @@ mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type)
 	if (!route || !*route || !(RTM_NEWROUTE == type || RTM_DELROUTE == type)) {
 		errno = EINVAL;
 	} else {
-		message = mnlxt_message_new();
+		message = mnlxt_rt_message_new(type, *route);
 		if (message) {
-			message->nlmsg_type = MNLXT_DATATYPE_RT_ROUTE;
-			message->nlmsg_type = type;
-			message->payload = *route;
 			*route = NULL;
 		}
 	}

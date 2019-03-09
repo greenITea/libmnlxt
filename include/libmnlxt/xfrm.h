@@ -33,4 +33,12 @@ int mnlxt_xfrm_data_dump(mnlxt_data_t *data, int type);
  */
 int mnlxt_xfrm_message_request(mnlxt_message_t *message);
 
+/**
+ * Create a mnlxt xfrm message
+ * @param type netlink message type (XFRM_MSG_GET* see linux/xfrm.h)
+ * @param payload structure of mnlxt_xfrm_*_new
+ * @return pointer at dynamic allocated mnlxt_message_t structure
+ */
+mnlxt_message_t *mnlxt_xfrm_message_new(uint16_t type, void *payload);
+
 #endif /* INCLUDE_LIBMNLXT_XFRM_H_ */

@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 
 #include "../../include/libmnlxt/xfrm_policy.h"
-#include "../../include/mnlxt_tools.h"
+#include "../internal.h"
 
 mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_new() {
 	return calloc(1, sizeof(mnlxt_xfrm_policy_t));

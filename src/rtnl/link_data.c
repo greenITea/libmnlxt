@@ -347,20 +347,11 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	msg = mnlxt_message_new();
-	if (!msg) {
-		data->error_str = "mnlxt_message_new failed";
-		goto end;
-	}
-
 	link = mnlxt_rt_link_new();
 	if (!link) {
 		data->error_str = "nl_link_new failed";
 		goto end;
 	}
-
-	msg->datatype = MNLXT_DATATYPE_RT_LINK;
-	msg->nlmsg_type = nlh->nlmsg_type;
 
 	struct ifinfomsg *ifm = mnl_nlmsg_get_payload(nlh);
 
@@ -457,7 +448,13 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		}
 	}
-	msg->payload = link;
+
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, link);
+	if (!msg) {
+		data->error_str = "mnlxt_rt_message_new failed";
+		goto end;
+	}
+
 	mnlxt_data_add(data, msg);
 	link = NULL;
 	msg = NULL;
@@ -507,11 +504,8 @@ mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type) {
 	if (!link || !*link || !(RTM_NEWLINK == type || RTM_DELLINK == type || RTM_SETLINK == type)) {
 		errno = EINVAL;
 	} else {
-		message = mnlxt_message_new();
+		message = mnlxt_rt_message_new(type, *link);
 		if (message) {
-			message->nlmsg_type = MNLXT_DATATYPE_RT_LINK;
-			message->nlmsg_type = type;
-			message->payload = *link;
 			*link = NULL;
 		}
 	}

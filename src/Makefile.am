@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libmnlxt.la
 
-libmnlxt_la_SOURCES  = mnlxt.c mnlxt_data.c rtnl/rtnl.c rtnl/data.c
+libmnlxt_la_SOURCES  = mnlxt.c mnlxt_data.c rtnl/rtnl.c
 libmnlxt_la_SOURCES += rtnl/addr.c rtnl/addr_data.c
 libmnlxt_la_SOURCES += rtnl/link.c rtnl/link_data.c
 libmnlxt_la_SOURCES += rtnl/route.c rtnl/route_data.c

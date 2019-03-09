@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "../../include/libmnlxt/rt_link.h"
-#include "../../include/mnlxt_tools.h"
+#include "../internal.h"
 
 mnlxt_rt_link_t *mnlxt_rt_link_new() {
 	return calloc(1, sizeof(mnlxt_rt_link_t));

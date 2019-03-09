@@ -94,6 +94,10 @@ int mnlxt_receive(mnlxt_handle_t *handle, mnlxt_buffer_t *buffer) {
 		buffer->len = len;
 		buffer->portid = mnl_socket_get_portid(handle->nl);
 		buffer->seq = handle->seq;
+		if (NULL != handle->data_handlers) {
+			buffer->data_handlers = handle->data_handlers;
+			buffer->data_nhandlers = handle->data_nhandlers;
+		}
 	}
 	rc = len;
 end:
