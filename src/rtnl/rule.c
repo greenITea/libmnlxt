@@ -50,7 +50,7 @@ int mnlxt_rt_rule_set_family(mnlxt_rt_rule_t *rule, uint8_t family) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_family(mnlxt_rt_rule_t *rule, uint8_t *family) {
+int mnlxt_rt_rule_get_family(const mnlxt_rt_rule_t *rule, uint8_t *family) {
 	int rc = -1;
 	if (rule && family) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_FAMILY)) {
@@ -77,7 +77,7 @@ int mnlxt_rt_rule_set_src_prefix(mnlxt_rt_rule_t *rule, uint8_t prefixlen) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_src_prefix(mnlxt_rt_rule_t *rule, uint8_t *prefixlen) {
+int mnlxt_rt_rule_get_src_prefix(const mnlxt_rt_rule_t *rule, uint8_t *prefixlen) {
 	int rc = -1;
 	if (rule && prefixlen) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_SRC_PREFIX)) {
@@ -104,7 +104,7 @@ int mnlxt_rt_rule_set_dst_prefix(mnlxt_rt_rule_t *rule, uint8_t prefixlen) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_dst_prefix(mnlxt_rt_rule_t *rule, uint8_t *prefixlen) {
+int mnlxt_rt_rule_get_dst_prefix(const mnlxt_rt_rule_t *rule, uint8_t *prefixlen) {
 	int rc = -1;
 	if (rule && prefixlen) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_DST_PREFIX)) {
@@ -133,7 +133,7 @@ int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
 	return rc;
 }
 
-int mnlxt_rt_rule_get_src(mnlxt_rt_rule_t *rule, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_rt_rule_get_src(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (rule && buf) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_SRC)) {
@@ -165,7 +165,7 @@ int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
 	return rc;
 }
 
-int mnlxt_rt_rule_get_dst(mnlxt_rt_rule_t *rule, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_rt_rule_get_dst(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (rule && buf) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_DST)) {
@@ -195,7 +195,7 @@ int mnlxt_rt_rule_set_table(mnlxt_rt_rule_t *rule, uint8_t table) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_table(mnlxt_rt_rule_t *rule, uint8_t *table) {
+int mnlxt_rt_rule_get_table(const mnlxt_rt_rule_t *rule, uint8_t *table) {
 	int rc = -1;
 	if (rule && table) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_TABLE)) {
@@ -222,7 +222,7 @@ int mnlxt_rt_rule_set_action(mnlxt_rt_rule_t *rule, uint8_t action) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_action(mnlxt_rt_rule_t *rule, uint8_t *action) {
+int mnlxt_rt_rule_get_action(const mnlxt_rt_rule_t *rule, uint8_t *action) {
 	int rc = -1;
 	if (rule && action) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_ACTION)) {
@@ -249,7 +249,7 @@ int mnlxt_rt_rule_set_tos(mnlxt_rt_rule_t *rule, uint8_t tos) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_tos(mnlxt_rt_rule_t *rule, uint8_t *tos) {
+int mnlxt_rt_rule_get_tos(const mnlxt_rt_rule_t *rule, uint8_t *tos) {
 	int rc = -1;
 	if (rule && tos) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_TOS)) {
@@ -276,7 +276,7 @@ int mnlxt_rt_rule_set_priority(mnlxt_rt_rule_t *rule, uint32_t priority) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_priority(mnlxt_rt_rule_t *rule, uint32_t *priority) {
+int mnlxt_rt_rule_get_priority(const mnlxt_rt_rule_t *rule, uint32_t *priority) {
 	int rc = -1;
 	if (rule && priority) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_PRIORITY)) {
@@ -305,7 +305,7 @@ int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const char *iif_name) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, const char **iif_name) {
+int mnlxt_rt_rule_get_iif_name(const mnlxt_rt_rule_t *rule, const char **iif_name) {
 	int rc = -1;
 	if (rule && iif_name) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_IIFNAME) && rule->iif_name) {
@@ -334,7 +334,7 @@ int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const char *oif_name) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, const char **oif_name) {
+int mnlxt_rt_rule_get_oif_name(const mnlxt_rt_rule_t *rule, const char **oif_name) {
 	int rc = -1;
 	if (rule && oif_name) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_OIFNAME) && rule->oif_name) {
@@ -361,7 +361,7 @@ int mnlxt_rt_rule_set_fwmark(mnlxt_rt_rule_t *rule, uint32_t fwmark) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_fwmark(mnlxt_rt_rule_t *rule, uint32_t *fwmark) {
+int mnlxt_rt_rule_get_fwmark(const mnlxt_rt_rule_t *rule, uint32_t *fwmark) {
 	int rc = -1;
 	if (rule && fwmark) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_FWMARK)) {
@@ -388,7 +388,7 @@ int mnlxt_rt_rule_set_fwmask(mnlxt_rt_rule_t *rule, uint32_t fwmask) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_fwmask(mnlxt_rt_rule_t *rule, uint32_t *fwmask) {
+int mnlxt_rt_rule_get_fwmask(const mnlxt_rt_rule_t *rule, uint32_t *fwmask) {
 	int rc = -1;
 	if (rule && fwmask) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_FWMASK)) {

@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 		char ifname[IFNAMSIZ];
 		char addr_str[INET6_ADDRSTRLEN];
 		while ((route = mnlxt_rt_route_iterate(&data, &iterator))) {
-			inet_addr_t *buf = NULL;
+			const inet_addr_t *buf = NULL;
 			if (0 == mnlxt_rt_route_match(route, filter)) {
 				int ret = mnlxt_rt_route_get_dst(route, NULL, &buf);
 				if (1 != ret) {

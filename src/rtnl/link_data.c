@@ -21,8 +21,8 @@ static const char *info_kinds[] = {
 };
 /* clang-format on */
 
-static int mnlxt_rt_link_vlan_match(mnlxt_rt_link_vlan_t *vlan, uint16_t prop_flags, mnlxt_rt_link_vlan_t *match,
-																		uint16_t match_flags) {
+static int mnlxt_rt_link_vlan_match(const mnlxt_rt_link_vlan_t *vlan, uint16_t prop_flags,
+																		const mnlxt_rt_link_vlan_t *match, uint16_t match_flags) {
 	int i = -1;
 	if (vlan && match) {
 		int flag = 0x1;
@@ -45,7 +45,7 @@ static int mnlxt_rt_link_vlan_match(mnlxt_rt_link_vlan_t *vlan, uint16_t prop_fl
 	return i;
 }
 
-static int mnlxt_rt_link_info_match(mnlxt_rt_link_info_t *link_info, mnlxt_rt_link_info_t *info_match) {
+static int mnlxt_rt_link_info_match(const mnlxt_rt_link_info_t *link_info, const mnlxt_rt_link_info_t *info_match) {
 	int rc = 1;
 	if (link_info && info_match) {
 		if (link_info->kind == info_match->kind) {
@@ -92,7 +92,7 @@ static const char *mnlxt_rt_link_info_kind_get_string(mnlxt_rt_link_info_kind_t 
 	return (const char *)kind;
 }
 
-int mnlxt_rt_link_match(mnlxt_rt_link_t *link, mnlxt_rt_link_t *match) {
+int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *match) {
 	int i = -1;
 	if (link && match) {
 		int flag = 0x1;
@@ -481,7 +481,7 @@ int mnlxt_rt_link_DATA(const struct nlmsghdr *nlh, void *data) {
 	return mnlxt_rt_link_data(nlh, (mnlxt_data_t *)data);
 }
 
-mnlxt_rt_link_t *mnlxt_rt_link_get(mnlxt_message_t *message) {
+mnlxt_rt_link_t *mnlxt_rt_link_get(const mnlxt_message_t *message) {
 	mnlxt_rt_link_t *link = NULL;
 	if (message && message->payload
 			&& (RTM_NEWLINK == message->nlmsg_type || RTM_GETLINK == message->nlmsg_type || RTM_DELLINK == message->nlmsg_type

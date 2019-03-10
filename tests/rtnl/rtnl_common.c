@@ -189,7 +189,7 @@ void mnlxt_rt_addr_print(mnlxt_rt_addr_t *addr) {
 		printf("mnlxt_rt_addr_get_scope failed, %m\n");
 	}
 
-	inet_addr_t *buf;
+	const inet_addr_t *buf;
 	char addr_str[INET6_ADDRSTRLEN];
 	ret = mnlxt_rt_addr_get_local(addr, NULL, &buf);
 	if (0 == ret) {
@@ -310,7 +310,7 @@ void mnlxt_rt_route_print(mnlxt_rt_route_t *route) {
 		printf("no type \n");
 	}
 
-	inet_addr_t *buf;
+	const inet_addr_t *buf;
 	char addr_str[INET6_ADDRSTRLEN];
 	ret = mnlxt_rt_route_get_src(route, NULL, &buf);
 	if (0 == ret) {
@@ -417,7 +417,7 @@ void mnlxt_rt_rule_print(mnlxt_rt_rule_t *rule) {
 		printf("error getting action, %m\n");
 	}
 
-	inet_addr_t *buf;
+	const inet_addr_t *buf;
 	char addr_str[INET6_ADDRSTRLEN];
 	ret = mnlxt_rt_rule_get_src(rule, NULL, &buf);
 	if (0 == ret) {

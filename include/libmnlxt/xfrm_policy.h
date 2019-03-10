@@ -120,7 +120,7 @@ int mnlxt_xfrm_policy_set_family(mnlxt_xfrm_policy_t *policy, uint8_t family);
  * @param family pointer at buffer to store IP address family
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_family(mnlxt_xfrm_policy_t *policy, uint8_t *family);
+int mnlxt_xfrm_policy_get_family(const mnlxt_xfrm_policy_t *policy, uint8_t *family);
 /**
  * Sets protocol on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -134,7 +134,7 @@ int mnlxt_xfrm_policy_set_proto(mnlxt_xfrm_policy_t *policy, uint8_t proto);
  * @param proto pointer at buffer to store protocol
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_proto(mnlxt_xfrm_policy_t *policy, uint8_t *proto);
+int mnlxt_xfrm_policy_get_proto(const mnlxt_xfrm_policy_t *policy, uint8_t *proto);
 /**
  * Sets source prefix length for source IP address on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -148,7 +148,7 @@ int mnlxt_xfrm_policy_set_src_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t pre
  * @param prefixlen pointer at buffer to store prefix length
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_src_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen);
+int mnlxt_xfrm_policy_get_src_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen);
 /**
  * Sets prefix length for destination IP address on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -162,7 +162,7 @@ int mnlxt_xfrm_policy_set_dst_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t pre
  * @param prefixlen pointer at buffer to store prefix length
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_dst_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen);
+int mnlxt_xfrm_policy_get_dst_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen);
 /**
  * Sets source IP address on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -178,7 +178,7 @@ int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
  * @param buf pointer at buffer to store IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t *family, inet_addr_t **buf);
+int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets destination IP address on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -194,7 +194,7 @@ int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
  * @param buf pointer at buffer to store IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t *family, inet_addr_t **buf);
+int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets source port on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -208,7 +208,7 @@ int mnlxt_xfrm_policy_set_src_port(mnlxt_xfrm_policy_t *policy, uint16_t port);
  * @param port pointer at buffer to store port number
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_src_port(mnlxt_xfrm_policy_t *policy, uint16_t *port);
+int mnlxt_xfrm_policy_get_src_port(const mnlxt_xfrm_policy_t *policy, uint16_t *port);
 /**
  * Sets destination port on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -222,7 +222,7 @@ int mnlxt_xfrm_policy_set_dst_port(mnlxt_xfrm_policy_t *policy, uint16_t port);
  * @param port pointer at buffer to store port number
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_dst_port(mnlxt_xfrm_policy_t *policy, uint16_t *port);
+int mnlxt_xfrm_policy_get_dst_port(const mnlxt_xfrm_policy_t *policy, uint16_t *port);
 /**
  * Sets input interface index on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -236,7 +236,7 @@ int mnlxt_xfrm_policy_set_ifindex(mnlxt_xfrm_policy_t *policy, uint32_t ifindex)
  * @param ifindex pointer at buffer to store interface index
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_ifindex(mnlxt_xfrm_policy_t *policy, uint32_t *ifindex);
+int mnlxt_xfrm_policy_get_ifindex(const mnlxt_xfrm_policy_t *policy, uint32_t *ifindex);
 /**
  * Sets policy action on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -250,7 +250,7 @@ int mnlxt_xfrm_policy_set_action(mnlxt_xfrm_policy_t *policy, uint8_t action);
  * @param action pointer at buffer to store policy action
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_action(mnlxt_xfrm_policy_t *policy, uint8_t *action);
+int mnlxt_xfrm_policy_get_action(const mnlxt_xfrm_policy_t *policy, uint8_t *action);
 /**
  * Sets policy direction on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -264,7 +264,7 @@ int mnlxt_xfrm_policy_set_dir(mnlxt_xfrm_policy_t *policy, uint8_t dir);
  * @param dir pointer at buffer to store policy direction
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_dir(mnlxt_xfrm_policy_t *policy, uint8_t *dir);
+int mnlxt_xfrm_policy_get_dir(const mnlxt_xfrm_policy_t *policy, uint8_t *dir);
 /**
  * Sets priority on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -278,7 +278,7 @@ int mnlxt_xfrm_policy_set_priority(mnlxt_xfrm_policy_t *policy, uint32_t priorit
  * @param priority pointer at buffer to store priority
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_priority(mnlxt_xfrm_policy_t *policy, uint32_t *priority);
+int mnlxt_xfrm_policy_get_priority(const mnlxt_xfrm_policy_t *policy, uint32_t *priority);
 /**
  * Sets mark on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -294,7 +294,7 @@ int mnlxt_xfrm_policy_set_mark(mnlxt_xfrm_policy_t *policy, uint32_t mark, uint3
  * @param mask pointer at buffer to store mark's mask or NULL
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_mark(mnlxt_xfrm_policy_t *policy, uint32_t *mark, uint32_t *mask);
+int mnlxt_xfrm_policy_get_mark(const mnlxt_xfrm_policy_t *policy, uint32_t *mark, uint32_t *mask);
 /**
  * Sets policy index on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -308,7 +308,7 @@ int mnlxt_xfrm_policy_set_index(mnlxt_xfrm_policy_t *policy, uint32_t index);
  * @param index pointer at buffer to store policy index
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_index(mnlxt_xfrm_policy_t *policy, uint32_t *index);
+int mnlxt_xfrm_policy_get_index(const mnlxt_xfrm_policy_t *policy, uint32_t *index);
 
 /**
  * Checks if a xfrm policy matches another one
@@ -316,7 +316,7 @@ int mnlxt_xfrm_policy_get_index(mnlxt_xfrm_policy_t *policy, uint32_t *index);
  * @param match pointer at policy to match
  * @return 0 for matching, else MNLXT_XFRM_POLICY_* + 1 for property which does not match
  */
-int mnlxt_xfrm_policy_match(mnlxt_xfrm_policy_t *policy, mnlxt_xfrm_policy_t *match);
+int mnlxt_xfrm_policy_match(const mnlxt_xfrm_policy_t *policy, const mnlxt_xfrm_policy_t *match);
 
 /**
  * Initializes netlink message from xfrm policy
@@ -364,7 +364,7 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_iterate(mnlxt_data_t *data, mnlxt_message
  * @param message message pointer at mnlxt message
  * @return pointer at xfrm policy structure on success, else NULL
  */
-mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(mnlxt_message_t *message);
+mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(const mnlxt_message_t *message);
 /**
  * Creates a mnxt message and stores the given address information into it
  * @param policy double pointer at xfrm policy

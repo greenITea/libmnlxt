@@ -101,7 +101,7 @@ int mnlxt_rt_addr_set_family(mnlxt_rt_addr_t *addr, uint8_t family);
  * @param family pointer at buffer to copy address family into
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_family(mnlxt_rt_addr_t *addr, uint8_t *family);
+int mnlxt_rt_addr_get_family(const mnlxt_rt_addr_t *addr, uint8_t *family);
 /**
  * Sets prefix length on address information
  * @param addr pointer at address information structure
@@ -115,7 +115,7 @@ int mnlxt_rt_addr_set_prefixlen(mnlxt_rt_addr_t *addr, uint8_t prefixlen);
  * @param prefixlen pointer at buffer to copy prefix length into
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_prefixlen(mnlxt_rt_addr_t *addr, uint8_t *prefixlen);
+int mnlxt_rt_addr_get_prefixlen(const mnlxt_rt_addr_t *addr, uint8_t *prefixlen);
 /**
  * Set flags on address information
  * @param addr pointer at address information structure
@@ -129,7 +129,7 @@ int mnlxt_rt_addr_set_flags(mnlxt_rt_addr_t *addr, uint32_t flags);
  * @param flags pointer at buffer to copy flags into
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_flags(mnlxt_rt_addr_t *addr, uint32_t *flags);
+int mnlxt_rt_addr_get_flags(const mnlxt_rt_addr_t *addr, uint32_t *flags);
 /**
  * Sets scope on address information
  * @param addr pointer at address information structure
@@ -143,7 +143,7 @@ int mnlxt_rt_addr_set_scope(mnlxt_rt_addr_t *addr, uint8_t scope);
  * @param scope pointer at buffer to copy address scope into
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_scope(mnlxt_rt_addr_t *addr, uint8_t *scope);
+int mnlxt_rt_addr_get_scope(const mnlxt_rt_addr_t *addr, uint8_t *scope);
 /**
  * Sets interface index on address information
  * @param addr pointer at address information structure
@@ -157,7 +157,7 @@ int mnlxt_rt_addr_set_ifindex(mnlxt_rt_addr_t *addr, uint32_t if_index);
  * @param if_index pointer at buffer to copy interface index into
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_ifindex(mnlxt_rt_addr_t *addr, uint32_t *if_index);
+int mnlxt_rt_addr_get_ifindex(const mnlxt_rt_addr_t *addr, uint32_t *if_index);
 /**
  * Sets IP address on address information
  * @param addr pointer at address information structure
@@ -173,7 +173,7 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *b
  * @param buf pointer to store pointer at IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_addr(mnlxt_rt_addr_t *addr, uint8_t *family, inet_addr_t **buf);
+int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets local IP address on address information
  * @param addr pointer at address information structure
@@ -189,7 +189,7 @@ int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *
  * @param buf pointer to store pointer at address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_local(mnlxt_rt_addr_t *addr, uint8_t *family, inet_addr_t **buf);
+int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets label on address information by copying the string
  * @param addr pointer at address information structure
@@ -203,7 +203,7 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label);
  * @param label pointer to store pointer at label
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label);
+int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label);
 
 /**
  * Get valid lifetime from address information cache
@@ -211,7 +211,7 @@ int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label);
  * @param valid_lft pointer at buffer to store time
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_get_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t *valid_lft);
+int mnlxt_rt_addr_get_valid_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *valid_lft);
 
 /**
  * Set valid lifetime on address information cache
@@ -227,7 +227,7 @@ int mnlxt_rt_addr_set_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t valid_lft);
  * @param preferred_lft pointer at buffer to store time
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_get_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t *preferred_lft);
+int mnlxt_rt_addr_get_preferred_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *preferred_lft);
 
 /**
  * Set preferred lifetime on address information cache
@@ -243,7 +243,7 @@ int mnlxt_rt_addr_set_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t preferr
  * @param create_time pointer at buffer to store time
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time);
+int mnlxt_rt_addr_get_create_time(const mnlxt_rt_addr_t *addr, uint32_t *create_time);
 
 /**
  * Get update time from address information cache
@@ -251,7 +251,7 @@ int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time);
  * @param update_time pointer at buffer to store time
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_get_last_update_time(mnlxt_rt_addr_t *addr, uint32_t *update_time);
+int mnlxt_rt_addr_get_last_update_time(const mnlxt_rt_addr_t *addr, uint32_t *update_time);
 
 /**
  * Checks if an address information matches another one
@@ -259,7 +259,7 @@ int mnlxt_rt_addr_get_last_update_time(mnlxt_rt_addr_t *addr, uint32_t *update_t
  * @param match pointer at address to match
  * @return 0 for matching, else MNLXT_RT_ADDR_* + 1 for property which does not match
  */
-int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match);
+int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *match);
 
 /**
  * Initializes netlink message from address information
@@ -305,7 +305,7 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_iterate(mnlxt_data_t *data, mnlxt_message_t **ite
  * @param message pointer at mnlxt message
  * @return pointer at address information structure on success, else NULL
  */
-mnlxt_rt_addr_t *mnlxt_rt_addr_get(mnlxt_message_t *message);
+mnlxt_rt_addr_t *mnlxt_rt_addr_get(const mnlxt_message_t *message);
 /**
  * Creates a mnxt message and stores the given address information into it
  * @param addr double pointer at an address information structure mnlxt_rt_addr_t

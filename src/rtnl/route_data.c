@@ -13,7 +13,7 @@
 
 #include <libmnlxt/rt.h>
 
-int mnlxt_rt_route_match(mnlxt_rt_route_t *route, mnlxt_rt_route_t *match) {
+int mnlxt_rt_route_match(const mnlxt_rt_route_t *route, const mnlxt_rt_route_t *match) {
 	int i = -1;
 	if (route && match) {
 		int flag = 0x1;
@@ -98,7 +98,7 @@ int mnlxt_rt_route_match(mnlxt_rt_route_t *route, mnlxt_rt_route_t *match) {
 	return i;
 }
 
-mnlxt_rt_route_t *mnlxt_rt_route_get(mnlxt_message_t *message) {
+mnlxt_rt_route_t *mnlxt_rt_route_get(const mnlxt_message_t *message) {
 	mnlxt_rt_route_t *route = NULL;
 	if (message && message->payload
 			&& (RTM_NEWROUTE == message->nlmsg_type || RTM_GETROUTE == message->nlmsg_type

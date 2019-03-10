@@ -101,7 +101,7 @@ int mnlxt_rt_rule_set_family(mnlxt_rt_rule_t *rule, uint8_t family);
  * @param family pointer at buffer to save rule family
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_family(mnlxt_rt_rule_t *rule, uint8_t *family);
+int mnlxt_rt_rule_get_family(const mnlxt_rt_rule_t *rule, uint8_t *family);
 /**
  * Sets rule source prefix on rule information
  * @param rule pointer at rule information structure
@@ -115,7 +115,7 @@ int mnlxt_rt_rule_set_src_prefix(mnlxt_rt_rule_t *rule, uint8_t prefixlen);
  * @param prefixlen pointer at buffer to save source prefix length
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_src_prefix(mnlxt_rt_rule_t *rule, uint8_t *prefixlen);
+int mnlxt_rt_rule_get_src_prefix(const mnlxt_rt_rule_t *rule, uint8_t *prefixlen);
 /**
  * Sets rule destination prefix on route information
  * @param rule pointer at rule information structure
@@ -129,7 +129,7 @@ int mnlxt_rt_rule_set_dst_prefix(mnlxt_rt_rule_t *rule, uint8_t prefixlen);
  * @param prefixlen pointer at buffer to save destination prefix length
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_dst_prefix(mnlxt_rt_rule_t *rule, uint8_t *prefixlen);
+int mnlxt_rt_rule_get_dst_prefix(const mnlxt_rt_rule_t *rule, uint8_t *prefixlen);
 /**
  * Sets rule source address on route information
  * @param rule pointer at rule information structure
@@ -145,7 +145,7 @@ int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
  * @param buf pointer at buffer to save pointer at source address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_src(mnlxt_rt_rule_t *rule, uint8_t *family, inet_addr_t **buf);
+int mnlxt_rt_rule_get_src(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets rule destination address on route information
  * @param rule pointer at rule information structure
@@ -161,7 +161,7 @@ int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
  * @param buf pointer at buffer to save pointer at destination address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_dst(mnlxt_rt_rule_t *rule, uint8_t *family, inet_addr_t **buf);
+int mnlxt_rt_rule_get_dst(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf);
 /**
  * Sets rule table on rule information
  * @param rule pointer at rule information structure
@@ -175,7 +175,7 @@ int mnlxt_rt_rule_set_table(mnlxt_rt_rule_t *rule, uint8_t table);
  * @param table pointer at buffer to save rule table
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_table(mnlxt_rt_rule_t *rule, uint8_t *table);
+int mnlxt_rt_rule_get_table(const mnlxt_rt_rule_t *rule, uint8_t *table);
 /**
  * Sets rule action on rule information
  * @param rule pointer at rule information structure
@@ -189,7 +189,7 @@ int mnlxt_rt_rule_set_action(mnlxt_rt_rule_t *rule, uint8_t action);
  * @param action pointer at buffer to save rule action
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_action(mnlxt_rt_rule_t *rule, uint8_t *action);
+int mnlxt_rt_rule_get_action(const mnlxt_rt_rule_t *rule, uint8_t *action);
 /**
  * Sets tos on rule information
  * @param rule pointer at rule information structure
@@ -203,7 +203,7 @@ int mnlxt_rt_rule_set_tos(mnlxt_rt_rule_t *rule, uint8_t tos);
  * @param tos pointer at buffer to save tos
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_tos(mnlxt_rt_rule_t *rule, uint8_t *tos);
+int mnlxt_rt_rule_get_tos(const mnlxt_rt_rule_t *rule, uint8_t *tos);
 /**
  * Sets rule priority on rule information
  * @param rule pointer at rule information structure
@@ -217,7 +217,7 @@ int mnlxt_rt_rule_set_priority(mnlxt_rt_rule_t *rule, uint32_t priority);
  * @param priority pointer at buffer to save rule priority
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_priority(mnlxt_rt_rule_t *rule, uint32_t *priority);
+int mnlxt_rt_rule_get_priority(const mnlxt_rt_rule_t *rule, uint32_t *priority);
 /**
  * Sets name of input interface on rule information
  * @param rule pointer at rule information structure
@@ -231,7 +231,7 @@ int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const char *iif_name);
  * @param iif_name pointer at buffer to save pointer at input interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, const char **iif_name);
+int mnlxt_rt_rule_get_iif_name(const mnlxt_rt_rule_t *rule, const char **iif_name);
 /**
  * Sets name of output interface on rule information
  * @param rule pointer at rule information structure
@@ -245,7 +245,7 @@ int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const char *oif_name);
  * @param oif_name pointer at buffer to save pointer at output interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, const char **oif_name);
+int mnlxt_rt_rule_get_oif_name(const mnlxt_rt_rule_t *rule, const char **oif_name);
 /**
  * Sets firewall mark on rule information
  * @param rule pointer at rule information structure
@@ -259,7 +259,7 @@ int mnlxt_rt_rule_set_fwmark(mnlxt_rt_rule_t *rule, uint32_t fwmark);
  * @param fwmark pointer at buffer to save mark
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_fwmark(mnlxt_rt_rule_t *rule, uint32_t *fwmark);
+int mnlxt_rt_rule_get_fwmark(const mnlxt_rt_rule_t *rule, uint32_t *fwmark);
 /**
  * Sets firewall mask on rule information
  * @param rule pointer at rule information structure
@@ -273,7 +273,7 @@ int mnlxt_rt_rule_set_fwmask(mnlxt_rt_rule_t *rule, uint32_t fwmask);
  * @param fwmask pointer at buffer to save mask
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_fwmask(mnlxt_rt_rule_t *rule, uint32_t *fwmask);
+int mnlxt_rt_rule_get_fwmask(const mnlxt_rt_rule_t *rule, uint32_t *fwmask);
 
 /**
  * Checks if a rule information matches another one
@@ -281,7 +281,7 @@ int mnlxt_rt_rule_get_fwmask(mnlxt_rt_rule_t *rule, uint32_t *fwmask);
  * @param match pointer at rule information to match
  * @return 0 for matching, else MNLXT_RT_RULE_* + 1 for property which does not match
  */
-int mnlxt_rt_rule_match(mnlxt_rt_rule_t *rule, mnlxt_rt_rule_t *match);
+int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rule, const mnlxt_rt_rule_t *match);
 
 /**
  * Initializes netlink message from rule information
@@ -326,7 +326,7 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_iterate(mnlxt_data_t *data, mnlxt_message_t **ite
  * @param message pointer at mnlxt message
  * @return pointer at rule information structure on success, else NULL
  */
-mnlxt_rt_rule_t *mnlxt_rt_rule_get(mnlxt_message_t *message);
+mnlxt_rt_rule_t *mnlxt_rt_rule_get(const mnlxt_message_t *message);
 /**
  * Creates a mnlxt message and stores the given rule information into it
  * @param rule double pointer at a rule information structure mnlxt_rt_rule_t
