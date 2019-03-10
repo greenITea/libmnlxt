@@ -207,7 +207,7 @@ void mnlxt_rt_addr_print(mnlxt_rt_addr_t *addr) {
 		printf("mnlxt_rt_addr_get_addr failed, %m\n");
 	}
 
-	char *label;
+	const char *label;
 	ret = mnlxt_rt_addr_get_label(addr, &label);
 	if (0 == ret) {
 		printf("label: %s\n", label);
@@ -374,7 +374,7 @@ void mnlxt_rt_rule_print(mnlxt_rt_rule_t *rule) {
 	}
 	int family = u8;
 
-	char *str;
+	const char *str;
 	ret = mnlxt_rt_rule_get_iif_name(rule, &str);
 	if (0 == ret) {
 		printf("\niif: %s\n", str);

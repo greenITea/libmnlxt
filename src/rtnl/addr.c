@@ -269,7 +269,7 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, char **label) {
+int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label) {
 	int rc = -1;
 	if (addr && label) {
 		if (addr->label) {

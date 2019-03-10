@@ -305,7 +305,7 @@ int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const char *iif_name) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, char **iif_name) {
+int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, const char **iif_name) {
 	int rc = -1;
 	if (rule && iif_name) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_IIFNAME) && rule->iif_name) {
@@ -334,7 +334,7 @@ int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const char *oif_name) {
 	return rc;
 }
 
-int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, char **oif_name) {
+int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, const char **oif_name) {
 	int rc = -1;
 	if (rule && oif_name) {
 		if (MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_OIFNAME) && rule->oif_name) {

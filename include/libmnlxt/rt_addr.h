@@ -203,7 +203,7 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label);
  * @param label pointer to store pointer at label
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, char **label);
+int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label);
 
 /**
  * Get valid lifetime from address information cache

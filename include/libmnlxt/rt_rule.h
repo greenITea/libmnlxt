@@ -231,7 +231,7 @@ int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const char *iif_name);
  * @param iif_name pointer at buffer to save pointer at input interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, char **iif_name);
+int mnlxt_rt_rule_get_iif_name(mnlxt_rt_rule_t *rule, const char **iif_name);
 /**
  * Sets name of output interface on rule information
  * @param rule pointer at rule information structure
@@ -245,7 +245,7 @@ int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const char *oif_name);
  * @param oif_name pointer at buffer to save pointer at output interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, char **oif_name);
+int mnlxt_rt_rule_get_oif_name(mnlxt_rt_rule_t *rule, const char **oif_name);
 /**
  * Sets firewall mark on rule information
  * @param rule pointer at rule information structure
