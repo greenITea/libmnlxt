@@ -46,6 +46,8 @@ AC_TYPE_UINT8_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset strchr strdup strtol])
 
+CFLAGS="$CFLAGS -Wall -Werror"
+
 #dnl enable-tests
 AC_MSG_CHECKING(whether to compile the test applications)
 AC_ARG_ENABLE(tests,
