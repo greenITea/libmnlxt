@@ -7,7 +7,7 @@ libmnlxt_la_SOURCES += rtnl/route.c rtnl/route_data.c
 libmnlxt_la_SOURCES += rtnl/rule.c rtnl/rule_data.c
 libmnlxt_la_SOURCES += xfrm/xfrm.c xfrm/policy.c xfrm/policy_data.c
 
-libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I./ -Wall -Werror
+libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I.
 
 #Here are a set of rules to help you update your library version information:
 #

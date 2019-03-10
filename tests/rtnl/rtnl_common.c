@@ -8,6 +8,7 @@
  *
  */
 
+#include <arpa/inet.h>
 #include <stdio.h>
 
 #include <libmnlxt/rt.h>
