@@ -17,6 +17,8 @@
 
 #include "internal.h"
 
+#include "config.h"
+
 int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 	int i = -1;
 	if (addr && match) {
@@ -115,7 +117,7 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr) {
 					break;
 				case MNLXT_RT_ADDR_FLAGS:
 					ifam->ifa_flags = (uint8_t)addr->flags;
-#if 0
+#if HAVE_IFA_FLAGS
 					mnl_attr_put_u32(nlh, IFA_FLAGS, addr->flags);
 #endif
 					break;
@@ -253,9 +255,16 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 			break;
 		case IFA_MULTICAST:
 			break;
-#if 0
+#if HAVE_IFA_FLAGS
 		case IFA_FLAGS:
-			/* u32 attribute that extends the u8 field ifa_flags */
+			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
+				data->error_str = "IFA_FLAGS validation failed";
+				goto end;
+			}
+			if (-1 == mnlxt_rt_addr_set_flags(addr, mnl_attr_get_u32(attr))) {
+				data->error_str = "mnlxt_rt_addr_set_flags failed";
+				goto end;
+			}
 			break;
 #endif
 		default:
