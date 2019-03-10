@@ -1,16 +1,19 @@
 /*
- * xfrm.h
+ * libmnlxt/xfrm.h		Libmnlxt Xfrm/IPsec
  *
- *  Created on: Dec 4, 2018
- *      Author: andrey
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
  */
 
-#ifndef INCLUDE_LIBMNLXT_XFRM_H_
-#define INCLUDE_LIBMNLXT_XFRM_H_
+#ifndef LIBMNLXT_XFRM_H_
+#define LIBMNLXT_XFRM_H_
 
-#include "core.h"
-#include "data.h"
-#include "xfrm_policy.h"
+#include <libmnlxt/core.h>
+#include <libmnlxt/data.h>
+#include <libmnlxt/xfrm_policy.h>
 
 /**
  * Connects to xfrm netlink socket and initializes mnlxt handle
@@ -41,4 +44,4 @@ int mnlxt_xfrm_message_request(mnlxt_message_t *message);
  */
 mnlxt_message_t *mnlxt_xfrm_message_new(uint16_t type, void *payload);
 
-#endif /* INCLUDE_LIBMNLXT_XFRM_H_ */
+#endif /* LIBMNLXT_XFRM_H_ */

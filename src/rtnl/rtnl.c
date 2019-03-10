@@ -1,8 +1,19 @@
+/*
+ * rtnl.c		Libmnlxt Routing
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/rtnetlink.h>
 
-#include "../../include/libmnlxt/rt.h"
-#include "../internal.h"
+#include <libmnlxt/rt.h>
+
+#include "internal.h"
 
 static const mnlxt_data_cb_t data_handlers[] = {
 	[RTM_NEWLINK] = {"NEWLINK", mnlxt_rt_link_DATA, mnlxt_rt_link_PUT, mnlxt_rt_link_FREE, NLM_F_CREATE},

@@ -1,11 +1,22 @@
+/*
+ * policy.c		Libmnlxt Xfrm/IPsec Policy
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 
-#include "../../include/libmnlxt/xfrm_policy.h"
-#include "../internal.h"
+#include <libmnlxt/xfrm_policy.h>
+
+#include "internal.h"
 
 mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_new() {
 	return calloc(1, sizeof(mnlxt_xfrm_policy_t));

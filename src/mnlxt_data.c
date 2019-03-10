@@ -1,10 +1,21 @@
+/*
+ * mnlxt_data.c		Libmnlxt Data
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/rtnetlink.h>
 #include <linux/xfrm.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/libmnlxt/data.h"
+#include <libmnlxt/data.h>
+
 #include "internal.h"
 
 const char *mnlxt_message_type(mnlxt_message_t *msg) {

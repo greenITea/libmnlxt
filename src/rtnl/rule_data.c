@@ -1,10 +1,18 @@
+/*
+ * rule_data.c		Libmnlxt Routing Rules
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/fib_rules.h>
 #include <string.h>
 
-#include <libmnl/libmnl.h>
-
-#include "../../include/libmnlxt/rt.h"
+#include <libmnlxt/rt.h>
 
 int mnlxt_rt_rule_match(mnlxt_rt_rule_t *rule, mnlxt_rt_rule_t *match) {
 	int i = -1;

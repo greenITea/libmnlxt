@@ -1,9 +1,19 @@
-#ifndef INCLUDE_LIBMNLXT_RT_LINK_H_
-#define INCLUDE_LIBMNLXT_RT_LINK_H_
+/*
+ * libmnlxt/rt_link.h		Libmnlxt Routing Link
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_RT_LINK_H_
+#define LIBMNLXT_RT_LINK_H_
 
 #include <net/ethernet.h>
 
-#include "data.h"
+#include <libmnlxt/data.h>
 
 typedef enum {
 	MNLXT_RT_LINK_TYPE = 0,
@@ -355,4 +365,4 @@ mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type);
  */
 int mnlxt_rt_link_dump(mnlxt_data_t *data);
 
-#endif /* INCLUDE_LIBMNLXT_RT_LINK_H_ */
+#endif /* LIBMNLXT_RT_LINK_H_ */

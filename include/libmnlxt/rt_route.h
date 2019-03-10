@@ -1,9 +1,19 @@
-#ifndef INCLUDE_LIBMNLXT_RT_ROUTE_H_
-#define INCLUDE_LIBMNLXT_RT_ROUTE_H_
+/*
+ * libmnlxt/rt_route.h		Libmnlxt Routing Routes
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_RT_ROUTE_H_
+#define LIBMNLXT_RT_ROUTE_H_
 
 #include <sys/socket.h>
 
-#include "rt_addr.h"
+#include <libmnlxt/rt_addr.h>
 
 typedef enum {
 	MNLXT_RT_ROUTE_FAMILY = 0,
@@ -368,4 +378,4 @@ mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type)
  */
 int mnlxt_rt_route_dump(mnlxt_data_t *data, unsigned char family);
 
-#endif /* INCLUDE_LIBMNLXT_RT_ROUTE_H_ */
+#endif /* LIBMNLXT_RT_ROUTE_H_ */

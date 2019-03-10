@@ -1,9 +1,19 @@
+/*
+ * link_data.c		Libmnlxt Routing Link
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/if_link.h>
 #include <linux/rtnetlink.h>
 #include <string.h>
 
-#include "../../include/libmnlxt/rt.h"
+#include <libmnlxt/rt.h>
 
 /* clang-format off */
 static const char *info_kinds[] = {

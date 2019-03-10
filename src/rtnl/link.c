@@ -1,11 +1,22 @@
+/*
+ * link.c		Libmnlxt Routing Link
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/if.h>
 #include <linux/rtnetlink.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/libmnlxt/rt_link.h"
-#include "../internal.h"
+#include <libmnlxt/rt_link.h>
+
+#include "internal.h"
 
 mnlxt_rt_link_t *mnlxt_rt_link_new() {
 	return calloc(1, sizeof(mnlxt_rt_link_t));

@@ -1,9 +1,19 @@
-#ifndef INCLUDE_LIBMNLXT_RT_RULE_H_
-#define INCLUDE_LIBMNLXT_RT_RULE_H_
+/*
+ * libmnlxt/rt_rule.h		Libmnlxt Routing Rules
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_RT_RULE_H_
+#define LIBMNLXT_RT_RULE_H_
 
 #include <sys/socket.h>
 
-#include "rt_addr.h"
+#include <libmnlxt/rt_addr.h>
 
 typedef enum {
 	MNLXT_RT_RULE_FAMILY = 0,
@@ -333,4 +343,4 @@ mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type);
  */
 int mnlxt_rt_rule_dump(mnlxt_data_t *data, unsigned char family);
 
-#endif /* INCLUDE_LIBMNLXT_RT_RULE_H_ */
+#endif /* LIBMNLXT_RT_RULE_H_ */

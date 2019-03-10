@@ -1,7 +1,17 @@
-#ifndef INCLUDE_LIBMNLXT_DATA_H_
-#define INCLUDE_LIBMNLXT_DATA_H_
+/*
+ * libmnlxt/data.h		Libmnlxt Data
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
 
-#include "core.h"
+#ifndef LIBMNLXT_DATA_H_
+#define LIBMNLXT_DATA_H_
+
+#include <libmnlxt/core.h>
 
 typedef struct mnlxt_message_s {
 	struct mnlxt_message_s *next;
@@ -100,4 +110,4 @@ void mnlxt_data_clean(mnlxt_data_t *data);
  */
 int mnlxt_data_dump(mnlxt_data_t *data, int bus, struct nlmsghdr *nlh);
 
-#endif /* INCLUDE_LIBMNLXT_DATA_H_ */
+#endif /* LIBMNLXT_DATA_H_ */

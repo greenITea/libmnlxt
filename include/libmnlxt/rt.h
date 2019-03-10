@@ -1,19 +1,22 @@
 /*
- * rt.h
+ * libmnlxt/rt.h		Libmnlxt Routing
  *
- *  Created on: Nov 13, 2018
- *      Author: Andrey Alexandrenko
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
  */
 
-#ifndef INCLUDE_LIBMNLXT_RT_H_
-#define INCLUDE_LIBMNLXT_RT_H_
+#ifndef LIBMNLXT_RT_H_
+#define LIBMNLXT_RT_H_
 
-#include "core.h"
-#include "data.h"
-#include "rt_addr.h"
-#include "rt_link.h"
-#include "rt_route.h"
-#include "rt_rule.h"
+#include <libmnlxt/core.h>
+#include <libmnlxt/data.h>
+#include <libmnlxt/rt_addr.h>
+#include <libmnlxt/rt_link.h>
+#include <libmnlxt/rt_route.h>
+#include <libmnlxt/rt_rule.h>
 
 /**
  * Connects to rtnetlink socket and initializes mnlxt handle
@@ -45,4 +48,4 @@ int mnlxt_rt_message_request(mnlxt_message_t *message);
  */
 mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, void *payload);
 
-#endif /* INCLUDE_LIBMNLXT_RT_H_ */
+#endif /* LIBMNLXT_RT_H_ */

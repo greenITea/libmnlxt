@@ -1,3 +1,13 @@
+/*
+ * policy_data.c		Libmnlxt Xfrm/IPsec Policy
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/if_addr.h>
 #include <linux/xfrm.h>
@@ -5,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/libmnlxt/xfrm.h"
+#include <libmnlxt/xfrm.h>
 
 int mnlxt_xfrm_policy_match(mnlxt_xfrm_policy_t *policy, mnlxt_xfrm_policy_t *match) {
 	int i = -1;
