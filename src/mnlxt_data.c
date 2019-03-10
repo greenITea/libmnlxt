@@ -9,8 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/rtnetlink.h>
-#include <linux/xfrm.h>
 #include <stdlib.h>
 #include <string.h>
 

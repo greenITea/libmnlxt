@@ -9,8 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/if_link.h>
-#include <linux/rtnetlink.h>
 #include <string.h>
 
 #include <libmnlxt/rt.h>

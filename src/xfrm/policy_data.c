@@ -9,8 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/if_addr.h>
-#include <linux/xfrm.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <string.h>
