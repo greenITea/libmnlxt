@@ -1,10 +1,21 @@
+/*
+ * addr_data.c		Libmnlxt Routing Address
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <errno.h>
 #include <linux/if_addr.h>
 #include <linux/rtnetlink.h>
 #include <string.h>
 
-#include "../../include/libmnlxt/rt.h"
-#include "../internal.h"
+#include <libmnlxt/rt.h>
+
+#include "internal.h"
 
 int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 	int i = -1;

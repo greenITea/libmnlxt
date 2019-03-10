@@ -1,9 +1,19 @@
+/*
+ * libmnlxt/xfrm_policy.h		Libmnlxt Xfrm/IPsec Policy
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_XFRM_POLICY_H_
+#define LIBMNLXT_XFRM_POLICY_H_
+
 #include <linux/xfrm.h>
 
-#ifndef INCLUDE_LIBMNLXT_XFRM_POLICY_H_
-#define INCLUDE_LIBMNLXT_XFRM_POLICY_H_
-
-#include "rt_addr.h"
+#include <libmnlxt/rt_addr.h>
 
 typedef enum {
 	MNLXT_XFRM_POLICY_FAMILY = 0,
@@ -370,4 +380,4 @@ mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_
  */
 int mnlxt_xfrm_policy_dump(mnlxt_data_t *data);
 
-#endif /* INCLUDE_LIBMNLXT_XFRM_POLICY_H_ */
+#endif /* LIBMNLXT_XFRM_POLICY_H_ */

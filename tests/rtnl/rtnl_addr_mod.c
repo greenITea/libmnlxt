@@ -1,3 +1,13 @@
+/*
+ * rtnl_addr_mod.c		Libmnlxt Routing Address Test - Add/Del address
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
 #include <arpa/inet.h>
 #include <linux/rtnetlink.h>
 #include <net/if.h>

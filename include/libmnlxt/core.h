@@ -1,5 +1,15 @@
-#ifndef INCLUDE_LIBMNLXT_CORE_H_
-#define INCLUDE_LIBMNLXT_CORE_H_
+/*
+ * libmnlxt/core.h		Libmnlxt Core
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_CORE_H_
+#define LIBMNLXT_CORE_H_
 
 #include <libmnl/libmnl.h>
 
@@ -56,4 +66,4 @@ int mnlxt_receive(mnlxt_handle_t *handle, mnlxt_buffer_t *buffer);
  */
 int mnlxt_handel_get_fd(mnlxt_handle_t *handle);
 
-#endif /* INCLUDE_LIBMNLXT_CORE_H_ */
+#endif /* LIBMNLXT_CORE_H_ */

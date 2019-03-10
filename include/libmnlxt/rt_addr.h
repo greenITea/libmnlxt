@@ -1,11 +1,21 @@
-#ifndef INCLUDE_LIBMNLXT_RT_ADDR_H_
-#define INCLUDE_LIBMNLXT_RT_ADDR_H_
+/*
+ * libmnlxt/rt_addr.h		Libmnlxt Routing Address
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ */
+
+#ifndef LIBMNLXT_RT_ADDR_H_
+#define LIBMNLXT_RT_ADDR_H_
 
 #include <linux/if_addr.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include "data.h"
+#include <libmnlxt/data.h>
 
 #define MNLXT_RT_ADDR_LIFE_TIME_INFINITY 0xFFFFFFFFU
 
@@ -312,4 +322,4 @@ mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type);
  */
 int mnlxt_rt_addr_dump(mnlxt_data_t *data, unsigned char family);
 
-#endif /* INCLUDE_LIBMNLXT_RT_ADDR_H_ */
+#endif /* LIBMNLXT_RT_ADDR_H_ */
