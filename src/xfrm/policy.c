@@ -59,7 +59,7 @@ int mnlxt_xfrm_policy_set_family(mnlxt_xfrm_policy_t *policy, uint8_t family) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_family(mnlxt_xfrm_policy_t *policy, uint8_t *family) {
+int mnlxt_xfrm_policy_get_family(const mnlxt_xfrm_policy_t *policy, uint8_t *family) {
 	int rc = -1;
 	if (!policy || !family) {
 		errno = EINVAL;
@@ -96,7 +96,7 @@ int mnlxt_xfrm_policy_set_proto(mnlxt_xfrm_policy_t *policy, uint8_t proto) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_proto(mnlxt_xfrm_policy_t *policy, uint8_t *proto) {
+int mnlxt_xfrm_policy_get_proto(const mnlxt_xfrm_policy_t *policy, uint8_t *proto) {
 	int rc = -1;
 	if (!policy || !proto) {
 		errno = EINVAL;
@@ -123,7 +123,7 @@ int mnlxt_xfrm_policy_set_src_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t pre
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_src_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen) {
+int mnlxt_xfrm_policy_get_src_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen) {
 	int rc = -1;
 	if (!policy || !prefixlen) {
 		errno = EINVAL;
@@ -150,7 +150,7 @@ int mnlxt_xfrm_policy_set_dst_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t pre
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_dst_prefixlen(mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen) {
+int mnlxt_xfrm_policy_get_dst_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8_t *prefixlen) {
 	int rc = -1;
 	if (!policy || !prefixlen) {
 		errno = EINVAL;
@@ -179,7 +179,7 @@ int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;
@@ -211,7 +211,7 @@ int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;
@@ -245,7 +245,7 @@ int mnlxt_xfrm_policy_set_src_port(mnlxt_xfrm_policy_t *policy, uint16_t port) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_src_port(mnlxt_xfrm_policy_t *policy, uint16_t *port) {
+int mnlxt_xfrm_policy_get_src_port(const mnlxt_xfrm_policy_t *policy, uint16_t *port) {
 	int rc = -1;
 	if (!policy || !port) {
 		errno = EINVAL;
@@ -276,7 +276,7 @@ int mnlxt_xfrm_policy_set_dst_port(mnlxt_xfrm_policy_t *policy, uint16_t port) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_dst_port(mnlxt_xfrm_policy_t *policy, uint16_t *port) {
+int mnlxt_xfrm_policy_get_dst_port(const mnlxt_xfrm_policy_t *policy, uint16_t *port) {
 	int rc = -1;
 	if (!policy || !port) {
 		errno = EINVAL;
@@ -303,7 +303,7 @@ int mnlxt_xfrm_policy_set_ifindex(mnlxt_xfrm_policy_t *policy, uint32_t ifindex)
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_ifindex(mnlxt_xfrm_policy_t *policy, uint32_t *ifindex) {
+int mnlxt_xfrm_policy_get_ifindex(const mnlxt_xfrm_policy_t *policy, uint32_t *ifindex) {
 	int rc = -1;
 	if (!policy || !ifindex) {
 		errno = EINVAL;
@@ -333,7 +333,7 @@ int mnlxt_xfrm_policy_set_action(mnlxt_xfrm_policy_t *policy, uint8_t action) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_action(mnlxt_xfrm_policy_t *policy, uint8_t *action) {
+int mnlxt_xfrm_policy_get_action(const mnlxt_xfrm_policy_t *policy, uint8_t *action) {
 	int rc = -1;
 	if (!policy || !action) {
 		errno = EINVAL;
@@ -364,7 +364,7 @@ int mnlxt_xfrm_policy_set_dir(mnlxt_xfrm_policy_t *policy, uint8_t dir) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_dir(mnlxt_xfrm_policy_t *policy, uint8_t *dir) {
+int mnlxt_xfrm_policy_get_dir(const mnlxt_xfrm_policy_t *policy, uint8_t *dir) {
 	int rc = -1;
 	if (!policy || !dir) {
 		errno = EINVAL;
@@ -391,7 +391,7 @@ int mnlxt_xfrm_policy_set_priority(mnlxt_xfrm_policy_t *policy, uint32_t priorit
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_priority(mnlxt_xfrm_policy_t *policy, uint32_t *priority) {
+int mnlxt_xfrm_policy_get_priority(const mnlxt_xfrm_policy_t *policy, uint32_t *priority) {
 	int rc = -1;
 	if (!policy || !priority) {
 		errno = EINVAL;
@@ -419,7 +419,7 @@ int mnlxt_xfrm_policy_set_mark(mnlxt_xfrm_policy_t *policy, uint32_t mark, uint3
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_mark(mnlxt_xfrm_policy_t *policy, uint32_t *mark, uint32_t *mask) {
+int mnlxt_xfrm_policy_get_mark(const mnlxt_xfrm_policy_t *policy, uint32_t *mark, uint32_t *mask) {
 	int rc = -1;
 	if (!policy) {
 		errno = EINVAL;
@@ -451,7 +451,7 @@ int mnlxt_xfrm_policy_set_index(mnlxt_xfrm_policy_t *policy, uint32_t index) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_index(mnlxt_xfrm_policy_t *policy, uint32_t *index) {
+int mnlxt_xfrm_policy_get_index(const mnlxt_xfrm_policy_t *policy, uint32_t *index) {
 	int rc = -1;
 	if (!policy || !index) {
 		errno = EINVAL;
@@ -478,7 +478,7 @@ int mnlxt_xfrm_policy_set_(mnlxt_xfrm_policy_t *policy,  ) {
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_(mnlxt_xfrm_policy_t *policy,  *) {
+int mnlxt_xfrm_policy_get_(const mnlxt_xfrm_policy_t *policy,  *) {
 	int rc = -1;
 	if (!policy || !) {
 		errno = EINVAL;

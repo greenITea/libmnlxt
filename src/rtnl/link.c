@@ -60,7 +60,7 @@ int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t
 	return rc;
 }
 
-int mnlxt_rt_link_get_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t *info_kind) {
+int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t *info_kind) {
 	int rc = -1;
 	if (link && info_kind) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INFO)) {
@@ -87,7 +87,7 @@ int mnlxt_rt_link_set_type(mnlxt_rt_link_t *link, uint16_t type) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_type(mnlxt_rt_link_t *link, uint16_t *type) {
+int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *link, uint16_t *type) {
 	int rc = -1;
 	if (link && type) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_TYPE)) {
@@ -114,7 +114,7 @@ int mnlxt_rt_link_set_family(mnlxt_rt_link_t *link, uint8_t family) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_family(mnlxt_rt_link_t *link, uint8_t *family) {
+int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *link, uint8_t *family) {
 	int rc = -1;
 	if (link && family) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_FAMILY)) {
@@ -129,7 +129,7 @@ int mnlxt_rt_link_get_family(mnlxt_rt_link_t *link, uint8_t *family) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_name(mnlxt_rt_link_t *link, const char **name) {
+int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name) {
 	int rc = -1;
 	if (link && name) {
 		if ((MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_NAME)) && link->name) {
@@ -158,7 +158,7 @@ int mnlxt_rt_link_set_name(mnlxt_rt_link_t *link, const char *name) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_index(mnlxt_rt_link_t *link, uint32_t *index) {
+int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *link, uint32_t *index) {
 	int rc = -1;
 	if (link && index) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INDEX)) {
@@ -185,7 +185,7 @@ int mnlxt_rt_link_set_index(mnlxt_rt_link_t *link, uint32_t index) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_parent(mnlxt_rt_link_t *link, uint32_t *index) {
+int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *link, uint32_t *index) {
 	int rc = -1;
 	if (link && index) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_PARENT)) {
@@ -212,7 +212,7 @@ int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *link, uint32_t index) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_flags(mnlxt_rt_link_t *link, uint32_t *flags) {
+int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *link, uint32_t *flags) {
 	int rc = -1;
 	if (link && flags) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS)) {
@@ -239,7 +239,7 @@ int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_mtu(mnlxt_rt_link_t *link, uint32_t *mtu) {
+int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *link, uint32_t *mtu) {
 	int rc = -1;
 	if (link && mtu) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_MTU)) {
@@ -266,7 +266,7 @@ int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *link, uint32_t mtu) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_master(mnlxt_rt_link_t *link, uint32_t *master) {
+int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *link, uint32_t *master) {
 	int rc = -1;
 	if (link && master) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_MASTER)) {
@@ -293,7 +293,7 @@ int mnlxt_rt_link_set_master(mnlxt_rt_link_t *link, uint32_t master) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_state(mnlxt_rt_link_t *link, uint8_t *state) {
+int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *link, uint8_t *state) {
 	int rc = -1;
 	if (link && state) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_STATE)) {
@@ -320,7 +320,7 @@ int mnlxt_rt_link_set_state(mnlxt_rt_link_t *link, uint8_t state) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_hwaddr(mnlxt_rt_link_t *link, eth_addr_t *mac) {
+int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *link, eth_addr_t *mac) {
 	int rc = -1;
 	if (link && mac) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_HWADDR)) {
@@ -347,7 +347,7 @@ int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *link, eth_addr_t mac) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_updown(mnlxt_rt_link_t *link, int *up) {
+int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up) {
 	int rc = -1;
 	if (up) {
 		uint32_t flags = 0;
@@ -390,7 +390,7 @@ int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *link, uint16_t id) {
 	return rc;
 }
 
-int mnlxt_rt_link_get_vlan_id(mnlxt_rt_link_t *link, uint16_t *id) {
+int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *link, uint16_t *id) {
 	int rc = -1;
 	if (link && id) {
 		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INFO)) {

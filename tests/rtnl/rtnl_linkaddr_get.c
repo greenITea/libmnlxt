@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 					printf("mnlxt_rt_addr_get_prefixlen failed, %m\n");
 					continue;
 				}
-				inet_addr_t *buf = NULL;
+				const inet_addr_t *buf = NULL;
 				ret = mnlxt_rt_addr_get_addr(addr, NULL, &buf);
 				if (0 == ret) {
 					inet_ntop(family, buf, addr_str, sizeof(addr_str));

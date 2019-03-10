@@ -62,7 +62,7 @@ int mnlxt_rt_addr_set_family(mnlxt_rt_addr_t *addr, uint8_t family) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_family(mnlxt_rt_addr_t *addr, uint8_t *family) {
+int mnlxt_rt_addr_get_family(const mnlxt_rt_addr_t *addr, uint8_t *family) {
 	int rc = -1;
 	if (addr && family) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY)) {
@@ -89,7 +89,7 @@ int mnlxt_rt_addr_set_prefixlen(mnlxt_rt_addr_t *addr, uint8_t prefixlen) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_prefixlen(mnlxt_rt_addr_t *addr, uint8_t *prefixlen) {
+int mnlxt_rt_addr_get_prefixlen(const mnlxt_rt_addr_t *addr, uint8_t *prefixlen) {
 	int rc = -1;
 	if (addr && prefixlen) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_PREFIXLEN)) {
@@ -116,7 +116,7 @@ int mnlxt_rt_addr_set_flags(mnlxt_rt_addr_t *addr, uint32_t flags) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_flags(mnlxt_rt_addr_t *addr, uint32_t *flags) {
+int mnlxt_rt_addr_get_flags(const mnlxt_rt_addr_t *addr, uint32_t *flags) {
 	int rc = -1;
 	if (addr && flags) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FLAGS)) {
@@ -143,7 +143,7 @@ int mnlxt_rt_addr_set_scope(mnlxt_rt_addr_t *addr, uint8_t scope) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_scope(mnlxt_rt_addr_t *addr, uint8_t *scope) {
+int mnlxt_rt_addr_get_scope(const mnlxt_rt_addr_t *addr, uint8_t *scope) {
 	int rc = -1;
 	if (addr && scope) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_SCOPE)) {
@@ -170,7 +170,7 @@ int mnlxt_rt_addr_set_ifindex(mnlxt_rt_addr_t *addr, uint32_t if_index) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_ifindex(mnlxt_rt_addr_t *addr, uint32_t *if_index) {
+int mnlxt_rt_addr_get_ifindex(const mnlxt_rt_addr_t *addr, uint32_t *if_index) {
 	int rc = -1;
 	if (addr && if_index) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_IFINDEX)) {
@@ -207,7 +207,7 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *b
 	return rc;
 }
 
-int mnlxt_rt_addr_get_addr(mnlxt_rt_addr_t *addr, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (addr && buf) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR)) {
@@ -234,7 +234,7 @@ int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *
 	return rc;
 }
 
-int mnlxt_rt_addr_get_local(mnlxt_rt_addr_t *addr, uint8_t *family, inet_addr_t **buf) {
+int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf) {
 	int rc = -1;
 	if (addr && buf) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
@@ -269,7 +269,7 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label) {
+int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label) {
 	int rc = -1;
 	if (addr && label) {
 		if (addr->label) {
@@ -284,7 +284,7 @@ int mnlxt_rt_addr_get_label(mnlxt_rt_addr_t *addr, const char **label) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t *valid_lft) {
+int mnlxt_rt_addr_get_valid_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *valid_lft) {
 	int rc = -1;
 	if (addr && valid_lft) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
@@ -311,7 +311,7 @@ int mnlxt_rt_addr_set_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t valid_lft) 
 	return rc;
 }
 
-int mnlxt_rt_addr_get_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t *preferred_lft) {
+int mnlxt_rt_addr_get_preferred_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *preferred_lft) {
 	int rc = -1;
 	if (addr && preferred_lft) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
@@ -338,7 +338,7 @@ int mnlxt_rt_addr_set_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t preferr
 	return rc;
 }
 
-int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time) {
+int mnlxt_rt_addr_get_create_time(const mnlxt_rt_addr_t *addr, uint32_t *create_time) {
 	int rc = -1;
 	if (addr && create_time) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
@@ -353,7 +353,7 @@ int mnlxt_rt_addr_get_create_time(mnlxt_rt_addr_t *addr, uint32_t *create_time) 
 	return rc;
 }
 
-int mnlxt_rt_addr_get_last_update_time(mnlxt_rt_addr_t *addr, uint32_t *update_time) {
+int mnlxt_rt_addr_get_last_update_time(const mnlxt_rt_addr_t *addr, uint32_t *update_time) {
 	int rc = -1;
 	if (addr && update_time) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {

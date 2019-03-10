@@ -15,7 +15,7 @@
 
 #include <libmnlxt/xfrm.h>
 
-int mnlxt_xfrm_policy_match(mnlxt_xfrm_policy_t *policy, mnlxt_xfrm_policy_t *match) {
+int mnlxt_xfrm_policy_match(const mnlxt_xfrm_policy_t *policy, const mnlxt_xfrm_policy_t *match) {
 	int i = -1;
 	if (policy && match) {
 		int flag = 0x1;
@@ -113,7 +113,7 @@ int mnlxt_xfrm_policy_match(mnlxt_xfrm_policy_t *policy, mnlxt_xfrm_policy_t *ma
 	return i;
 }
 
-mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(mnlxt_message_t *message) {
+mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(const mnlxt_message_t *message) {
 	mnlxt_xfrm_policy_t *policy = NULL;
 	if (message && message->payload
 			&& (XFRM_MSG_NEWPOLICY == message->nlmsg_type || XFRM_MSG_UPDPOLICY == message->nlmsg_type

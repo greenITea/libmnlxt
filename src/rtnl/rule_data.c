@@ -14,7 +14,7 @@
 
 #include <libmnlxt/rt.h>
 
-int mnlxt_rt_rule_match(mnlxt_rt_rule_t *rule, mnlxt_rt_rule_t *match) {
+int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rule, const mnlxt_rt_rule_t *match) {
 	int i = -1;
 	if (rule && match) {
 		int flag = 0x1;
@@ -104,7 +104,7 @@ int mnlxt_rt_rule_match(mnlxt_rt_rule_t *rule, mnlxt_rt_rule_t *match) {
 	return i;
 }
 
-mnlxt_rt_rule_t *mnlxt_rt_rule_get(mnlxt_message_t *message) {
+mnlxt_rt_rule_t *mnlxt_rt_rule_get(const mnlxt_message_t *message) {
 	mnlxt_rt_rule_t *rule = NULL;
 	if (message && message->payload
 			&& (RTM_NEWRULE == message->nlmsg_type || RTM_GETRULE == message->nlmsg_type

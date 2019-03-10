@@ -17,7 +17,7 @@
 
 #include "config.h"
 
-int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
+int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *match) {
 	int i = -1;
 	if (addr && match) {
 		int flag = 0x1;
@@ -87,7 +87,7 @@ int mnlxt_rt_addr_match(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_t *match) {
 	return i;
 }
 
-mnlxt_rt_addr_t *mnlxt_rt_addr_get(mnlxt_message_t *message) {
+mnlxt_rt_addr_t *mnlxt_rt_addr_get(const mnlxt_message_t *message) {
 	mnlxt_rt_addr_t *addr = NULL;
 	if (message && message->payload
 			&& (RTM_NEWADDR == message->nlmsg_type || RTM_GETADDR == message->nlmsg_type
