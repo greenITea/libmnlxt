@@ -326,7 +326,7 @@ int mnlxt_xfrm_policy_match(const mnlxt_xfrm_policy_t *policy, const mnlxt_xfrm_
  * XFRM_MSG_DELPOLICY see linux/xfrm.h)
  * @return 0 on success, else -1
  */
-int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, mnlxt_xfrm_policy_t *policy, uint16_t nlmsg_type);
+int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *policy, uint16_t nlmsg_type);
 /**
  * Callback wrapper for mnlxt_xfrm_policy_put
  * @param nlh pointer at netlink message
@@ -334,7 +334,7 @@ int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, mnlxt_xfrm_policy_t *policy, uin
  * @param nlmsg_type netlink message type
  * @return 0 on success, else -1
  */
-int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, void *policy, uint16_t nlmsg_type);
+int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, const void *policy, uint16_t nlmsg_type);
 
 /**
  * Parses netlink message into xfrm policy structure and stores it into mnlxt data

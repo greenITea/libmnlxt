@@ -45,14 +45,14 @@ void mnlxt_message_free(mnlxt_message_t *message);
  * @param message pointer at mnlxt message
  * @return pointer at static allocated string with mnlxt message type or NULL on not known
  */
-const char *mnlxt_message_type(mnlxt_message_t *message);
+const char *mnlxt_message_type(const mnlxt_message_t *message);
 /**
  * Creates a request from a mnlxt message and sends it via netlink
  * @param message pointer at mnlxt message
  * @param bus bus type (NETLINK_* see linux/netlink.h)
  * @return 0 on success, else -1
  */
-int mnlxt_message_request(mnlxt_message_t *message, int bus);
+int mnlxt_message_request(const mnlxt_message_t *message, int bus);
 /**
  * Iterates over mnlxt data
  * @param data pointer at mnlxt data to iterate
@@ -78,7 +78,7 @@ void mnlxt_data_add(mnlxt_data_t *data, mnlxt_message_t *message);
  * @param message pointer at mnlxt message to create netlink message header for
  * @return pointer at dynamic allocated nlmsghdr structure
  */
-struct nlmsghdr *mnlxt_msghdr_create(mnlxt_message_t *message);
+struct nlmsghdr *mnlxt_msghdr_create(const mnlxt_message_t *message);
 /**
  * Frees memory allocated with netlink message header
  * @param msghdr pointer at netlink message header to free

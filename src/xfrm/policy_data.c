@@ -123,7 +123,7 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(const mnlxt_message_t *message) {
 	return policy;
 }
 
-int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, mnlxt_xfrm_policy_t *policy, uint16_t nlmsg_type) {
+int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *policy, uint16_t nlmsg_type) {
 	int rc = -1;
 	uint8_t *dir = NULL;
 	uint32_t *index = NULL;
@@ -219,7 +219,7 @@ failed:
 	return rc;
 }
 
-int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, void *policy, uint16_t nlmsg_type) {
+int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, const void *policy, uint16_t nlmsg_type) {
 	return mnlxt_xfrm_policy_put(nlh, (mnlxt_xfrm_policy_t *)policy, nlmsg_type);
 }
 

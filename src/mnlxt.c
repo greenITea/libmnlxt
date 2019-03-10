@@ -114,7 +114,7 @@ end:
 	return rc;
 }
 
-int mnlxt_handel_get_fd(mnlxt_handle_t *handle) {
+int mnlxt_handel_get_fd(const mnlxt_handle_t *handle) {
 	int rc = -1;
 	if (handle && handle->nl) {
 		rc = mnl_socket_get_fd(handle->nl);

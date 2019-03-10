@@ -1,5 +1,5 @@
 
-AM_CFLAGS = -I$(top_srcdir)/include
+AM_CFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include
 AM_LDFLAGS = $(top_builddir)/src/libmnlxt.la
 
 rtnl_dump_SOURCES = rtnl_common.c rtnl_dump.c

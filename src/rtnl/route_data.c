@@ -108,7 +108,7 @@ mnlxt_rt_route_t *mnlxt_rt_route_get(const mnlxt_message_t *message) {
 	return route;
 }
 
-int mnlxt_rt_route_put(struct nlmsghdr *nlh, mnlxt_rt_route_t *route) {
+int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route) {
 	int rc = -1;
 	if (route && nlh) {
 		struct rtmsg *rtm = mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtmsg));
@@ -168,7 +168,7 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, mnlxt_rt_route_t *route) {
 	return rc;
 }
 
-int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, void *route, uint16_t nlmsg_type) {
+int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_type) {
 	(void)nlmsg_type;
 	return mnlxt_rt_route_put(nlh, (mnlxt_rt_route_t *)route);
 }

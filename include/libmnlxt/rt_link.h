@@ -312,7 +312,7 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *matc
  * @param link pointer at link information structure
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link);
+int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link);
 /**
  * Callback Wrapper for mnlxt_rt_link_put
  * @param nlh pointer at netlink message header to initialize
@@ -320,7 +320,7 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, void *link, uint16_t nlmsg_type);
+int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_type);
 
 /**
  * Parses netlink message into link information and stores it into mnlxt data

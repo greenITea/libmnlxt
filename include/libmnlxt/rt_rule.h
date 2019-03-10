@@ -289,7 +289,7 @@ int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rule, const mnlxt_rt_rule_t *matc
  * @param rule pointer at rule information structure
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_put(struct nlmsghdr *nlh, mnlxt_rt_rule_t *rule);
+int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule);
 /**
  * Callback wrapper at mnlxt_rt_rule_put
  * @param nlh nlh pointer at netlink message header to initialize
@@ -297,7 +297,7 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, mnlxt_rt_rule_t *rule);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, void *rule, uint16_t nlmsg_type);
+int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, const void *rule, uint16_t nlmsg_type);
 
 /**
  * Parses netlink message into rule information and stores it into mnlxt data

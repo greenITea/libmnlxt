@@ -1,13 +1,19 @@
 lib_LTLIBRARIES = libmnlxt.la
 
 libmnlxt_la_SOURCES  = mnlxt.c mnlxt_data.c rtnl/rtnl.c
-libmnlxt_la_SOURCES += rtnl/addr.c rtnl/addr_data.c
-libmnlxt_la_SOURCES += rtnl/link.c rtnl/link_data.c
-libmnlxt_la_SOURCES += rtnl/route.c rtnl/route_data.c
-libmnlxt_la_SOURCES += rtnl/rule.c rtnl/rule_data.c
-libmnlxt_la_SOURCES += xfrm/xfrm.c xfrm/policy.c xfrm/policy_data.c
 
-libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I.
+if ENABLE_RTM
+  libmnlxt_la_SOURCES += rtnl/addr.c rtnl/addr_data.c
+  libmnlxt_la_SOURCES += rtnl/link.c rtnl/link_data.c
+  libmnlxt_la_SOURCES += rtnl/route.c rtnl/route_data.c
+  libmnlxt_la_SOURCES += rtnl/rule.c rtnl/rule_data.c
+endif
+
+if ENABLE_XFRM
+  libmnlxt_la_SOURCES += xfrm/xfrm.c xfrm/policy.c xfrm/policy_data.c
+endif
+
+libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include -I.
 
 #Here are a set of rules to help you update your library version information:
 #
@@ -20,4 +26,3 @@ libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I.
 # * If any interfaces have been removed or changed since the last public release, then set age to 0.
 
 libmnlxt_la_LDFLAGS = -version-info 0:0:0
-
