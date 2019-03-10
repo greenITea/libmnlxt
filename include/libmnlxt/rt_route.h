@@ -323,7 +323,7 @@ int mnlxt_rt_route_match(const mnlxt_rt_route_t *route, const mnlxt_rt_route_t *
  * @param route pointer at route information structure
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_put(struct nlmsghdr *nlh, mnlxt_rt_route_t *route);
+int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route);
 /**
  * Callback wrapper for mnlxt_rt_route_put
  * @param nlh pointer at netlink message header to initialize
@@ -331,7 +331,7 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, mnlxt_rt_route_t *route);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, void *route, uint16_t nlmsg_type);
+int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_type);
 
 /**
  * Parses netlink message into route information and stores it into netlink data

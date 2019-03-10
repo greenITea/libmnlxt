@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/mnlxt.h>
+#include "../../include/libmnlxt/mnlxt.h"
 
 static void usage(const char *progname) {
 	printf("usage: %s add|del\n", progname);

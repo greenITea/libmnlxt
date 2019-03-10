@@ -13,7 +13,37 @@
 
 #include <libmnl/libmnl.h>
 
-typedef struct mnlxt_data_cb_s mnlxt_data_cb_t;
+/**
+ * Function to free message payload
+ * @param payload structure
+ */
+typedef void (*mnlxt_data_free_cb_t)(void *);
+
+/**
+ * Function to create Netlink message.
+ * @param Netlink message header
+ * @param message payload structure
+ * @param message type
+ * @return 0 on success, else -1
+ */
+typedef int (*mnlxt_data_put_cb_t)(struct nlmsghdr *, const void *, uint16_t);
+
+typedef struct {
+	/** symbolic name of message type */
+	const char *name;
+
+	/** function to parse Netlink message */
+	mnl_cb_t parse;
+
+	/** function to create Netlink message */
+	mnlxt_data_put_cb_t put;
+
+	/** function to free resources of message payload */
+	mnlxt_data_free_cb_t free;
+
+	/** message flags to append */
+	uint16_t flags;
+} mnlxt_data_cb_t;
 
 typedef struct {
 	int portid;
@@ -64,6 +94,6 @@ int mnlxt_receive(mnlxt_handle_t *handle, mnlxt_buffer_t *buffer);
  * @param handle pointer at mnlxt handle
  * @return file descriptor on success, or -1
  */
-int mnlxt_handel_get_fd(mnlxt_handle_t *handle);
+int mnlxt_handel_get_fd(const mnlxt_handle_t *handle);
 
 #endif /* LIBMNLXT_CORE_H_ */

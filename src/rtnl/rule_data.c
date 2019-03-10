@@ -114,7 +114,7 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_get(const mnlxt_message_t *message) {
 	return rule;
 }
 
-int mnlxt_rt_rule_put(struct nlmsghdr *nlh, mnlxt_rt_rule_t *rule) {
+int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule) {
 	int rc = -1;
 	if (rule && nlh) {
 		struct fib_rule_hdr *rule_hdr = mnl_nlmsg_put_extra_header(nlh, sizeof(struct fib_rule_hdr));
@@ -174,7 +174,7 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, mnlxt_rt_rule_t *rule) {
 	return rc;
 }
 
-int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, void *rule, uint16_t nlmsg_type) {
+int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, const void *rule, uint16_t nlmsg_type) {
 	(void)nlmsg_type;
 	return mnlxt_rt_rule_put(nlh, (mnlxt_rt_rule_t *)rule);
 }

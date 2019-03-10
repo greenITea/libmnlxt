@@ -171,7 +171,7 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *matc
 	return i;
 }
 
-static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link) {
+static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	int rc = -1;
 	mnlxt_rt_link_info_kind_t info_kind = -1;
 	struct nlattr *nest1, *nest2;
@@ -196,7 +196,7 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link) {
 	return rc;
 }
 
-int mnlxt_rt_link_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link) {
+int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	int rc = -1;
 	if (link && nlh) {
 		struct ifinfomsg *ifm = mnl_nlmsg_put_extra_header(nlh, sizeof(struct ifinfomsg));
@@ -250,7 +250,7 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, mnlxt_rt_link_t *link) {
 	return rc;
 }
 
-int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, void *link, uint16_t nlmsg_type) {
+int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_type) {
 	(void)nlmsg_type;
 	return mnlxt_rt_link_put(nlh, (mnlxt_rt_link_t *)link);
 }

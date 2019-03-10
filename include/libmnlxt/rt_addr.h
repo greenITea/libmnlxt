@@ -267,7 +267,7 @@ int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *matc
  * @param addr pointer at address information
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr);
+int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr);
 /**
  * Callback wrapper for mnlxt_rt_addr_put
  * @param nlh pointer at netlink message header to initialize
@@ -275,7 +275,7 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, void *addr, uint16_t nlmsg_type);
+int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_type);
 
 /**
  * Parses netlink message into address information structure and stores it into mnlxt data

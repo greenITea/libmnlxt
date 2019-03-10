@@ -24,7 +24,17 @@
 #ifndef LIBMNLXT_MNLXT_H_
 #define LIBMNLXT_MNLXT_H_
 
+#include <libmnlxt/features.h>
+
+#include <libmnlxt/core.h>
+#include <libmnlxt/data.h>
+
+#ifdef LIBMNLXT_WITH_RTM
 #include <libmnlxt/rt.h>
+#endif
+
+#ifdef LIBMNLXT_WITH_XFRM
 #include <libmnlxt/xfrm.h>
+#endif
 
 #endif /* LIBMNLXT_MNLXT_H_ */

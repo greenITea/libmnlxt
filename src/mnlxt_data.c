@@ -16,7 +16,7 @@
 
 #include "internal.h"
 
-const char *mnlxt_message_type(mnlxt_message_t *msg) {
+const char *mnlxt_message_type(const mnlxt_message_t *msg) {
 	const char *type = NULL;
 	if (msg && msg->handler) {
 		type = msg->handler->name;
@@ -93,7 +93,7 @@ static int mnlxt_request(struct nlmsghdr *nlh, int bus, mnlxt_data_t *data) {
 	return rc;
 }
 
-int mnlxt_message_request(mnlxt_message_t *message, int bus) {
+int mnlxt_message_request(const mnlxt_message_t *message, int bus) {
 	int rc = -1;
 	if (!message) {
 		errno = EINVAL;
@@ -112,7 +112,7 @@ int mnlxt_message_request(mnlxt_message_t *message, int bus) {
 	return rc;
 }
 
-struct nlmsghdr *mnlxt_msghdr_create(mnlxt_message_t *message) {
+struct nlmsghdr *mnlxt_msghdr_create(const mnlxt_message_t *message) {
 	struct nlmsghdr *nlh_msg = NULL;
 	char buf[MNL_SOCKET_BUFFER_SIZE];
 	struct nlmsghdr *nlh = mnl_nlmsg_put_header(buf);

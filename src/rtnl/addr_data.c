@@ -97,7 +97,7 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_get(const mnlxt_message_t *message) {
 	return addr;
 }
 
-int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr) {
+int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr) {
 	int rc = -1;
 	if (addr && nlh) {
 		struct ifaddrmsg *ifam = mnl_nlmsg_put_extra_header(nlh, sizeof(struct ifaddrmsg));
@@ -148,7 +148,7 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, mnlxt_rt_addr_t *addr) {
 	return rc;
 }
 
-int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, void *addr, uint16_t nlmsg_type) {
+int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_type) {
 	(void)nlmsg_type;
 	return mnlxt_rt_addr_put(nlh, (mnlxt_rt_addr_t *)addr);
 }
