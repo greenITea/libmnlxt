@@ -12,6 +12,7 @@
 #define LIBMNLXT_RT_LINK_H_
 
 #include <net/ethernet.h>
+#include <net/if.h>
 
 #include <libmnlxt/data.h>
 

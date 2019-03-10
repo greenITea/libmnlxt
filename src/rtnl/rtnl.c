@@ -9,7 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/rtnetlink.h>
 
 #include <libmnlxt/rt.h>
 

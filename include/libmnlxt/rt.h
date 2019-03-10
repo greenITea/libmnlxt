@@ -11,6 +11,8 @@
 #ifndef LIBMNLXT_RT_H_
 #define LIBMNLXT_RT_H_
 
+#include <linux/rtnetlink.h>
+
 #include <libmnlxt/core.h>
 #include <libmnlxt/data.h>
 #include <libmnlxt/rt_addr.h>

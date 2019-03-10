@@ -9,7 +9,6 @@
  */
 
 #include <arpa/inet.h>
-#include <linux/rtnetlink.h>
 #include <net/if.h>
 #include <stdio.h>
 #include <stdlib.h>

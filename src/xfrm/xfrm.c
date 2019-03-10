@@ -9,7 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/xfrm.h>
 
 #include <libmnlxt/xfrm.h>
 

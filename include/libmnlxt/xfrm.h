@@ -11,6 +11,8 @@
 #ifndef LIBMNLXT_XFRM_H_
 #define LIBMNLXT_XFRM_H_
 
+#include <linux/xfrm.h>
+
 #include <libmnlxt/core.h>
 #include <libmnlxt/data.h>
 #include <libmnlxt/xfrm_policy.h>
