@@ -165,7 +165,7 @@ int mnlxt_xfrm_policy_get_dst_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8
 	return rc;
 }
 
-int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, inet_addr_t *buf) {
+int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;
@@ -179,7 +179,7 @@ int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;
@@ -197,21 +197,21 @@ int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *f
 	return rc;
 }
 
-int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, inet_addr_t *buf) {
+int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;
 	} else {
 		rc = mnlxt_xfrm_policy_set_family(policy, family);
 		if (0 == rc) {
-			memcpy(&policy->dst.addr, buf, sizeof(inet_addr_t));
+			memcpy(&policy->dst.addr, buf, sizeof(mnlxt_inet_addr_t));
 			MNLXT_SET_PROP_FLAG(policy, MNLXT_XFRM_POLICY_DST_ADDR);
 		}
 	}
 	return rc;
 }
 
-int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (!policy || !buf) {
 		errno = EINVAL;

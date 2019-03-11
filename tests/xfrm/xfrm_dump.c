@@ -36,7 +36,7 @@ static int test_policy_dump() {
 			uint8_t u8;
 			uint16_t u16;
 			uint32_t u32;
-			const inet_addr_t *buf = NULL;
+			const mnlxt_inet_addr_t *buf = NULL;
 			char str[INET6_ADDRSTRLEN] = {};
 			int ret;
 			printf("\n");

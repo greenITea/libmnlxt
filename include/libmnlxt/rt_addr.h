@@ -35,7 +35,7 @@ typedef enum {
 typedef union {
 	struct in6_addr in6;
 	struct in_addr in;
-} inet_addr_t;
+} mnlxt_inet_addr_t;
 
 typedef struct {
 	/** Properties flags */
@@ -63,10 +63,10 @@ typedef struct {
 	/** Interface index */
 	uint32_t if_index;
 	/** IPv6 address, or IPv6 mapped IPv4 address */
-	inet_addr_t addr;
+	mnlxt_inet_addr_t addr;
 	/** Local IP address, equal to addr except ppp-like interfaces */
 	/* does it exists for IPv6? */
-	inet_addr_t addr_local;
+	mnlxt_inet_addr_t addr_local;
 	/** Address label, IPv4 only */
 	char *label;
 	/** Cache Info like valid life time */
@@ -165,7 +165,7 @@ int mnlxt_rt_addr_get_ifindex(const mnlxt_rt_addr_t *addr, uint32_t *if_index);
  * @param buf pointer at address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets IP address from address information
  * @param addr pointer at address information structure
@@ -173,7 +173,7 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *b
  * @param buf pointer to store pointer at IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets local IP address on address information
  * @param addr pointer at address information structure
@@ -181,7 +181,7 @@ int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const i
  * @param buf pointer at IP address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets local IP address from address information
  * @param addr pointer at address information structure
@@ -189,7 +189,7 @@ int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *
  * @param buf pointer to store pointer at address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets label on address information by copying the string
  * @param addr pointer at address information structure

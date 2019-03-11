@@ -64,9 +64,9 @@ typedef struct {
 	uint32_t fwmark;
 	uint32_t fwmask;
 	/** Route source address */
-	inet_addr_t src;
+	mnlxt_inet_addr_t src;
 	/** Route destination address */
-	inet_addr_t dst;
+	mnlxt_inet_addr_t dst;
 	/** Name of the input interface */
 	char *iif_name;
 	/** Name of the output interface */
@@ -137,7 +137,7 @@ int mnlxt_rt_rule_get_dst_prefix(const mnlxt_rt_rule_t *rule, uint8_t *prefixlen
  * @param buf pointer at source address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets rule source address from rule information
  * @param rule pointer at rule information structure
@@ -145,7 +145,7 @@ int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
  * @param buf pointer at buffer to save pointer at source address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_src(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_rule_get_src(const mnlxt_rt_rule_t *rule, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets rule destination address on route information
  * @param rule pointer at rule information structure
@@ -153,7 +153,7 @@ int mnlxt_rt_rule_get_src(const mnlxt_rt_rule_t *rule, uint8_t *family, const in
  * @param buf pointer at destination address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets rule destination address from rule information
  * @param rule pointer at rule information structure
@@ -161,7 +161,7 @@ int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, inet_addr_t *bu
  * @param buf pointer at buffer to save pointer at destination address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_dst(const mnlxt_rt_rule_t *rule, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_rule_get_dst(const mnlxt_rt_rule_t *rule, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets rule table on rule information
  * @param rule pointer at rule information structure

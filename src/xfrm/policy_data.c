@@ -238,9 +238,9 @@ static void mnlxt_xfrm_policy_selector_set(mnlxt_xfrm_policy_t *policy, struct x
 		if (sel->sport_mask) {
 			mnlxt_xfrm_policy_set_src_port(policy, ntohs(sel->sport));
 		}
-		mnlxt_xfrm_policy_set_src_addr(policy, family, (inet_addr_t *)&sel->saddr.in6);
+		mnlxt_xfrm_policy_set_src_addr(policy, family, (mnlxt_inet_addr_t *)&sel->saddr.in6);
 		mnlxt_xfrm_policy_set_src_prefixlen(policy, sel->prefixlen_s);
-		mnlxt_xfrm_policy_set_dst_addr(policy, family, (inet_addr_t *)&sel->daddr.in6);
+		mnlxt_xfrm_policy_set_dst_addr(policy, family, (mnlxt_inet_addr_t *)&sel->daddr.in6);
 		mnlxt_xfrm_policy_set_dst_prefixlen(policy, sel->prefixlen_d);
 		if (sel->ifindex) {
 			mnlxt_xfrm_policy_set_ifindex(policy, sel->ifindex);

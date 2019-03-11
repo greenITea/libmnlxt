@@ -16,7 +16,7 @@
 
 #include "../../include/libmnlxt/mnlxt.h"
 
-int validate_ip_prefix(inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr, const char *prefixstr) {
+int validate_ip_prefix(mnlxt_inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr, const char *prefixstr) {
 	int rc = -1;
 	struct in6_addr addr = {};
 	int fam = 0, pref = 0;
@@ -93,7 +93,7 @@ end:
 	return rc;
 }
 
-int validate_ip(inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr) {
+int validate_ip(mnlxt_inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr) {
 	int rc = -1;
 	if (ipstr) {
 		char *slash = strchr(ipstr, '/');
@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 	int action = 0, ret;
 	mnlxt_rt_addr_t *addr = NULL;
 	mnlxt_message_t *message = NULL;
-	inet_addr_t addr_buf = {};
+	mnlxt_inet_addr_t addr_buf = {};
 	int rc = EXIT_FAILURE;
 
 	if (4 != argc) {
