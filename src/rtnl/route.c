@@ -225,7 +225,7 @@ int mnlxt_rt_route_get_dst_prefix(const mnlxt_rt_route_t *route, uint8_t *prefix
 	return rc;
 }
 
-int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf) {
+int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (route && buf) {
 		rc = mnlxt_rt_route_set_family(route, family);
@@ -239,7 +239,7 @@ int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t 
 	return rc;
 }
 
-int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (route && buf) {
 		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC)) {
@@ -257,7 +257,7 @@ int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const
 	return rc;
 }
 
-int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf) {
+int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (route && buf) {
 		rc = mnlxt_rt_route_set_family(route, family);
@@ -275,7 +275,7 @@ int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t 
 	return rc;
 }
 
-int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (route && buf) {
 		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST)) {
@@ -293,7 +293,7 @@ int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const
 	return rc;
 }
 
-int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf) {
+int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (route && buf) {
 		rc = mnlxt_rt_route_set_family(route, family);
@@ -307,7 +307,7 @@ int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, inet_add
 	return rc;
 }
 
-int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (route && buf) {
 		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_GATEWAY)) {

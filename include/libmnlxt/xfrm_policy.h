@@ -50,9 +50,9 @@ typedef struct {
 	uint32_t reqid;
 	uint32_t spi;
 	/** source peer */
-	inet_addr_t src;
+	mnlxt_inet_addr_t src;
 	/** destination peer */
-	inet_addr_t dst;
+	mnlxt_inet_addr_t dst;
 } mnlxt_xfrm_tmpl_t;
 
 typedef struct {
@@ -61,7 +61,7 @@ typedef struct {
 	uint8_t padding;
 	/** only for IPPROTO_TCP, IPPROTO_UDP, IPPROTO_SCTP or IPPROTO_DCCP */
 	uint16_t port;
-	inet_addr_t addr;
+	mnlxt_inet_addr_t addr;
 } mnlxt_xfrm_site_t;
 
 typedef struct {
@@ -170,7 +170,7 @@ int mnlxt_xfrm_policy_get_dst_prefixlen(const mnlxt_xfrm_policy_t *policy, uint8
  * @param buf pointer at IP address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, inet_addr_t *buf);
+int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets source IP address from xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -178,7 +178,7 @@ int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
  * @param buf pointer at buffer to store IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets destination IP address on xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -186,7 +186,7 @@ int mnlxt_xfrm_policy_get_src_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *f
  * @param buf pointer at IP address buffer
  * @return 0 on success, else -1
  */
-int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, inet_addr_t *buf);
+int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets destination IP address from xfrm policy
  * @param policy pointer at xfrm policy structure
@@ -194,7 +194,7 @@ int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
  * @param buf pointer at buffer to store IP address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_xfrm_policy_get_dst_addr(const mnlxt_xfrm_policy_t *policy, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets source port on xfrm policy
  * @param policy pointer at xfrm policy structure

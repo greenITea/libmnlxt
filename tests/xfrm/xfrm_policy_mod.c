@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	int job = 0, ret;
 	mnlxt_xfrm_policy_t *policy = NULL;
 	mnlxt_message_t *message = NULL;
-	inet_addr_t addr_buf = {};
+	mnlxt_inet_addr_t addr_buf = {};
 	int rc = EXIT_FAILURE;
 
 	if (2 != argc) {

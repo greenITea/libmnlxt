@@ -98,11 +98,11 @@ typedef struct {
 	/** Output interface index. */
 	uint32_t oif_index;
 	/** Route source address */
-	inet_addr_t src;
+	mnlxt_inet_addr_t src;
 	/** Route destination address */
-	inet_addr_t dst;
+	mnlxt_inet_addr_t dst;
 	/** Route gateway address */
-	inet_addr_t gateway;
+	mnlxt_inet_addr_t gateway;
 } mnlxt_rt_route_t;
 
 /**
@@ -225,7 +225,7 @@ int mnlxt_rt_route_get_dst_prefix(const mnlxt_rt_route_t *route, uint8_t *prefix
  * @param buf pointer at route buffer with source address
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route source address from route information
  * @param route pointer at route information structure
@@ -233,7 +233,7 @@ int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t 
  * @param buf pointer at buffer to save pointer at route source
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route destination address on route information
  * @param route pointer at route information structure
@@ -241,7 +241,7 @@ int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const
  * @param buf pointer at route buffer with destination address
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route destination address from route information
  * @param route pointer at route information structure
@@ -249,7 +249,7 @@ int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t 
  * @param buf pointer at buffer to save pointer at route destination
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route gateway address on route information
  * @param route pointer at route information structure
@@ -257,7 +257,7 @@ int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const
  * @param buf pointer at route buffer with gateway address
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, inet_addr_t *buf);
+int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route gateway address from route information
  * @param route pointer at route information structure
@@ -265,7 +265,7 @@ int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, inet_add
  * @param buf pointer at buffer to save pointer at route gateway
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const inet_addr_t **buf);
+int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route priority prefix on route information
  * @param route pointer at route information structure

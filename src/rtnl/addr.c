@@ -185,7 +185,7 @@ int mnlxt_rt_addr_get_ifindex(const mnlxt_rt_addr_t *addr, uint32_t *if_index) {
 	return rc;
 }
 
-int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *buf) {
+int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
 	if (addr && buf) {
 		rc = mnlxt_rt_addr_set_family(addr, family);
@@ -207,7 +207,7 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *b
 	return rc;
 }
 
-int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (addr && buf) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR)) {
@@ -225,7 +225,7 @@ int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const i
 	return rc;
 }
 
-int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *buf) {
+int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = mnlxt_rt_addr_set_family(addr, family);
 	if (0 == rc) {
 		memcpy(&addr->addr_local, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
@@ -234,7 +234,7 @@ int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, inet_addr_t *
 	return rc;
 }
 
-int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const inet_addr_t **buf) {
+int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
 	if (addr && buf) {
 		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
