@@ -9,7 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/fib_rules.h>
 #include <string.h>
 
 #include <libmnlxt/rt.h>

@@ -8,13 +8,13 @@
  *
  */
 
-#include <arpa/inet.h>
-#include <net/if.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../include/libmnlxt/mnlxt.h"
+#include <arpa/inet.h>
+
+#include <libmnlxt/mnlxt.h>
 
 int validate_ip_prefix(mnlxt_inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr, const char *prefixstr) {
 	int rc = -1;

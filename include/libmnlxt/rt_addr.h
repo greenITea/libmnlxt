@@ -11,9 +11,10 @@
 #ifndef LIBMNLXT_RT_ADDR_H_
 #define LIBMNLXT_RT_ADDR_H_
 
-#include <linux/if_addr.h>
 #include <netinet/in.h>
-#include <sys/socket.h>
+
+#include <linux/if_addr.h>
+#include <linux/rtnetlink.h>
 
 #include <libmnlxt/data.h>
 
@@ -44,7 +45,7 @@ typedef struct {
 	uint8_t family;
 	/** IPv4/IPv6 prefix length */
 	uint8_t prefixlen;
-	/** Interface address flags
+	/** Interface address flags, see linux/if_addr.h
 	 * IFA_F_TEMPORARY
 	 * IFA_F_DEPRECATED
 	 * IFA_F_TENTATIVE
