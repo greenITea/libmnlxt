@@ -11,8 +11,6 @@
 #ifndef LIBMNLXT_RT_ROUTE_H_
 #define LIBMNLXT_RT_ROUTE_H_
 
-#include <sys/socket.h>
-
 #include <libmnlxt/rt_addr.h>
 
 typedef enum {

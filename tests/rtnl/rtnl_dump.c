@@ -8,13 +8,11 @@
  *
  */
 
-#include <arpa/inet.h>
 #include <errno.h>
-#include <netinet/in.h>
 #include <stdio.h>
-#include <sys/socket.h>
 
-#include "../../include/libmnlxt/mnlxt.h"
+#include <libmnlxt/mnlxt.h>
+
 #include "rtnl_common.h"
 
 static int test_addr_dump() {

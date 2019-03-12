@@ -13,6 +13,9 @@
 
 #include <net/ethernet.h>
 #include <net/if.h>
+#include <net/if_arp.h>
+
+#include <linux/if.h>
 
 #include <libmnlxt/data.h>
 
@@ -68,7 +71,7 @@ typedef struct {
 	 */
 	uint16_t type;
 	uint8_t family;
-	/** link state, see RFC2863
+	/** link state, see linux/if.h, RFC2863
 	 * IF_OPER_UNKNOWN
 	 * IF_OPER_NOTPRESENT
 	 * IF_OPER_DOWN

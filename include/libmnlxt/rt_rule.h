@@ -11,7 +11,7 @@
 #ifndef LIBMNLXT_RT_RULE_H_
 #define LIBMNLXT_RT_RULE_H_
 
-#include <sys/socket.h>
+#include <linux/fib_rules.h>
 
 #include <libmnlxt/rt_addr.h>
 
@@ -45,7 +45,7 @@ typedef struct {
 	 * */
 	uint8_t table;
 	uint8_t tos;
-	/** Rule actions
+	/** Rule actions, see linux/fib_rules.h
 	 * FR_ACT_UNSPEC
 	 * FR_ACT_TO_TBL			pass to fixed table
 	 * FR_ACT_GOTO				jump to another rule
