@@ -16,7 +16,7 @@
 
 static const char *xfrm_dir[] = {[XFRM_POLICY_IN] = "in", [XFRM_POLICY_OUT] = "out", [XFRM_POLICY_FWD] = "fwd"};
 
-static const char *xfrm_action[] = {[XFRM_POLICY_ALLOW] = "bypass", [XFRM_POLICY_BLOCK] = "block"};
+static const char *xfrm_action[] = {[XFRM_POLICY_ALLOW] = "allow", [XFRM_POLICY_BLOCK] = "block"};
 
 static int test_policy_dump() {
 	printf("\nmnlxt_xfrm_policy_dump test\n");
