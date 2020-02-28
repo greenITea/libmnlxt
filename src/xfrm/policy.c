@@ -20,6 +20,33 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_new() {
 	return calloc(1, sizeof(mnlxt_xfrm_policy_t));
 }
 
+mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_clone(const mnlxt_xfrm_policy_t *src) {
+	mnlxt_xfrm_policy_t *dst = NULL;
+	do {
+		if (NULL == src) {
+			errno = EINVAL;
+			break;
+		}
+		mnlxt_xfrm_tmpl_t *tmpls = NULL;
+		if (NULL != src->tmpls && src->tmpl_num) {
+			if (NULL == (tmpls = calloc(src->tmpl_num, sizeof(mnlxt_xfrm_tmpl_t)))) {
+				break;
+			} else {
+				memcpy(tmpls, src->tmpls, src->tmpl_num * sizeof(mnlxt_xfrm_tmpl_t));
+			}
+		}
+		if (NULL == (dst = mnlxt_xfrm_policy_new())) {
+			if (tmpls) {
+				free(tmpls);
+			}
+			break;
+		}
+		memcpy(dst, src, sizeof(mnlxt_xfrm_policy_t));
+		dst->tmpls = tmpls;
+	} while (0);
+	return dst;
+}
+
 void mnlxt_xfrm_policy_free(mnlxt_xfrm_policy_t *policy) {
 	if (policy) {
 		if (policy->tmpls) {

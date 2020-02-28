@@ -108,6 +108,14 @@ mnlxt_rt_route_t *mnlxt_rt_route_get(const mnlxt_message_t *message) {
 	return route;
 }
 
+mnlxt_rt_route_t *mnlxt_rt_route_remove(mnlxt_message_t *message) {
+	mnlxt_rt_route_t *route = mnlxt_rt_route_get(message);
+	if (NULL != route) {
+		message->payload = NULL;
+	}
+	return route;
+}
+
 int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route) {
 	int rc = -1;
 	if (route && nlh) {

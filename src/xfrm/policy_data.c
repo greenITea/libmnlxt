@@ -122,6 +122,14 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(const mnlxt_message_t *message) {
 	return policy;
 }
 
+mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_remove(mnlxt_message_t *message) {
+	mnlxt_xfrm_policy_t *policy = mnlxt_xfrm_policy_get(message);
+	if (NULL != policy) {
+		message->payload = NULL;
+	}
+	return policy;
+}
+
 int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *policy, uint16_t nlmsg_type) {
 	int rc = -1;
 	uint8_t *dir = NULL;

@@ -20,6 +20,16 @@ mnlxt_rt_route_t *mnlxt_rt_route_new() {
 	return calloc(1, sizeof(mnlxt_rt_route_t));
 }
 
+mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *src) {
+	mnlxt_rt_route_t *dst = NULL;
+	if (NULL == src) {
+		errno = EINVAL;
+	} else if (NULL != (dst = mnlxt_rt_route_new())) {
+		dst = memcpy(dst, src, sizeof(mnlxt_rt_route_t));
+	}
+	return dst;
+}
+
 void mnlxt_rt_route_free(mnlxt_rt_route_t *route) {
 	if (route) {
 		free(route);

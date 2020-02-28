@@ -25,6 +25,30 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_new() {
 	return addr;
 }
 
+mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *src) {
+	mnlxt_rt_addr_t *dst = NULL;
+	do {
+		if (NULL == src) {
+			errno = EINVAL;
+			break;
+		}
+		char *label = NULL;
+		if (src->label && NULL == (label = strdup(src->label))) {
+			break;
+		}
+		if (NULL == (dst = mnlxt_rt_addr_new())) {
+			if (label) {
+				free(label);
+				break;
+			}
+		}
+		memcpy(dst, src, sizeof(mnlxt_rt_addr_t));
+		dst->label = label;
+	} while (0);
+
+	return dst;
+}
+
 void mnlxt_rt_addr_free(mnlxt_rt_addr_t *addr) {
 	if (addr) {
 		if (addr->label) {
@@ -254,17 +278,18 @@ int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const 
 
 int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 	int rc = -1;
-	if (addr && label) {
-		if (addr->label) {
-			free(addr->label);
-		}
-		addr->label = strdup(label);
-		if (addr->label) {
+	if (NULL == addr || NULL == label) {
+		errno = EINVAL;
+	} else {
+		char *label_copy = strndup(label, IFNAMSIZ - 1);
+		if (NULL != label_copy) {
+			if (addr->label) {
+				free(addr->label);
+			}
+			addr->label = label_copy;
 			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL);
 			rc = 0;
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
@@ -272,7 +297,7 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label) {
 	int rc = -1;
 	if (addr && label) {
-		if (addr->label) {
+		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL) && addr->label) {
 			*label = addr->label;
 			rc = 0;
 		} else {

@@ -20,6 +20,16 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_new() {
 	return calloc(1, sizeof(mnlxt_rt_rule_t));
 }
 
+mnlxt_rt_rule_t *mnlxt_rt_rule_clone(const mnlxt_rt_rule_t *src) {
+	mnlxt_rt_rule_t *dst = NULL;
+	if (NULL == src) {
+		errno = EINVAL;
+	} else if (NULL != (dst = mnlxt_rt_rule_new())) {
+		memcpy(dst, src, sizeof(mnlxt_rt_rule_t));
+	}
+	return dst;
+}
+
 void mnlxt_rt_rule_free(mnlxt_rt_rule_t *rule) {
 	if (rule) {
 		free(rule);

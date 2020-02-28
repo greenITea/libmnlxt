@@ -20,11 +20,18 @@ mnlxt_rt_link_t *mnlxt_rt_link_new() {
 	return calloc(1, sizeof(mnlxt_rt_link_t));
 }
 
+mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *src) {
+	mnlxt_rt_link_t *dst = NULL;
+	if (NULL == src) {
+		errno = EINVAL;
+	} else if (NULL != (dst = mnlxt_rt_link_new())) {
+		memcpy(dst, src, sizeof(mnlxt_rt_link_t));
+	}
+	return dst;
+}
+
 void mnlxt_rt_link_free(mnlxt_rt_link_t *link) {
 	if (link) {
-		if (link->name) {
-			free(link->name);
-		}
 		free(link);
 	}
 }
@@ -132,7 +139,7 @@ int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *link, uint8_t *family) {
 int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name) {
 	int rc = -1;
 	if (link && name) {
-		if ((MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_NAME)) && link->name) {
+		if ((MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_NAME))) {
 			*name = link->name;
 			rc = 0;
 		} else {
@@ -147,10 +154,13 @@ int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name) {
 int mnlxt_rt_link_set_name(mnlxt_rt_link_t *link, const char *name) {
 	int rc = -1;
 	if (link && name) {
-		link->name = strdup(name);
-		if (link->name) {
-			rc = 0;
+		size_t len = strlen(name);
+		if (len < sizeof(link->name)) {
+			memcpy(link->name, name, len + 1);
 			MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_NAME);
+			rc = 0;
+		} else {
+			errno = EINVAL;
 		}
 	} else {
 		errno = EINVAL;

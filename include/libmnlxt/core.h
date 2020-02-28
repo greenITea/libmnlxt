@@ -64,7 +64,7 @@ typedef struct {
 
 /**
  * Connects to netlink socket and initializes mnlxt handle
- * @param handle pointer at mnlxt handle
+ * @param handle pointer to mnlxt handle
  * @param bus netlink bus type (NETLINK_* see linux/netlink.h)
  * @param groups netlink multicast groups to subscribe
  * @return 0 on success, else -1
@@ -72,26 +72,26 @@ typedef struct {
 int mnlxt_connect(mnlxt_handle_t *handle, int bus, int groups);
 /**
  * Disconnects netlink socket and cleans mnlxt handle
- * @param handle pointer at mnlxt handle
+ * @param handle pointer to mnlxt handle
  */
 void mnlxt_disconnect(mnlxt_handle_t *handle);
 /**
  * Sends a message via netlink
- * @param handle pointer at mnlxt handle
+ * @param handle pointer to mnlxt handle
  * @param nlh netlink message header with embedded message to send
  * @return 0 on success, else -1
  */
 int mnlxt_send(mnlxt_handle_t *handle, struct nlmsghdr *nlh);
 /**
  * Receives netlink message
- * @param handle pointer at mnlxt handle
- * @param buffer pointer at buffer to save netlink message(s) into
+ * @param handle pointer to mnlxt handle
+ * @param buffer pointer to buffer to save netlink message(s) into
  * @return 0 on success, else -1
  */
 int mnlxt_receive(mnlxt_handle_t *handle, mnlxt_buffer_t *buffer);
 /**
  * Gets netlink file descriptor
- * @param handle pointer at mnlxt handle
+ * @param handle pointer to mnlxt handle
  * @return file descriptor on success, or -1
  */
 int mnlxt_handel_get_fd(const mnlxt_handle_t *handle);

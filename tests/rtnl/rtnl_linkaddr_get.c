@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <net/if.h>
+
 #include <libmnlxt/mnlxt.h>
 
 int main(int argc, char **argv) {

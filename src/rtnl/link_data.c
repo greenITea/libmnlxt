@@ -17,7 +17,8 @@
 static const char *info_kinds[] = {
 	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge",
 	[MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
-	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond"
+	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond",
+	[MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
 };
 /* clang-format on */
 
@@ -59,6 +60,9 @@ static int mnlxt_rt_link_info_match(const mnlxt_rt_link_info_t *link_info, const
 			case MNLXT_RT_LINK_INFO_KIND_VLAN:
 				rc = mnlxt_rt_link_vlan_match(&link_info->data.vlan, link_info->prop_flags, &info_match->data.vlan,
 																			info_match->prop_flags);
+				break;
+			case MNLXT_RT_LINK_INFO_KIND_TUN:
+				/*TODO*/ rc = 0;
 				break;
 			}
 		}
@@ -111,7 +115,7 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *matc
 						}
 						break;
 					case MNLXT_RT_LINK_NAME:
-						if (!link->name || !match->name || 0 != strcmp(link->name, match->name)) {
+						if (0 != strcmp(link->name, match->name)) {
 							goto fail;
 						}
 						break;
@@ -325,6 +329,9 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 		case MNLXT_RT_LINK_INFO_KIND_VLAN:
 			rc = mnlxt_rt_link_info_data_vlan(data_attr, data, link);
 			break;
+		case MNLXT_RT_LINK_INFO_KIND_TUN:
+			/*TODO*/ rc = 0;
+			break;
 		}
 	} else {
 		rc = 0;
@@ -489,6 +496,14 @@ mnlxt_rt_link_t *mnlxt_rt_link_get(const mnlxt_message_t *message) {
 		link = (mnlxt_rt_link_t *)message->payload;
 	}
 	return link;
+}
+
+mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message) {
+	mnlxt_rt_link_t *rt_link = mnlxt_rt_link_get(message);
+	if (NULL != rt_link) {
+		message->payload = NULL;
+	}
+	return rt_link;
 }
 
 mnlxt_rt_link_t *mnlxt_rt_link_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator) {

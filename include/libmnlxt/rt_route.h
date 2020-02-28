@@ -43,18 +43,18 @@ typedef struct {
 	 * */
 	uint8_t table;
 	/**
-	 * Type of route, @see rtnetlink(7):
+	 * Type of route, @see rtnetlink(7) or linux/rtnetlink.h:
 	 * RTN_UNSPEC
-	 * RTN_UNICAST			Gateway or direct route
-	 * RTN_LOCAL				Accept locally
-	 * RTN_BROADCAST		Accept locally as broadcast, send as broadcast
-	 * RTN_ANYCAST			Accept locally as broadcast, but send as unicast
-	 * RTN_MULTICAST		Multicast route
-	 * RTN_BLACKHOLE		Drop
-	 * RTN_UNREACHABLE	Destination is unreachable
-	 * RTN_PROHIBIT			Administratively prohibited
-	 * RTN_THROW				Not in this table
-	 * RTN_NAT					Translate this address
+	 * RTN_UNICAST       Gateway or direct route
+	 * RTN_LOCAL         Accept locally
+	 * RTN_BROADCAST     Accept locally as broadcast, send as broadcast
+	 * RTN_ANYCAST       Accept locally as broadcast, but send as unicast
+	 * RTN_MULTICAST     Multicast route
+	 * RTN_BLACKHOLE     Drop
+	 * RTN_UNREACHABLE   Destination is unreachable
+	 * RTN_PROHIBIT	     Administratively prohibited
+	 * RTN_THROW         Not in this table
+	 * RTN_NAT           Translate this address
 	 * RTN_XRESOLVE
 	 */
 	uint8_t type;
@@ -77,7 +77,7 @@ typedef struct {
 	 * RTPROT_BABEL      Babel daemon
 	 * */
 	uint8_t protocol;
-	/**
+	/**Routing scope; linux/rtnetlink.h
 	 * 1 - 199 are user defined
 	 * RT_SCOPE_UNIVERSE
 	 * RT_SCOPE_SITE
@@ -105,12 +105,18 @@ typedef struct {
 
 /**
  * Creates a new route information
- * @return pointer at new dynamically allocated route information structure
+ * @return pointer to new dynamically allocated route information structure
  */
 mnlxt_rt_route_t *mnlxt_rt_route_new();
 /**
+ * Makes a copy of a route information structure
+ * @param src source address to copy from
+ * @return pointer to copy on success, else NULL
+ */
+mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *route);
+/**
  * Frees memory allocated by a route information structure
- * @param rtnl_route pointer at route information structure to free
+ * @param rtnl_route pointer to route information structure to free
  */
 void mnlxt_rt_route_free(mnlxt_rt_route_t *rtnl_route);
 /**
@@ -120,211 +126,211 @@ void mnlxt_rt_route_free(mnlxt_rt_route_t *rtnl_route);
 void mnlxt_rt_route_FREE(void *route);
 /**
  * Sets route family on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param family route family
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_family(mnlxt_rt_route_t *route, uint8_t family);
 /**
  * Gets route family from route information
- * @param route pointer at route information structure
- * @param family pointer at buffer to save route family
+ * @param route pointer to route information structure
+ * @param family pointer to buffer to save route family
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_family(const mnlxt_rt_route_t *route, uint8_t *family);
 /**
  * Sets route protocol on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param protocol route protocol
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_protocol(mnlxt_rt_route_t *route, uint8_t protocol);
 /**
  * Gets route protocol from route information
- * @param route pointer at route information structure
- * @param protocol pointer at buffer to save route protocol
+ * @param route pointer to route information structure
+ * @param protocol pointer to buffer to save route protocol
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_protocol(const mnlxt_rt_route_t *route, uint8_t *protocol);
 /**
  * Sets route table on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param table route table number
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_table(mnlxt_rt_route_t *route, uint8_t table);
 /**
  * Gets route table from route information
- * @param route pointer at route information structure
- * @param table pointer at buffer to save route table number
+ * @param route pointer to route information structure
+ * @param table pointer to buffer to save route table number
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_table(const mnlxt_rt_route_t *route, uint8_t *table);
 /**
  * Sets route scope on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param scope route scope
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_scope(mnlxt_rt_route_t *route, uint8_t scope);
 /**
  * Gets route scope from route information
- * @param route pointer at route information structure
- * @param scope pointer at buffer to save route scope
+ * @param route pointer to route information structure
+ * @param scope pointer to buffer to save route scope
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_scope(const mnlxt_rt_route_t *route, uint8_t *scope);
 /**
  * Sets route type on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param type route type
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_type(mnlxt_rt_route_t *route, uint8_t type);
 /**
  * Gets route type from route information
- * @param route pointer at route information structure
- * @param type pointer at buffer to save route type
+ * @param route pointer to route information structure
+ * @param type pointer to buffer to save route type
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_type(const mnlxt_rt_route_t *route, uint8_t *type);
 /**
  * Sets route source prefix on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param prefixlen source prefix length
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_src_prefix(mnlxt_rt_route_t *route, uint8_t prefixlen);
 /**
  * Gets route source prefix from route information
- * @param route pointer at route information structure
- * @param prefixlen pointer at buffer to save route source prefix length
+ * @param route pointer to route information structure
+ * @param prefixlen pointer to buffer to save route source prefix length
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_src_prefix(const mnlxt_rt_route_t *route, uint8_t *prefixlen);
 /**
  * Sets route destination prefix on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param prefixlen destination prefix length
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_dst_prefix(mnlxt_rt_route_t *route, uint8_t prefixlen);
 /**
  * Gets route destination prefix from route information
- * @param route pointer at route information structure
- * @param prefixlen pointer at buffer to save route destination prefix length
+ * @param route pointer to route information structure
+ * @param prefixlen pointer to buffer to save route destination prefix length
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_dst_prefix(const mnlxt_rt_route_t *route, uint8_t *prefixlen);
 /**
  * Sets route source address on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param family address family
- * @param buf pointer at route buffer with source address
+ * @param buf pointer to route buffer with source address
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route source address from route information
- * @param route pointer at route information structure
- * @param family pointer at buffer to save address family
- * @param buf pointer at buffer to save pointer at route source
+ * @param route pointer to route information structure
+ * @param family pointer to buffer to save address family
+ * @param buf pointer to buffer to save pointer to route source
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route destination address on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param family address family
- * @param buf pointer at route buffer with destination address
+ * @param buf pointer to route buffer with destination address
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route destination address from route information
- * @param route pointer at route information structure
- * @param family pointer at buffer to save address family
- * @param buf pointer at buffer to save pointer at route destination
+ * @param route pointer to route information structure
+ * @param family pointer to buffer to save address family
+ * @param buf pointer to buffer to save pointer to route destination
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route gateway address on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param family address family
- * @param buf pointer at route buffer with gateway address
+ * @param buf pointer to route buffer with gateway address
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf);
 /**
  * Gets route gateway address from route information
- * @param route pointer at route information structure
- * @param family pointer at buffer to save address family
- * @param buf pointer at buffer to save pointer at route gateway
+ * @param route pointer to route information structure
+ * @param family pointer to buffer to save address family
+ * @param buf pointer to buffer to save pointer to route gateway
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf);
 /**
  * Sets route priority prefix on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param priority route priority
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_priority(mnlxt_rt_route_t *route, uint32_t priority);
 /**
  * Gets route priority from route information
- * @param route pointer at route information structure
- * @param priority pointer at buffer to save address priority
+ * @param route pointer to route information structure
+ * @param priority pointer to buffer to save address priority
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_priority(const mnlxt_rt_route_t *route, uint32_t *priority);
 /**
  * Sets route output interface on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param oif_index output interface index
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_oifindex(mnlxt_rt_route_t *route, uint32_t oif_index);
 /**
  * Sets route output interface on route information
- * @param route pointer at route information structure
- * @param oif_index pointer at buffer to save output interface index
+ * @param route pointer to route information structure
+ * @param oif_index pointer to buffer to save output interface index
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_oifindex(const mnlxt_rt_route_t *route, uint32_t *oif_index);
 /**
  * Sets route input interface on route information
- * @param route pointer at route information structure
+ * @param route pointer to route information structure
  * @param iif_index input interface index
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_set_iifindex(mnlxt_rt_route_t *route, uint32_t iif_index);
 /**
  * Sets route output interface on route information
- * @param route pointer at route information structure
- * @param iif_index pointer at buffer to save input interface index
+ * @param route pointer to route information structure
+ * @param iif_index pointer to buffer to save input interface index
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_route_get_iifindex(const mnlxt_rt_route_t *route, uint32_t *iif_index);
 
 /**
  * Checks if a route information matches another one
- * @param route pointer at route information to check
- * @param match pointer at route information to match
+ * @param route pointer to route information to check
+ * @param match pointer to route information to match
  * @return 0 for matching, else MNLXT_RT_ROUTE_* + 1 for property which does not match
  */
 int mnlxt_rt_route_match(const mnlxt_rt_route_t *route, const mnlxt_rt_route_t *match);
 
 /**
  * Initializes netlink message from route information
- * @param nlh pointer at netlink message header to initialize
- * @param route pointer at route information structure
+ * @param nlh pointer to netlink message header to initialize
+ * @param route pointer to route information structure
  * @return 0 on success, else -1
  */
 int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route);
 /**
  * Callback wrapper for mnlxt_rt_route_put
- * @param nlh pointer at netlink message header to initialize
+ * @param nlh pointer to netlink message header to initialize
  * @param route route information structure given by void pointer
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
@@ -333,14 +339,14 @@ int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_t
 
 /**
  * Parses netlink message into route information and stores it into netlink data
- * @param nlh pointer at netlink message
- * @param data pointer at mnlxt data
+ * @param nlh pointer to netlink message
+ * @param data pointer to mnlxt data
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
 int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
 /**
  * Callback wrapper for mnlxt_rt_route_data
- * @param nlh pointer at netlink message
+ * @param nlh pointer to netlink message
  * @param data mnlxt data by void pointer
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
@@ -348,29 +354,38 @@ int mnlxt_rt_route_DATA(const struct nlmsghdr *nlh, void *data);
 
 /**
  * Iterates over route informations stored in mnlxt data
- * @param data pointer at mnlxt data
- * @param iterator pointer at mnlxt message pointer; this pointer have to be initialized with NULL before iteration
- * @return pointer at the next route information or NULL for the end of iteration
+ * @param data pointer to mnlxt data
+ * @param iterator pointer to mnlxt message pointer; this pointer have to be initialized with NULL before iteration
+ * @return pointer to the next route information or NULL for the end of iteration
  */
 mnlxt_rt_route_t *mnlxt_rt_route_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator);
 
 /**
- * Gets route information from netlink message
- * @param message pointer at mnlxt message
- * @return pointer at route information structure on success, else NULL
+ * Gets route information from netlink message.
+ * In case, if you will handle the route information independently from the mnlxt message use @mnlxt_rt_route_remove
+ * instead. Or clone it with @mnlxt_rt_route_clone before calling @mnlxt_message_free.
+ * @param message pointer to mnlxt message
+ * @return pointer to route information structure on success, else NULL
  */
 mnlxt_rt_route_t *mnlxt_rt_route_get(const mnlxt_message_t *message);
 /**
+ * Gets route information from netlink message.
+ * Unlike @mnlxt_rt_route_get it will detach rule information from the message.
+ * @param message pointer to mnlxt message
+ * @return pointer to route information structure on success, else NULL
+ */
+mnlxt_rt_route_t *mnlxt_rt_route_remove(mnlxt_message_t *message);
+/**
  * Creates a mnlxt message and stores the given route information into it
- * @param route double pointer at a route information structure mnlxt_rt_route_t
+ * @param route double pointer to a route information structure mnlxt_rt_route_t
  * @param type message type (RTM_NEWROUTE or RTM_DELROUTE)
- * @return pointer at mnlxt message on success (pointer at the given mnlxt_rt route will be reset) else NULL
+ * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt route will be reset) else NULL
  */
 mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type);
 
 /**
  * Gets information of all routes configured on system
- * @param data pointer at mnlxt data to store information into
+ * @param data pointer to mnlxt data to store information into
  * @param family route family get the information for
  * @return 0 on success, else -1
  */

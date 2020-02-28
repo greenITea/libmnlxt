@@ -12,10 +12,9 @@
 #define LIBMNLXT_RT_LINK_H_
 
 #include <net/ethernet.h>
-#include <net/if.h>
-#include <net/if_arp.h>
 
 #include <linux/if.h>
+#include <linux/if_arp.h>
 
 #include <libmnlxt/data.h>
 
@@ -48,8 +47,9 @@ typedef struct {
 typedef enum {
 	MNLXT_RT_LINK_INFO_KIND_BR = 0,
 	MNLXT_RT_LINK_INFO_KIND_VLAN,
-	MNLXT_RT_LINK_INFO_KIND_BOND
-#define MNLXT_RT_LINK_INFO_KIND_MAX MNLXT_RT_LINK_INFO_KIND_BOND + 1
+	MNLXT_RT_LINK_INFO_KIND_BOND,
+	MNLXT_RT_LINK_INFO_KIND_TUN,
+#define MNLXT_RT_LINK_INFO_KIND_MAX MNLXT_RT_LINK_INFO_KIND_TUN + 1
 } mnlxt_rt_link_info_kind_t;
 
 typedef struct {
@@ -67,7 +67,7 @@ typedef struct {
 	 * ARPHRD_PPP
 	 * ARPHRD_ETHER
 	 * ARPHRD_LOOPBACK
-	 * ARPHRD_*
+	 * ...
 	 */
 	uint16_t type;
 	uint8_t family;
@@ -84,9 +84,17 @@ typedef struct {
 	/** Hardware address */
 	eth_addr_t mac;
 	/** Interface name */
-	char *name;
+	char name[IFNAMSIZ];
 	/** Interface index */
 	uint32_t index;
+	/** link flags, see linux/if.h and linux/if_tun.h
+	 * IFF_UP
+	 * IFF_BROADCAST
+	 * IFF_DEBUG
+	 * IFF_LOOPBACK
+	 * IFF_RUNNING
+	 * ...
+	 */
 	uint32_t flags;
 	uint32_t flag_mask;
 	/** MTU value */
@@ -99,203 +107,209 @@ typedef struct {
 
 /**
  * Creates a new mnlxt_rt_link_t instance
- * @return pointer at new dynamically allocated link information structure
+ * @return pointer to new dynamically allocated link information structure
  */
 mnlxt_rt_link_t *mnlxt_rt_link_new();
 /**
+ * Makes a copy of a link information structure
+ * @param rt_link source address to copy from
+ * @return pointer to copy on success, else NULL
+ */
+mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *rt_link);
+/**
  * Frees memory allocated by a link information structure
- * @param link pointer at link information structure to free
+ * @param link pointer to link information structure to free
  */
 void mnlxt_rt_link_free(mnlxt_rt_link_t *link);
 /**
  * Callback wrapper for mnlxt_rt_link_free
- * @param link void pointer at link information structure to free
+ * @param link void pointer to link information structure to free
  */
 void mnlxt_rt_link_FREE(void *link);
 /**
  * Revoke link type data on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param index one of MNLXT_RT_LINK_*
  */
 void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index);
 /**
  * Gets link type from link information
- * @param link pointer at link information structure
- * @param type pointer at buffer to save link type
+ * @param link pointer to link information structure
+ * @param type pointer to buffer to save link type
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *link, uint16_t *type);
 /**
  * Sets link type on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param type link type
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_type(mnlxt_rt_link_t *link, uint16_t type);
 /**
  * Gets link family from link information
- * @param link pointer at link information structure
- * @param family pointer at buffer to save link family
+ * @param link pointer to link information structure
+ * @param family pointer to buffer to save link family
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *link, uint8_t *family);
 /**
  * Sets family on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param family link family
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_family(mnlxt_rt_link_t *link, uint8_t family);
 /**
  * Gets link name from link information
- * @param link pointer at link information structure
- * @param name pointer at buffer to store pointer at name
+ * @param link pointer to link information structure
+ * @param name pointer to buffer to store pointer to name
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name);
 /**
- * Sets link name on link information by copying the string
- * @param link pointer at link information structure
- * @param name pointer at link name
+ * Sets link name on link information by copying the string. The maximal length of the name is limited to 15 symbols.
+ * @param link pointer to link information structure
+ * @param name pointer to link name
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_name(mnlxt_rt_link_t *link, const char *name);
 /**
  * Gets link index from link information
- * @param link pointer at link information structure
- * @param index pointer at buffer to save link index
+ * @param link pointer to link information structure
+ * @param index pointer to buffer to save link index
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *link, uint32_t *index);
 /**
  * Sets link index on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param index link index
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_index(mnlxt_rt_link_t *link, uint32_t index);
 /**
  * Gets link flags from link information
- * @param link pointer at link information structure
- * @param flags pointer at buffer to save link flags
+ * @param link pointer to link information structure
+ * @param flags pointer to buffer to save link flags
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *link, uint32_t *flags);
 /**
  * Sets link flags on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param flags link flags
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags);
 /**
  * Gets mtu from link information
- * @param link pointer at link information structure
- * @param mtu pointer at buffer to save link mtu
+ * @param link pointer to link information structure
+ * @param mtu pointer to buffer to save link mtu
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *link, uint32_t *mtu);
 /**
  * Sets mtu on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param mtu link mtu
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *link, uint32_t mtu);
 /**
  * Gets link master from link information
- * @param link pointer at link information structure
- * @param master pointer at buffer to save link master's index
+ * @param link pointer to link information structure
+ * @param master pointer to buffer to save link master's index
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *link, uint32_t *master);
 /**
  * Sets master on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param master link master's index
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_master(mnlxt_rt_link_t *link, uint32_t master);
 /**
  * Gets link state from link information
- * @param link pointer at link information structure
- * @param state pointer at buffer to save link state
+ * @param link pointer to link information structure
+ * @param state pointer to buffer to save link state
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *link, uint8_t *state);
 /**
  * Sets state on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param state link state
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_state(mnlxt_rt_link_t *link, uint8_t state);
 /**
  * Gets link address from link information
- * @param link pointer at link information structure
- * @param mac pointer at buffer to save link address
+ * @param link pointer to link information structure
+ * @param mac pointer to buffer to save link address
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *link, eth_addr_t *mac);
 /**
  * Sets address on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param mac link address
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *link, eth_addr_t mac);
 /**
  * Gets link UP/DOWN state from link information
- * @param link pointer at link information structure
- * @param up pointer at buffer to save link state
+ * @param link pointer to link information structure
+ * @param up pointer to buffer to save link state
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up);
 /**
  * Sets UP/DOWN state on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param up link state (0 for DOWN, else UP)
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_updown(mnlxt_rt_link_t *link, int up);
 /**
  * Gets link parent from link information
- * @param link pointer at link information structure
- * @param index pointer at buffer to save link parent's index
+ * @param link pointer to link information structure
+ * @param index pointer to buffer to save link parent's index
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *link, uint32_t *index);
 /**
  * Sets parent on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param index link parent's index
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *link, uint32_t index);
 /**
  * Gets information kind from link information
- * @param link pointer at link information structure
- * @param info_kind pointer at buffer to save information kind
+ * @param link pointer to link information structure
+ * @param info_kind pointer to buffer to save information kind
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t *info_kind);
 /**
  * Sets information kind on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param info_kind information kind
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t info_kind);
 /**
  * Gets vlan id from link information
- * @param link pointer at link information structure
- * @param id pointer at buffer to save vlan's id
+ * @param link pointer to link information structure
+ * @param id pointer to buffer to save vlan's id
  * @return 0 on success, 1 on not set, else -1
  */
 int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *link, uint16_t *id);
 /**
  * Sets vlan id on link information
- * @param link pointer at link information structure
+ * @param link pointer to link information structure
  * @param id vlan id
  * @return 0 on success, else -1
  */
@@ -303,22 +317,22 @@ int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *link, uint16_t id);
 
 /**
  * Checks if a link information matches another one
- * @param link pointer at link information to check
- * @param match pointer at link information to match
+ * @param link pointer to link information to check
+ * @param match pointer to link information to match
  * @return 0 for matching, -1 for error, else MNLXT_RT_LINK_* + 1 for property which does not match
  */
 int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *match);
 
 /**
  * Initializes netlink message from link information
- * @param nlh pointer at netlink message header to initialize
- * @param link pointer at link information structure
+ * @param nlh pointer to netlink message header to initialize
+ * @param link pointer to link information structure
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link);
 /**
  * Callback Wrapper for mnlxt_rt_link_put
- * @param nlh pointer at netlink message header to initialize
+ * @param nlh pointer to netlink message header to initialize
  * @param link link information structure given by void pointer
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
@@ -327,14 +341,14 @@ int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_typ
 
 /**
  * Parses netlink message into link information and stores it into mnlxt data
- * @param nlh pointer at mnlxt message
- * @param data pointer at mnlxt data
+ * @param nlh pointer to mnlxt message
+ * @param data pointer to mnlxt data
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
 int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
 /**
  * Callback Wrapper for mnlxt_rt_link_data
- * @param nlh pointer at netlink message
+ * @param nlh pointer to netlink message
  * @param data mnlxt data given by void pointer
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
@@ -342,29 +356,38 @@ int mnlxt_rt_link_DATA(const struct nlmsghdr *nlh, void *data);
 
 /**
  * Iterates over link informations stored in mnlxt data
- * @param data pointer at mnlxt data
- * @param iterator pointer at mnlxt message pointer; this pointer have to be initialized with NULL before iteration
- * @return pointer at next link information or NULL for the end of iteration
+ * @param data pointer to mnlxt data
+ * @param iterator pointer to mnlxt message pointer; this pointer have to be initialized with NULL before iteration
+ * @return pointer to next link information or NULL for the end of iteration
  */
 mnlxt_rt_link_t *mnlxt_rt_link_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator);
 
 /**
- * Gets link information from mnlxt message
- * @param message pointer at mnlxt message
- * @return pointer at link information structure on success, else NULL
+ * Gets link information from mnlxt message.
+ * In case, if you will handle the link information independently from the mnlxt message use @mnlxt_rt_link_remove
+ * instead. Or clone it with @mnlxt_rt_link_clone before calling @mnlxt_message_free.
+ * @param message pointer to mnlxt message
+ * @return pointer to link information structure on success, else NULL
  */
 mnlxt_rt_link_t *mnlxt_rt_link_get(const mnlxt_message_t *message);
 /**
+ * Remove link information from mnlxt message.
+ * Unlike @mnlxt_rt_link_get it will detach link information from the message.
+ * @param message pointer to mnlxt message
+ * @return pointer to link information structure on success, else NULL
+ */
+mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message);
+/**
  * Creates a mnlxt message and stores the given link information into it
- * @param link double pointer at a link information structure mnlxt_rt_link_t
+ * @param link double pointer to a link information structure mnlxt_rt_link_t
  * @param type message type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
- * @return pointer at mnlxt message on success (pointer at the given mnlxt_rt link will be reset) else NULL
+ * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt link will be reset) else NULL
  */
 mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type);
 
 /**
  * Gets information of all links configured on system
- * @param data pointer at mnlxt data to store information into
+ * @param data pointer to mnlxt data to store information into
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_dump(mnlxt_data_t *data);

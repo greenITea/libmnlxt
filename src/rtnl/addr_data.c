@@ -97,6 +97,14 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_get(const mnlxt_message_t *message) {
 	return addr;
 }
 
+mnlxt_rt_addr_t *mnlxt_rt_addr_remove(mnlxt_message_t *message) {
+	mnlxt_rt_addr_t *addr = mnlxt_rt_addr_get(message);
+	if (NULL != addr) {
+		message->payload = NULL;
+	}
+	return addr;
+}
+
 int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr) {
 	int rc = -1;
 	if (addr && nlh) {

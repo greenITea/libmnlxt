@@ -113,6 +113,14 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_get(const mnlxt_message_t *message) {
 	return rule;
 }
 
+mnlxt_rt_rule_t *mnlxt_rt_rule_remove(mnlxt_message_t *message) {
+	mnlxt_rt_rule_t *rule = mnlxt_rt_rule_get(message);
+	if (rule) {
+		message->payload = NULL;
+	}
+	return rule;
+}
+
 int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule) {
 	int rc = -1;
 	if (rule && nlh) {
