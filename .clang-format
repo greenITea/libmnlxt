@@ -1,3 +1,4 @@
+# clang-format v6.0
 ---
 Language:        Cpp
 # BasedOnStyle:  LLVM
@@ -92,8 +93,7 @@ PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Right
 RawStringFormats: 
   - Language:        TextProto
-    Delimiters:
-      - 'pb'
+    Delimiter:      'pb'
     BasedOnStyle:    google
 ReflowComments:  true
 SortIncludes:    true

@@ -21,3 +21,4 @@ stamp-h1
 tests/rtnl_*
 tests/xfrm_*
 m4
+include/libmnlxt/features.h
