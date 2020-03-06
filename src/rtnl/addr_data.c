@@ -324,6 +324,17 @@ int mnlxt_rt_addr_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
+int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type) {
+	int rc = -1;
+	mnlxt_message_t *message = mnlxt_rt_addr_message(&rt_addr, type);
+	if (NULL != message) {
+		rc = mnlxt_rt_message_request(message);
+		mnlxt_rt_addr_remove(message);
+		mnlxt_message_free(message);
+	}
+	return rc;
+}
+
 mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type) {
 	mnlxt_message_t *message = NULL;
 	if (!addr || !*addr || !(RTM_NEWADDR == type || RTM_DELADDR == type)) {

@@ -241,6 +241,7 @@ int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags) {
 	int rc = -1;
 	if (link) {
 		link->flags = flags;
+		link->flag_mask = (uint32_t)-1;
 		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS);
 		rc = 0;
 	} else {
@@ -249,6 +250,44 @@ int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags) {
 	return rc;
 }
 
+static int mnlxt_rt_link_set_selected_flags(mnlxt_rt_link_t *link, uint32_t flags, int on) {
+	int rc = -1;
+	if (NULL == link || 0 == flags) {
+		errno = EINVAL;
+	} else {
+		if (on) {
+			link->flags |= flags;
+		} else {
+			link->flags &= ~flags;
+		}
+		link->flag_mask |= flags;
+		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS);
+	}
+	return rc;
+}
+
+int mnlxt_rt_link_set_flags_on(mnlxt_rt_link_t *link, uint32_t flags) {
+	return mnlxt_rt_link_set_selected_flags(link, flags, 1);
+}
+
+int mnlxt_rt_link_set_flags_off(mnlxt_rt_link_t *link, uint32_t flags) {
+	return mnlxt_rt_link_set_selected_flags(link, flags, 0);
+}
+#if 0 /* not in use yet */
+int mnlxt_rt_link_reset_flags(mnlxt_rt_link_t *link, uint32_t flags) {
+	int rc = -1;
+	if (NULL == link || 0 == flags) {
+		errno = EINVAL;
+	} else {
+		link->flags &= ~flags;
+		link->flag_mask &= ~flags;
+		if ( 0 == link->flag_mask) {
+			MNLXT_UNSET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS);
+		}
+	}
+	return rc;
+}
+#endif
 int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *link, uint32_t *mtu) {
 	int rc = -1;
 	if (link && mtu) {
@@ -376,18 +415,7 @@ int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up) {
 }
 
 int mnlxt_rt_link_set_updown(mnlxt_rt_link_t *link, int up) {
-	uint32_t flags = 0;
-	int rc = mnlxt_rt_link_get_flags(link, &flags);
-	if (-1 != rc) {
-		if (up) {
-			flags |= IFF_UP;
-		} else {
-			flags &= ~IFF_UP;
-		}
-		rc = mnlxt_rt_link_set_flags(link, flags);
-		link->flag_mask |= IFF_UP;
-	}
-	return rc;
+	return mnlxt_rt_link_set_selected_flags(link, IFF_UP, up);
 }
 
 int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *link, uint16_t id) {

@@ -125,7 +125,7 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *matc
 						}
 						break;
 					case MNLXT_RT_LINK_FLAGS:
-						if ((link->flags & match->flags) != match->flags) {
+						if ((link->flag_mask & match->flags) != link->flags) {
 							goto fail;
 						}
 						break;
@@ -520,6 +520,17 @@ mnlxt_rt_link_t *mnlxt_rt_link_iterate(mnlxt_data_t *data, mnlxt_message_t **ite
 
 int mnlxt_rt_link_dump(mnlxt_data_t *data) {
 	return mnlxt_rt_data_dump(data, RTM_GETLINK, AF_PACKET);
+}
+
+int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type) {
+	int rc = -1;
+	mnlxt_message_t *message = mnlxt_rt_link_message(&rt_link, type);
+	if (NULL != message) {
+		rc = mnlxt_rt_message_request(message);
+		mnlxt_rt_link_remove(message);
+		mnlxt_message_free(message);
+	}
+	return rc;
 }
 
 mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type) {

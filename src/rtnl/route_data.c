@@ -350,6 +350,17 @@ int mnlxt_rt_route_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
+int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type) {
+	int rc = -1;
+	mnlxt_message_t *message = mnlxt_rt_route_message(&rt_route, type);
+	if (NULL != message) {
+		rc = mnlxt_rt_message_request(message);
+		mnlxt_rt_route_remove(message);
+		mnlxt_message_free(message);
+	}
+	return rc;
+}
+
 mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type) {
 	mnlxt_message_t *message = NULL;
 	if (!route || !*route || !(RTM_NEWROUTE == type || RTM_DELROUTE == type)) {

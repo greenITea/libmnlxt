@@ -196,12 +196,37 @@ int mnlxt_rt_link_set_index(mnlxt_rt_link_t *link, uint32_t index);
  */
 int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *link, uint32_t *flags);
 /**
- * Sets link flags on link information
+ * Sets all link flags at once on link information.
+ * For setting some particular flags on network device use @mnlxt_rt_link_set_flags_up
+ * or @mnlxt_rt_link_set_flags_down instead.
  * @param link pointer to link information structure
  * @param flags link flags
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags);
+/**
+ * Sets selected link flags to on/1 on link information.
+ * @param link pointer to link information structure
+ * @param flags flags to be set
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_set_flags_on(mnlxt_rt_link_t *link, uint32_t flags);
+/**
+ * Sets selected link flags to off/0 on link information.
+ * @param link pointer to link information structure
+ * @param flags flags to be set
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_set_flags_off(mnlxt_rt_link_t *link, uint32_t flags);
+#if 0 /* not in use yet */
+/**
+ * Resets (previously set to 1 or 0) link flags on link information.
+ * @param link pointer to link information structure
+ * @param flags flags to reset
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_reset_flags(mnlxt_rt_link_t *link, uint32_t flags);
+#endif
 /**
  * Gets mtu from link information
  * @param link pointer to link information structure
@@ -385,6 +410,13 @@ mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message);
  */
 mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type);
 
+/**
+ * Sends a netlink request with the given link information
+ * @param rt_link pointer to a link information structure mnlxt_rt_link_t
+ * @param type request type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_request(mnlxt_rt_link_t *link, uint16_t type);
 /**
  * Gets information of all links configured on system
  * @param data pointer to mnlxt data to store information into

@@ -90,7 +90,7 @@ void mnlxt_rt_link_print(mnlxt_rt_link_t *link) {
 
 	ret = mnlxt_rt_link_get_flags(link, &u32);
 	if (0 == ret) {
-		printf("flags: %d\n", u32);
+		printf("flags/mask: 0x%x/0x%x\n", u32, link->flag_mask);
 	} else if (-1 == ret) {
 		printf("error getting flags, %m\n");
 	} else {

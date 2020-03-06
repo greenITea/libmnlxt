@@ -351,6 +351,13 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_remove(mnlxt_message_t *message);
 mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type);
 
 /**
+ * Sends a netlink request with the given rule information
+ * @param rt_rule pointer to a rule information structure mnlxt_rt_rule_t
+ * @param type request type (RTM_NEWRULE or RTM_DELRULE)
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type);
+/**
  * Gets information of all network rules configured on system
  * @param data pointer to mnlxt data to store information into
  * @param family rule family get the information for

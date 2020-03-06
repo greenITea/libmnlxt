@@ -384,6 +384,13 @@ mnlxt_rt_route_t *mnlxt_rt_route_remove(mnlxt_message_t *message);
 mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type);
 
 /**
+ * Sends a netlink request with the given route information
+ * @param rt_route pointer to a route information structure mnlxt_rt_route_t
+ * @param type request type (RTM_NEWROUTE or RTM_DELROUTE)
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type);
+/**
  * Gets information of all routes configured on system
  * @param data pointer to mnlxt data to store information into
  * @param family route family get the information for

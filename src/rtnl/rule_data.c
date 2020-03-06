@@ -365,6 +365,17 @@ int mnlxt_rt_rule_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
+int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type) {
+	int rc = -1;
+	mnlxt_message_t *message = mnlxt_rt_rule_message(&rt_rule, type);
+	if (NULL != message) {
+		rc = mnlxt_rt_message_request(message);
+		mnlxt_rt_rule_remove(message);
+		mnlxt_message_free(message);
+	}
+	return rc;
+}
+
 mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type) {
 	mnlxt_message_t *message = NULL;
 	if (!rule || !*rule || !(RTM_NEWRULE == type || RTM_DELRULE == type)) {

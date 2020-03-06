@@ -166,6 +166,7 @@ int main(int argc, char **argv) {
 	mnlxt_rt_addr_set_ifindex(addr, (uint32_t)if_index);
 	mnlxt_rt_addr_set_prefixlen(addr, (uint8_t)prefix);
 
+#if 0 /* more control */
 	message = mnlxt_rt_addr_message(&addr, (uint16_t)action);
 	if (!message) {
 		perror("mnlxt_rt_addr_message");
@@ -177,7 +178,12 @@ int main(int argc, char **argv) {
 		perror("mnlxt_rt_message_request");
 		goto err;
 	}
-
+#else /* simple way */
+	if (-1 == mnlxt_rt_addr_request(addr, (uint16_t)action)) {
+		perror("mnlxt_rt_addr_request");
+		goto err;
+	}
+#endif
 	rc = EXIT_SUCCESS;
 err:
 	if (addr) {

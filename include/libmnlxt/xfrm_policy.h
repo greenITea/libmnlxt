@@ -389,6 +389,13 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_remove(mnlxt_message_t *message);
 mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type);
 
 /**
+ * Sends a netlink request with the given xfrm policy
+ * @param xfrm_policy pointer to xfrm policy
+ * @param type request type (XFRM_MSG_NEWPOLICY, XFRM_MSG_UPDPOLICY or XFRM_MSG_DELPOLICY)
+ * @return
+ */
+int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type);
+/**
  * Gets information of all policies configured on system
  * @param data pointer to mnlxt data to store information into
  * @return 0 on success, else -1

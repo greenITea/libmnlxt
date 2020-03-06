@@ -424,6 +424,17 @@ int mnlxt_xfrm_policy_dump(mnlxt_data_t *data) {
 	return mnlxt_xfrm_data_dump(data, XFRM_MSG_GETPOLICY);
 }
 
+int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type) {
+	int rc = -1;
+	mnlxt_message_t *message = mnlxt_xfrm_policy_message(&xfrm_policy, type);
+	if (NULL != message) {
+		rc = mnlxt_xfrm_message_request(message);
+		mnlxt_xfrm_policy_remove(message);
+		mnlxt_message_free(message);
+	}
+	return rc;
+}
+
 mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type) {
 	mnlxt_message_t *message = NULL;
 	if (!policy || !*policy
