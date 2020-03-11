@@ -30,7 +30,7 @@ typedef enum {
 	MNLXT_RT_RULE_FWMARK,
 	MNLXT_RT_RULE_FWMASK
 #define MNLXT_RT_RULE_MAX MNLXT_RT_RULE_FWMASK + 1
-} nl_rule_data_t;
+} mnlxt_rt_rule_data_t;
 
 typedef struct {
 	/** Properties flags */
@@ -81,9 +81,11 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_new();
 /**
  * Makes a copy of a rule information structure
  * @param rule source address to copy from
+ * @param filter data filter. In case of 0, the function is equal to @mnlxt_rt_rule_new().
+ * Use macro MNLXT_FLAG to create filter from @mnlxt_rt_rule_data_t.
  * @return pointer to copy on success, else NULL
  */
-mnlxt_rt_rule_t *mnlxt_rt_rule_clone(const mnlxt_rt_rule_t *rule);
+mnlxt_rt_rule_t *mnlxt_rt_rule_clone(const mnlxt_rt_rule_t *rule, uint64_t filter);
 /**
  * Frees memory allocated by a rule information structure
  * @param rule pointer to rule information structure to free

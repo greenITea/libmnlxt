@@ -83,9 +83,11 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_new();
 /**
  * Makes a copy of an address information structure
  * @param addr source address to copy from
+ * @param filter data filter. In case of 0, the function is equal to @mnlxt_rt_addr_new().
+ * Use macro MNLXT_FLAG to create filter from @mnlxt_rt_addr_data_t.
  * @return pointer to copy on success, else NULL
  */
-mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *addr);
+mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *addr, uint64_t filter);
 /**
  * Frees memory allocated by netlink address information structure
  * @param addr pointer to netlink address information structure to free

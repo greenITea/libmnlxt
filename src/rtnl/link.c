@@ -20,12 +20,13 @@ mnlxt_rt_link_t *mnlxt_rt_link_new() {
 	return calloc(1, sizeof(mnlxt_rt_link_t));
 }
 
-mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *src) {
+mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *src, uint64_t filter) {
 	mnlxt_rt_link_t *dst = NULL;
 	if (NULL == src) {
 		errno = EINVAL;
-	} else if (NULL != (dst = mnlxt_rt_link_new())) {
+	} else if (NULL != (dst = mnlxt_rt_link_new()) && filter) {
 		memcpy(dst, src, sizeof(mnlxt_rt_link_t));
+		dst->prop_flags = src->prop_flags & filter;
 	}
 	return dst;
 }

@@ -28,7 +28,7 @@ typedef enum {
 	MNLXT_RT_ROUTE_DST,
 	MNLXT_RT_ROUTE_GATEWAY
 #define MNLXT_RT_ROUTE_MAX MNLXT_RT_ROUTE_GATEWAY + 1
-} nl_route_data_t;
+} mnlxt_rt_route_data_t;
 
 typedef struct {
 	/** Properties flags */
@@ -111,9 +111,11 @@ mnlxt_rt_route_t *mnlxt_rt_route_new();
 /**
  * Makes a copy of a route information structure
  * @param src source address to copy from
+ * @param filter data filter. In case of 0, the function is equal to @mnlxt_rt_route_new().
+ * Use macro MNLXT_FLAG to create filter from @mnlxt_rt_route_data_t.
  * @return pointer to copy on success, else NULL
  */
-mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *route);
+mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *route, uint64_t filter);
 /**
  * Frees memory allocated by a route information structure
  * @param rtnl_route pointer to route information structure to free

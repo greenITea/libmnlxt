@@ -113,9 +113,11 @@ mnlxt_rt_link_t *mnlxt_rt_link_new();
 /**
  * Makes a copy of a link information structure
  * @param rt_link source address to copy from
+ * @param filter data filter. In case of 0, the function is equal to @mnlxt_rt_link_new().
+ * Use macro MNLXT_FLAG to create filter from @mnlxt_rt_link_data_t.
  * @return pointer to copy on success, else NULL
  */
-mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *rt_link);
+mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *rt_link, uint64_t filter);
 /**
  * Frees memory allocated by a link information structure
  * @param link pointer to link information structure to free

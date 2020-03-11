@@ -14,6 +14,11 @@
 #include <libmnl/libmnl.h>
 
 /**
+ * Converts bit number to flag
+ */
+#define MNLXT_FLAG(bit) (0x1 << bit)
+
+/**
  * Function to free message payload
  * @param payload structure
  */

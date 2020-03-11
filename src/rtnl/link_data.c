@@ -13,14 +13,12 @@
 
 #include <libmnlxt/rt.h>
 
-/* clang-format off */
 static const char *info_kinds[] = {
 	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge",
 	[MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
 	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond",
 	[MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
 };
-/* clang-format on */
 
 static int mnlxt_rt_link_vlan_match(const mnlxt_rt_link_vlan_t *vlan, uint16_t prop_flags,
 																		const mnlxt_rt_link_vlan_t *match, uint16_t match_flags) {

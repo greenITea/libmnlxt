@@ -100,9 +100,11 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_new();
 /**
  * Makes a copy of an xfrm policy structure
  * @param policy source address to copy from
+ * @param filter data filter. In case of 0, the function is equal to @mnlxt_xfrm_policy_new().
+ * Use macro MNLXT_FLAG to create filter from @mnlxt_xfrm_policy_data_t.
  * @return pointer to copy on success, else NULL
  */
-mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_clone(const mnlxt_xfrm_policy_t *policy);
+mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_clone(const mnlxt_xfrm_policy_t *policy, uint64_t filter);
 /**
  * Frees memory allocated by dynamic allocated an xfrm policy structure
  * @param policy pointer to xfrm policy structure to free
