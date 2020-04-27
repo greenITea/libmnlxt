@@ -13,94 +13,114 @@
 
 #include <libmnlxt/rt.h>
 
-int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rule, const mnlxt_rt_rule_t *match) {
-	int i = -1;
-	if (rule && match) {
-		int flag = 0x1;
-		size_t addr_size = (AF_INET == rule->family ? sizeof(rule->src.in) : sizeof(rule->src));
+static int mnlxt_rt_rule_cmp(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2, mnlxt_rt_rule_data_t data) {
+	int rc = data + 1;
+	size_t addr_size;
+	switch (data) {
+	case MNLXT_RT_RULE_FAMILY:
+		if (rt_rule1->family != rt_rule2->family) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_TABLE:
+		if (rt_rule1->table != rt_rule2->table) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_TOS:
+		if (rt_rule1->tos != rt_rule2->tos) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_ACTION:
+		if (rt_rule1->action != rt_rule2->action) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_PRIORITY:
+		if (rt_rule1->priority != rt_rule2->priority) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_OIFNAME:
+		if (strcmp(rt_rule1->oif_name, rt_rule2->oif_name)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_IIFNAME:
+		if (strcmp(rt_rule1->iif_name, rt_rule2->iif_name)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_SRC_PREFIX:
+		if (rt_rule1->src_prefix != rt_rule2->src_prefix) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_DST_PREFIX:
+		if (rt_rule1->dst_prefix != rt_rule2->dst_prefix) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_SRC:
+		addr_size = (AF_INET == rt_rule1->family ? sizeof(rt_rule1->src.in) : sizeof(rt_rule1->src));
+		if (0 != memcmp(&rt_rule1->src, &rt_rule2->src, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_DST:
+		addr_size = (AF_INET == rt_rule1->family ? sizeof(rt_rule1->dst.in) : sizeof(rt_rule1->dst));
+		if (0 != memcmp(&rt_rule1->dst, &rt_rule2->dst, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_FWMARK:
+		if (rt_rule1->fwmark != rt_rule2->fwmark) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_RULE_FWMASK:
+		if (rt_rule1->fwmask != rt_rule2->fwmask) {
+			goto failed;
+		}
+		break;
+	}
+	rc = 0;
+	failed:
+	return rc;
+}
+
+int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rt_rule, const mnlxt_rt_rule_t *match) {
+	return mnlxt_rt_rule_compare(rt_rule, match, match->prop_flags);
+}
+
+int mnlxt_rt_rule_compare(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2, uint64_t filter) {
+	int rc = -1, i;
+	if (NULL == rt_rule1 || NULL == rt_rule2) {
+		errno = EINVAL;
+	} else {
 		for (i = 0; i < MNLXT_RT_RULE_MAX; ++i) {
-			if (match->prop_flags & flag) {
-				if (rule->prop_flags & flag) {
-					switch (i) {
-					case MNLXT_RT_RULE_FAMILY:
-						if (rule->family != match->family) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_TABLE:
-						if (rule->table != match->table) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_TOS:
-						if (rule->tos != match->tos) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_ACTION:
-						if (rule->action != match->action) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_PRIORITY:
-						if (rule->priority != match->priority) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_OIFNAME:
-						if (strcmp(rule->oif_name, match->oif_name)) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_IIFNAME:
-						if (strcmp(rule->iif_name, match->iif_name)) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_SRC_PREFIX:
-						if (rule->src_prefix != match->src_prefix) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_DST_PREFIX:
-						if (rule->dst_prefix != match->dst_prefix) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_SRC:
-						if (0 != memcmp(&rule->src, &match->src, addr_size)) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_DST:
-						if (0 != memcmp(&rule->dst, &match->dst, addr_size)) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_FWMARK:
-						if (rule->fwmark != match->fwmark) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_RULE_FWMASK:
-						if (rule->fwmask != match->fwmask) {
-							goto fail;
-						}
-						break;
-					}
-				} else {
-					goto fail;
-				}
+			uint64_t flag = MNLXT_FLAG(i);
+			if (0 == (flag & filter)) {
+				continue;
 			}
-			flag <<= 1;
+			if (0 == (rt_rule1->prop_flags & flag)) {
+				if (0 == (rt_rule2->prop_flags & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (rt_rule2->prop_flags & flag)) {
+				goto failed;
+			} else if (0 != mnlxt_rt_rule_cmp(rt_rule1, rt_rule2, i)) {
+				goto failed;
+			}
 		}
 		return 0;
-	fail:
-		++i;
-	} else {
-		errno = EINVAL;
+		failed:
+		rc = ++i;
 	}
-	return i;
+	return rc;
 }
 
 mnlxt_rt_rule_t *mnlxt_rt_rule_get(const mnlxt_message_t *message) {

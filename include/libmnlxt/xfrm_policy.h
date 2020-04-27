@@ -325,6 +325,14 @@ int mnlxt_xfrm_policy_get_index(const mnlxt_xfrm_policy_t *policy, uint32_t *ind
  * @return 0 for matching, else MNLXT_XFRM_POLICY_* + 1 for property which does not match
  */
 int mnlxt_xfrm_policy_match(const mnlxt_xfrm_policy_t *policy, const mnlxt_xfrm_policy_t *match);
+/**
+ * Compares two xfrm policies
+ * @param policy1 pointer to first xfrm policy structure
+ * @param policy2 pointer to second xfrm policy structure
+ * @param filter  data filter for selecting policy properties to compare. Use macro MNLXT_FLAG to create filter from @mnlxt_xfrm_policy_data_t.
+ * @return 0 for equal, else MNLXT_XFRM_POLICY_* + 1 for property which does not match
+ */
+int mnlxt_xfrm_policy_compare(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2, uint64_t filter);
 
 /**
  * Initializes netlink message from xfrm policy

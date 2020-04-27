@@ -94,83 +94,105 @@ static const char *mnlxt_rt_link_info_kind_get_string(mnlxt_rt_link_info_kind_t 
 	return (const char *)kind;
 }
 
-int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *match) {
-	int i = -1;
-	if (link && match) {
-		int flag = 0x1;
+static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2, mnlxt_rt_link_data_t data) {
+	int rc = data + 1;
+	uint32_t flag_mask;
+	switch (data) {
+	case MNLXT_RT_LINK_TYPE:
+		if (rt_link1->type != rt_link2->type) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_FAMILY:
+		if (rt_link1->family != rt_link2->family) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_NAME:
+		if (0 != strcmp(rt_link1->name, rt_link2->name)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_INDEX:
+		if (rt_link1->index != rt_link2->index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_FLAGS:
+		/* calculate common flag mask */
+		flag_mask = rt_link1->flag_mask & rt_link2->flag_mask;
+		/* compare what can be compare */
+		if ((rt_link1->flags & flag_mask) != (rt_link2->flags & flag_mask)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_HWADDR:
+		if (0 != memcmp(rt_link1->mac, rt_link2->mac, sizeof(rt_link1->mac))) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_MTU:
+		if (rt_link1->mtu != rt_link2->mtu) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_MASTER:
+		if (rt_link1->master != rt_link2->master) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_STATE:
+		if (rt_link1->state != rt_link2->state) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_PARENT:
+		if (rt_link1->parent != rt_link2->parent) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_INFO:
+		if (mnlxt_rt_link_info_match(&rt_link1->info, &rt_link2->info)) {
+			goto failed;
+		}
+		break;
+	}
+	rc = 0;
+failed:
+	return rc;
+}
+
+int mnlxt_rt_link_match(const mnlxt_rt_link_t *rt_link, const mnlxt_rt_link_t *match) {
+	return mnlxt_rt_link_compare(rt_link, match, match->prop_flags);
+}
+
+int mnlxt_rt_link_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2, uint64_t filter) {
+	int rc = -1, i;
+	if (NULL == rt_link1 || NULL == rt_link2) {
+		errno = EINVAL;
+	} else {
 		for (i = 0; i < MNLXT_RT_LINK_MAX; ++i) {
-			if (match->prop_flags & flag) {
-				if (link->prop_flags & flag) {
-					switch (i) {
-					case MNLXT_RT_LINK_TYPE:
-						if (link->type != match->type) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_FAMILY:
-						if (link->family != match->family) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_NAME:
-						if (0 != strcmp(link->name, match->name)) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_INDEX:
-						if (link->index != match->index) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_FLAGS:
-						if ((link->flag_mask & match->flags) != link->flags) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_HWADDR:
-						if (0 != memcmp(link->mac, match->mac, sizeof(link->mac))) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_MTU:
-						if (link->mtu != match->mtu) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_MASTER:
-						if (link->master != match->master) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_STATE:
-						if (link->state != match->state) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_PARENT:
-						if (link->parent != match->parent) {
-							goto fail;
-						}
-						break;
-					case MNLXT_RT_LINK_INFO:
-						if (mnlxt_rt_link_info_match(&link->info, &match->info)) {
-							goto fail;
-						}
-						break;
-					}
-				} else {
-					goto fail;
-				}
+			uint64_t flag = MNLXT_FLAG(i);
+			if (0 == (flag & filter)) {
+				continue;
 			}
-			flag <<= 1;
+			if (0 == (rt_link1->prop_flags & flag)) {
+				if (0 == (rt_link2->prop_flags & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (rt_link2->prop_flags & flag)) {
+				goto failed;
+			} else if (0 != mnlxt_rt_link_cmp(rt_link1, rt_link2, i)) {
+				goto failed;
+			}
 		}
 		return 0;
-	fail:
-		++i;
-	} else {
-		errno = EINVAL;
+		failed:
+		rc = ++i;
 	}
-	return i;
+	return rc;
 }
 
 static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
@@ -292,6 +314,7 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 	int rc = -1;
 	const struct nlattr *attr, *data_attr = NULL;
 	mnlxt_rt_link_info_kind_t info_kind = -1;
+	const char *info_kind_str = NULL;
 
 	mnl_attr_for_each_nested(attr, link_info_attr) {
 		int type = mnl_attr_get_type(attr);
@@ -301,9 +324,14 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 				data->error_str = "IFLA_INFO_KIND validation failed";
 				goto end;
 			}
-			info_kind = mnlxt_rt_link_info_kind_get_enum(mnl_attr_get_str(attr));
+			info_kind_str = mnl_attr_get_str(attr);
+			info_kind = mnlxt_rt_link_info_kind_get_enum(info_kind_str);
 			if (-1 == info_kind) {
-				data->error_str = "not supported IFLA_INFO_KIND";
+				strncpy(data->error_buf, "not supported IFLA_INFO_KIND: ", sizeof(data->error_buf) - 1);
+				strncat(data->error_buf, info_kind_str, sizeof(data->error_buf) - 1);
+				data->error_str = data->error_buf;
+				/* unknown kind: store the message, but report as success */
+				rc = 0;
 				goto end;
 			}
 			if (-1 == mnlxt_rt_link_set_info_kind(link, info_kind)) {

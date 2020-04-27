@@ -17,74 +17,96 @@
 
 #include "config.h"
 
+static int mnlxt_rt_addr_cmp(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2, mnlxt_rt_addr_data_t data) {
+	int rc = data + 1;
+	size_t addr_size;
+	switch (data) {
+	case MNLXT_RT_ADDR_FAMILY:
+		if (rt_addr1->family != rt_addr2->family) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_PREFIXLEN:
+		if (rt_addr1->prefixlen != rt_addr2->prefixlen) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_FLAGS:
+		if (rt_addr1->flags != rt_addr2->flags) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_SCOPE:
+		if (rt_addr1->scope != rt_addr2->scope) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_IFINDEX:
+		if (rt_addr1->if_index != rt_addr2->if_index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_ADDR:
+		addr_size = (AF_INET == rt_addr1->family ? sizeof(rt_addr1->addr.in) : sizeof(rt_addr1->addr));
+		if (0 != memcmp(&rt_addr1->addr, &rt_addr2->addr, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_LOCAL:
+		addr_size = (AF_INET == rt_addr1->family ? sizeof(rt_addr1->addr_local.in) : sizeof(rt_addr1->addr_local));
+		if (0 != memcmp(&rt_addr1->addr_local, &rt_addr2->addr_local, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_LABEL:
+		if (!rt_addr1->label || !rt_addr2->label || 0 != strcmp(rt_addr1->label, rt_addr2->label)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ADDR_CACHEINFO:
+#if 0 /* don't compare cache info */
+		if (0 != memcmp(&rt_addr1->cacheinfo, &rt_addr2->cacheinfo, sizeof(addr->cacheinfo))) {
+			goto failed;
+		}
+#endif
+		break;
+	}
+	rc = 0;
+failed:
+	return rc;
+}
+
 int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *match) {
-	int i = -1;
-	if (addr && match) {
-		int flag = 0x1;
-		size_t addr_size = (AF_INET == addr->family ? sizeof(addr->addr.in) : sizeof(addr->addr));
+	return mnlxt_rt_addr_compare(addr, match, match->prop_flags);
+}
+
+int mnlxt_rt_addr_compare(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2, uint64_t filter) {
+	int rc = -1, i;
+	if (NULL == rt_addr1 || NULL == rt_addr2) {
+		errno = EINVAL;
+	} else {
 		for (i = 0; i < MNLXT_RT_ADDR_MAX; ++i) {
-			if (match->prop_flags & flag) {
-				if (addr->prop_flags & flag) {
-					switch (i) {
-					case MNLXT_RT_ADDR_FAMILY:
-						if (addr->family != match->family) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_PREFIXLEN:
-						if (addr->prefixlen != match->prefixlen) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_FLAGS:
-						if (addr->flags != match->flags) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_SCOPE:
-						if (addr->scope != match->scope) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_IFINDEX:
-						if (addr->if_index != match->if_index) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_ADDR:
-						if (0 != memcmp(&addr->addr, &match->addr, addr_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_LOCAL:
-						if (0 != memcmp(&addr->addr_local, &match->addr_local, addr_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_LABEL:
-						if (!addr->label || !match->label || 0 != strcmp(addr->label, match->label)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ADDR_CACHEINFO:
-						if (0 != memcmp(&addr->cacheinfo, &match->cacheinfo, sizeof(addr->cacheinfo))) {
-							goto failed;
-						}
-						break;
-					}
-				} else {
-					goto failed;
-				}
+			uint64_t flag = MNLXT_FLAG(i);
+			if (0 == (flag & filter)) {
+				continue;
 			}
-			flag <<= 1;
+			if (0 == (rt_addr1->prop_flags & flag)) {
+				if (0 == (rt_addr2->prop_flags & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (rt_addr2->prop_flags & flag)) {
+				goto failed;
+			} else if (0 != mnlxt_rt_addr_cmp(rt_addr1, rt_addr2, i)) {
+				goto failed;
+			}
 		}
 		return 0;
-	failed:
-		++i;
-	} else {
-		errno = EINVAL;
+		failed:
+		rc = ++i;
 	}
-	return i;
+	return rc;
 }
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_get(const mnlxt_message_t *message) {

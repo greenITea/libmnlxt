@@ -14,6 +14,8 @@
 
 #include <libmnlxt/rt_addr.h>
 
+#include <linux/if.h>
+
 #include "internal.h"
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_new() {

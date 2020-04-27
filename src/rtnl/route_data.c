@@ -13,89 +13,115 @@
 
 #include <libmnlxt/rt.h>
 
-int mnlxt_rt_route_match(const mnlxt_rt_route_t *route, const mnlxt_rt_route_t *match) {
-	int i = -1;
-	if (route && match) {
-		int flag = 0x1;
-		size_t family_size = (AF_INET == route->family ? sizeof(route->src.in) : sizeof(route->src));
+static int mnlxt_rt_route_cmp(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2, mnlxt_rt_route_data_t data) {
+	int rc = data + 1;
+	size_t family_size;
+	switch (data) {
+	case MNLXT_RT_ROUTE_FAMILY:
+		if (rt_route1->family != rt_route2->family) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_TABLE:
+		if (rt_route1->table != rt_route2->table) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_TYPE:
+		if (rt_route1->type != rt_route2->type) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_PROTOCOL:
+		if (rt_route1->protocol != rt_route2->protocol) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_SCOPE:
+		if (rt_route1->scope != rt_route2->scope) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_PRIORITY:
+		if (rt_route1->priority != rt_route2->priority) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_IIFINDEX:
+		if (rt_route1->iif_index != rt_route2->iif_index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_OIFINDEX:
+		if (rt_route1->oif_index != rt_route2->oif_index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_SRC_PREFIX:
+		if (rt_route1->src_prefix != rt_route2->src_prefix) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_DST_PREFIX:
+		if (rt_route1->dst_prefix != rt_route2->dst_prefix) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_SRC:
+		family_size = (AF_INET == rt_route1->family ? sizeof(rt_route1->src.in) : sizeof(rt_route1->src));
+		if (0 != memcmp(&rt_route1->src, &rt_route2->src, family_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_DST:
+		family_size = (AF_INET == rt_route1->family ? sizeof(rt_route1->dst.in) : sizeof(rt_route1->dst));
+		if (0 != memcmp(&rt_route1->dst, &rt_route2->dst, family_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_ROUTE_GATEWAY:
+		family_size = (AF_INET == rt_route1->family ? sizeof(rt_route1->gateway.in) : sizeof(rt_route1->gateway));
+		if (0 != memcmp(&rt_route1->gateway, &rt_route2->gateway, family_size)) {
+			goto failed;
+		}
+		break;
+	}
+	rc = 0;
+failed:
+	return rc;
+}
+
+int mnlxt_rt_route_match(const mnlxt_rt_route_t *rt_route, const mnlxt_rt_route_t *match) {
+	return mnlxt_rt_route_compare(rt_route, match, match->prop_flags);
+}
+
+int mnlxt_rt_route_compare(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2, uint64_t filter) {
+	int rc = -1, i;
+	if (NULL == rt_route1 || NULL == rt_route2) {
+		errno = EINVAL;
+	} else {
 		for (i = 0; i < MNLXT_RT_ROUTE_MAX; ++i) {
-			if (match->prop_flags & flag) {
-				if (route->prop_flags & flag) {
-					switch (i) {
-					case MNLXT_RT_ROUTE_FAMILY:
-						if (route->family != match->family) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_TABLE:
-						if (route->table != match->table) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_TYPE:
-						if (route->type != match->type) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_PROTOCOL:
-						if (route->protocol != match->protocol) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_SCOPE:
-						if (route->scope != match->scope) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_PRIORITY:
-						if (route->priority != match->priority) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_OIFINDEX:
-						if (route->oif_index != match->oif_index) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_SRC_PREFIX:
-						if (route->src_prefix != match->src_prefix) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_DST_PREFIX:
-						if (route->dst_prefix != match->dst_prefix) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_SRC:
-						if (0 != memcmp(&route->src, &match->src, family_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_DST:
-						if (0 != memcmp(&route->dst, &match->dst, family_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_RT_ROUTE_GATEWAY:
-						if (0 != memcmp(&route->gateway, &match->gateway, family_size)) {
-							goto failed;
-						}
-						break;
-					}
-				} else {
-					goto failed;
-				}
+			uint64_t flag = MNLXT_FLAG(i);
+			if (0 == (flag & filter)) {
+				continue;
 			}
-			flag <<= 1;
+			if (0 == (rt_route1->prop_flags & flag)) {
+				if (0 == (rt_route2->prop_flags & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (rt_route2->prop_flags & flag)) {
+				goto failed;
+			} else if (0 != mnlxt_rt_route_cmp(rt_route1, rt_route2, i)) {
+				goto failed;
+			}
 		}
 		return 0;
-	failed:
-		++i;
-	} else {
-		errno = EINVAL;
+		failed:
+		rc = ++i;
 	}
-	return i;
+	return rc;
 }
 
 mnlxt_rt_route_t *mnlxt_rt_route_get(const mnlxt_message_t *message) {

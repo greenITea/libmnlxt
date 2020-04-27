@@ -14,102 +14,122 @@
 
 #include <libmnlxt/xfrm.h>
 
+static int mnlxt_xfrm_policy_cmp(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2, mnlxt_xfrm_policy_data_t data) {
+	int rc = data + 1;
+	size_t addr_size;
+	switch (data) {
+	case MNLXT_XFRM_POLICY_FAMILY:
+		if (policy1->family != policy2->family) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_PROTO:
+		if (policy1->proto != policy2->proto) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_SRC_PREFIXLEN:
+		if (policy1->src.prefixlen != policy2->src.prefixlen) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_DST_PREFIXLEN:
+		if (policy1->dst.prefixlen != policy2->dst.prefixlen) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_SRC_ADDR:
+		addr_size = (AF_INET == policy1->family ? sizeof(policy1->src.addr.in) : sizeof(policy1->src.addr));
+		if (0 != memcmp(&policy1->src.addr, &policy2->src.addr, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_DST_ADDR:
+		addr_size = (AF_INET == policy1->family ? sizeof(policy1->dst.addr.in) : sizeof(policy1->dst.addr));
+		if (0 != memcmp(&policy1->dst.addr, &policy2->dst.addr, addr_size)) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_SRC_PORT:
+		if (policy1->src.port != policy2->src.port) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_DST_PORT:
+		if (policy1->dst.port != policy2->dst.port) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_INDEX:
+		if (policy1->index != policy2->index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_IFINDEX:
+		if (policy1->if_index != policy2->if_index) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_PRIO:
+		if (policy1->priority != policy2->priority) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_ACTION:
+		if (policy1->action != policy2->action) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_DIR:
+		if (policy1->dir != policy2->dir) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_MARK:
+		if (0 != memcmp(&policy1->mark, &policy2->mark, sizeof(policy1->mark))) {
+			goto failed;
+		}
+		break;
+	case MNLXT_XFRM_POLICY_TMPLS:
+		/*TODO*/
+		break;
+	}
+	rc = 0;
+failed:
+	return rc;
+}
+
 int mnlxt_xfrm_policy_match(const mnlxt_xfrm_policy_t *policy, const mnlxt_xfrm_policy_t *match) {
-	int i = -1;
-	if (policy && match) {
-		int flag = 0x1;
-		size_t addr_size = (AF_INET == policy->family ? sizeof(policy->src.addr.in) : sizeof(policy->src.addr));
+	return mnlxt_xfrm_policy_compare(policy, match, match->prop_flags);
+}
+
+int mnlxt_xfrm_policy_compare(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2, uint64_t filter) {
+	int rc = -1, i;
+	if (NULL == policy1 || NULL == policy2) {
+		errno = EINVAL;
+	} else {
 		for (i = 0; i < MNLXT_XFRM_POLICY_MAX; ++i) {
-			if (match->prop_flags & flag) {
-				if (policy->prop_flags & flag) {
-					switch (i) {
-					case MNLXT_XFRM_POLICY_FAMILY:
-						if (policy->family != match->family) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_PROTO:
-						if (policy->proto != match->proto) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_SRC_PREFIXLEN:
-						if (policy->src.prefixlen != match->src.prefixlen) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_DST_PREFIXLEN:
-						if (policy->dst.prefixlen != match->dst.prefixlen) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_SRC_ADDR:
-						if (0 != memcmp(&policy->src.addr, &match->src.addr, addr_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_DST_ADDR:
-						if (0 != memcmp(&policy->dst.addr, &match->dst.addr, addr_size)) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_SRC_PORT:
-						if (policy->src.port != match->src.port) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_DST_PORT:
-						if (policy->dst.port != match->dst.port) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_INDEX:
-						if (policy->index != match->index) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_IFINDEX:
-						if (policy->if_index != match->if_index) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_PRIO:
-						if (policy->priority != match->priority) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_ACTION:
-						if (policy->action != match->action) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_DIR:
-						if (policy->dir != match->dir) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_MARK:
-						if (0 != memcmp(&policy->mark, &match->mark, sizeof(policy->mark))) {
-							goto failed;
-						}
-						break;
-					case MNLXT_XFRM_POLICY_TMPLS:
-						/*TODO*/
-						break;
-					}
-				} else {
-					goto failed;
-				}
+			uint64_t flag = MNLXT_FLAG(i);
+			if (0 == (flag & filter)) {
+				continue;
 			}
-			flag <<= 1;
+			if (0 == (policy1->prop_flags & flag)) {
+				if (0 == (policy2->prop_flags & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (policy2->prop_flags & flag)) {
+				goto failed;
+			} else if (0 != mnlxt_xfrm_policy_cmp(policy1, policy2, i)) {
+				goto failed;
+			}
 		}
 		return 0;
-	failed:
-		++i;
-	} else {
-		errno = EINVAL;
+		failed:
+		rc = ++i;
 	}
-	return i;
+	return rc;
 }
 
 mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_get(const mnlxt_message_t *message) {
@@ -177,10 +197,10 @@ int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *polic
 				sel->prefixlen_d = policy->dst.prefixlen;
 				break;
 			case MNLXT_XFRM_POLICY_SRC_ADDR:
-				memcpy(&sel->saddr.in6, &policy->src.addr.in6, addr_size);
+				memcpy(&sel->saddr, &policy->src.addr, addr_size);
 				break;
 			case MNLXT_XFRM_POLICY_DST_ADDR:
-				memcpy(&sel->daddr.in6, &policy->dst.addr.in6, addr_size);
+				memcpy(&sel->daddr, &policy->dst.addr, addr_size);
 				break;
 			case MNLXT_XFRM_POLICY_SRC_PORT:
 				sel->sport = htons(policy->src.port);
@@ -245,9 +265,9 @@ static void mnlxt_xfrm_policy_selector_set(mnlxt_xfrm_policy_t *policy, struct x
 		if (sel->sport_mask) {
 			mnlxt_xfrm_policy_set_src_port(policy, ntohs(sel->sport));
 		}
-		mnlxt_xfrm_policy_set_src_addr(policy, family, (mnlxt_inet_addr_t *)&sel->saddr.in6);
+		mnlxt_xfrm_policy_set_src_addr(policy, family, (mnlxt_inet_addr_t *)&sel->saddr);
 		mnlxt_xfrm_policy_set_src_prefixlen(policy, sel->prefixlen_s);
-		mnlxt_xfrm_policy_set_dst_addr(policy, family, (mnlxt_inet_addr_t *)&sel->daddr.in6);
+		mnlxt_xfrm_policy_set_dst_addr(policy, family, (mnlxt_inet_addr_t *)&sel->daddr);
 		mnlxt_xfrm_policy_set_dst_prefixlen(policy, sel->prefixlen_d);
 		if (sel->ifindex) {
 			mnlxt_xfrm_policy_set_ifindex(policy, sel->ifindex);

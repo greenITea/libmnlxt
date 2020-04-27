@@ -28,6 +28,7 @@ typedef struct {
 	const char *error_str;
 	const mnlxt_data_cb_t *handlers;
 	size_t nhandlers;
+	char error_buf[512];
 } mnlxt_data_t;
 
 /**
