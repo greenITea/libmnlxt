@@ -13,7 +13,8 @@
 
 #include <libmnlxt/rt.h>
 
-static int mnlxt_rt_route_cmp(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2, mnlxt_rt_route_data_t data) {
+static int mnlxt_rt_route_cmp(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2,
+															mnlxt_rt_route_data_t data) {
 	int rc = data + 1;
 	size_t family_size;
 	switch (data) {
@@ -118,7 +119,7 @@ int mnlxt_rt_route_compare(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_rou
 			}
 		}
 		return 0;
-		failed:
+	failed:
 		rc = ++i;
 	}
 	return rc;

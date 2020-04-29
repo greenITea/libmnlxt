@@ -1,2 +1,9 @@
 20.01.2020 - v0.1.2
  * First official release
+29.04.2020 - v0.2.0
+ * New function family mnlxt_*_compare() for comparing netlink information structures
+ * New function family mnlxt_*_request() - simple way to send Netlink message
+ * New function family mnlxt_*_clone() for creating copies of Netlink information structures
+ * New function family mnlxt_*_remove() for detaching message content from mnlxt_message_t structure
+ * Fix error in case of an unsupported IFLA_INFO_KIND. Error message sill be generated in error_str
+ * Some small documentation improvement and refactoring 

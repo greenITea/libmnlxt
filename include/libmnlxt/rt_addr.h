@@ -273,7 +273,8 @@ int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *matc
  * Compares two address information structures
  * @param rt_addr1 pointer to first address
  * @param rt_addr2 pointer to second address
- * @param filter data filter for selecting address properties to compare. Use macro MNLXT_FLAG to create filter from @mnlxt_rt_addr_data_t.
+ * @param filter data filter for selecting address properties to compare. Use macro MNLXT_FLAG to create filter from
+ * @mnlxt_rt_addr_data_t.
  * @return 0 for equal, else MNLXT_RT_ADDR_* + 1 for property which does not match
  */
 int mnlxt_rt_addr_compare(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2, uint64_t filter);

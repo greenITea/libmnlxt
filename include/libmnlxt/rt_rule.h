@@ -294,7 +294,8 @@ int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rule, const mnlxt_rt_rule_t *matc
  * Compares two rules structures
  * @param rt_rule1 pointer to first rule information
  * @param rt_rule2 pointer to second rule information
- * @param filter data filter for selecting rule properties to compare. Use macro MNLXT_FLAG to create filter from @mnlxt_rt_rule_data_t.
+ * @param filter data filter for selecting rule properties to compare. Use macro MNLXT_FLAG to create filter from
+ * @mnlxt_rt_rule_data_t.
  * @return 0 for equal, else MNLXT_RT_RULE_* + 1 for property which does not match
  */
 int mnlxt_rt_rule_compare(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2, uint64_t filter);

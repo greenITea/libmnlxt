@@ -14,7 +14,8 @@
 
 #include <libmnlxt/xfrm.h>
 
-static int mnlxt_xfrm_policy_cmp(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2, mnlxt_xfrm_policy_data_t data) {
+static int mnlxt_xfrm_policy_cmp(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2,
+																 mnlxt_xfrm_policy_data_t data) {
 	int rc = data + 1;
 	size_t addr_size;
 	switch (data) {
@@ -126,7 +127,7 @@ int mnlxt_xfrm_policy_compare(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xf
 			}
 		}
 		return 0;
-		failed:
+	failed:
 		rc = ++i;
 	}
 	return rc;

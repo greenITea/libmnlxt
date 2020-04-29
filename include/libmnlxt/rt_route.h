@@ -326,7 +326,8 @@ int mnlxt_rt_route_match(const mnlxt_rt_route_t *route, const mnlxt_rt_route_t *
  * Compater two route information structures
  * @param rt_route1 pointer to first route information
  * @param rt_route2 pointer to second route information
- * @param filter data filter for selecting route properties to compare. Use macro MNLXT_FLAG to create filter from @mnlxt_rt_route_data_t.
+ * @param filter data filter for selecting route properties to compare. Use macro MNLXT_FLAG to create filter from
+ * @mnlxt_rt_route_data_t.
  * @return 0 for equal, else MNLXT_RT_ROUTE_* + 1 for property which does not match
  */
 int mnlxt_rt_route_compare(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2, uint64_t filter);

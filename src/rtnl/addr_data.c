@@ -17,7 +17,8 @@
 
 #include "config.h"
 
-static int mnlxt_rt_addr_cmp(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2, mnlxt_rt_addr_data_t data) {
+static int mnlxt_rt_addr_cmp(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2,
+														 mnlxt_rt_addr_data_t data) {
 	int rc = data + 1;
 	size_t addr_size;
 	switch (data) {
@@ -103,7 +104,7 @@ int mnlxt_rt_addr_compare(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t
 			}
 		}
 		return 0;
-		failed:
+	failed:
 		rc = ++i;
 	}
 	return rc;

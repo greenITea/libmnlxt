@@ -13,7 +13,8 @@
 
 #include <libmnlxt/rt.h>
 
-static int mnlxt_rt_rule_cmp(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2, mnlxt_rt_rule_data_t data) {
+static int mnlxt_rt_rule_cmp(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2,
+														 mnlxt_rt_rule_data_t data) {
 	int rc = data + 1;
 	size_t addr_size;
 	switch (data) {
@@ -86,7 +87,7 @@ static int mnlxt_rt_rule_cmp(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rul
 		break;
 	}
 	rc = 0;
-	failed:
+failed:
 	return rc;
 }
 
@@ -117,7 +118,7 @@ int mnlxt_rt_rule_compare(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t
 			}
 		}
 		return 0;
-		failed:
+	failed:
 		rc = ++i;
 	}
 	return rc;

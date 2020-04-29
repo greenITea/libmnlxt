@@ -94,7 +94,8 @@ static const char *mnlxt_rt_link_info_kind_get_string(mnlxt_rt_link_info_kind_t 
 	return (const char *)kind;
 }
 
-static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2, mnlxt_rt_link_data_t data) {
+static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2,
+														 mnlxt_rt_link_data_t data) {
 	int rc = data + 1;
 	uint32_t flag_mask;
 	switch (data) {
@@ -189,7 +190,7 @@ int mnlxt_rt_link_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t
 			}
 		}
 		return 0;
-		failed:
+	failed:
 		rc = ++i;
 	}
 	return rc;

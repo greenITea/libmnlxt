@@ -352,7 +352,8 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *matc
  * Compares two link information structures
  * @param rt_link1 pointer to first link information
  * @param rt_link2 pointer to second link information
- * @param filter data filter for selecting link properties to compare. Use macro MNLXT_FLAG to create filter from @mnlxt_rt_link_data_t.
+ * @param filter data filter for selecting link properties to compare. Use macro MNLXT_FLAG to create filter from
+ * @mnlxt_rt_link_data_t.
  * @return 0 for equak, -1 for error, else MNLXT_RT_LINK_* + 1 for property which does not match
  */
 int mnlxt_rt_link_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2, uint64_t filter);
