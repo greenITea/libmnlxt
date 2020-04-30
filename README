@@ -1,9 +1,10 @@
 libmnlxt is a user space (linux only) system library build on top of libmnl.
-It provides some functionality of iproute2 tools for system developers.
+It provides functionality of iproute2 tools for system developers, available
+via C API.
 It allows you to configure the linux system or read it's configuration via Netlink.
 The library is designed to be simple in use without deep knowledge of Netlink 
 (see tests folder for examples).
-It is also very flexible. You can use the core functionality and go your own 
-way or you can take the ready to use functions.
+It is also very flexible. You can use the core functionality with more control 
+or you can take take the easy way by using combined functions.
 The library is not 100% complete yet, but it is very easy to extend and to add 
-functionality.
+new functionality.
