@@ -93,7 +93,13 @@ failed:
 }
 
 int mnlxt_rt_route_match(const mnlxt_rt_route_t *rt_route, const mnlxt_rt_route_t *match) {
-	return mnlxt_rt_route_compare(rt_route, match, match->prop_flags);
+	int rc = -1;
+	if (NULL == match) {
+		errno = EINVAL;
+	} else {
+		rc = mnlxt_rt_route_compare(rt_route, match, match->prop_flags);
+	}
+	return rc;
 }
 
 int mnlxt_rt_route_compare(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2, uint64_t filter) {

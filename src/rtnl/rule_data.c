@@ -92,7 +92,13 @@ failed:
 }
 
 int mnlxt_rt_rule_match(const mnlxt_rt_rule_t *rt_rule, const mnlxt_rt_rule_t *match) {
-	return mnlxt_rt_rule_compare(rt_rule, match, match->prop_flags);
+	int rc = -1;
+	if (NULL == match) {
+		errno = EINVAL;
+	} else {
+		rc = mnlxt_rt_rule_compare(rt_rule, match, match->prop_flags);
+	}
+	return rc;
 }
 
 int mnlxt_rt_rule_compare(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2, uint64_t filter) {

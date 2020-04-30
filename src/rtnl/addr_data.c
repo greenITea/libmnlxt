@@ -78,7 +78,13 @@ failed:
 }
 
 int mnlxt_rt_addr_match(const mnlxt_rt_addr_t *addr, const mnlxt_rt_addr_t *match) {
-	return mnlxt_rt_addr_compare(addr, match, match->prop_flags);
+	int rc = -1;
+	if (NULL == match) {
+		errno = EINVAL;
+	} else {
+		rc = mnlxt_rt_addr_compare(addr, match, match->prop_flags);
+	}
+	return rc;
 }
 
 int mnlxt_rt_addr_compare(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2, uint64_t filter) {
