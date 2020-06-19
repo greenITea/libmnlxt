@@ -45,9 +45,10 @@ int mnlxt_rt_message_request(mnlxt_message_t *message);
 /**
  * Create a mnlxt routing message
  * @param type rtnetlink message type (RTM_GET* see linux/rtnetlink.h)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @param payload structure of mnlxt_rt_*_new
  * @return pointer to dynamic allocated mnlxt_message_t structure
  */
-mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, void *payload);
+mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, uint16_t flags, void *payload);
 
 #endif /* LIBMNLXT_RT_H_ */

@@ -101,7 +101,9 @@ int mnlxt_message_request(const mnlxt_message_t *message, int bus) {
 		struct nlmsghdr *nlh = mnlxt_msghdr_create(message);
 		if (nlh) {
 			nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-			if (message->handler) {
+			if (message->flags) {
+				nlh->nlmsg_flags |= message->flags;
+			} else if (message->handler) {
 				nlh->nlmsg_flags |= message->handler->flags;
 			}
 			rc = mnlxt_request(nlh, bus, NULL);

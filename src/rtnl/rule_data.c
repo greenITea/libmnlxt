@@ -218,12 +218,12 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	mnlxt_rt_rule_t *rule = NULL;
 	mnlxt_message_t *msg = NULL;
 
-	if (!data) {
+	if (NULL == data) {
 		errno = EINVAL;
 		goto end;
 	}
 
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 		data->error_str = "invalid arguments";
 		goto end;
@@ -249,7 +249,7 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	}
 
 	rule = mnlxt_rt_rule_new();
-	if (!rule) {
+	if (NULL == rule) {
 		data->error_str = "mnlxt_rt_rule_new failed";
 		goto end;
 	}
@@ -346,8 +346,8 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		}
 	}
 
-	msg = mnlxt_rt_message_new(nlh->nlmsg_type, rule);
-	if (!msg) {
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, 0, rule);
+	if (NULL == msg) {
 		data->error_str = "mnlxt_rt_message_new failed";
 		goto end;
 	}
@@ -357,12 +357,9 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	msg = NULL;
 	rc = MNL_CB_OK;
 end:
-	if (rule) {
-		mnlxt_rt_rule_free(rule);
-	}
-	if (msg) {
-		mnlxt_message_free(msg);
-	}
+	mnlxt_rt_rule_free(rule);
+	mnlxt_message_free(msg);
+
 	return rc;
 }
 
@@ -392,9 +389,9 @@ int mnlxt_rt_rule_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
-int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type) {
+int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type, uint16_t flags) {
 	int rc = -1;
-	mnlxt_message_t *message = mnlxt_rt_rule_message(&rt_rule, type);
+	mnlxt_message_t *message = mnlxt_rt_rule_message(&rt_rule, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
 		mnlxt_rt_rule_remove(message);
@@ -403,15 +400,12 @@ int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type) {
+mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type, uint16_t flags) {
 	mnlxt_message_t *message = NULL;
-	if (!rule || !*rule || !(RTM_NEWRULE == type || RTM_DELRULE == type)) {
+	if (NULL == rule || NULL == *rule || !(RTM_NEWRULE == type || RTM_DELRULE == type)) {
 		errno = EINVAL;
-	} else {
-		message = mnlxt_rt_message_new(type, *rule);
-		if (message) {
-			*rule = NULL;
-		}
+	} else if (NULL != (message = mnlxt_rt_message_new(type, flags, *rule))) {
+		*rule = NULL;
 	}
 	return message;
 }

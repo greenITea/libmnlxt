@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
 
 	mnlxt_xfrm_policy_set_dir(policy, XFRM_POLICY_FWD);
 
-	message = mnlxt_xfrm_policy_message(&policy, (uint16_t)job);
+	message = mnlxt_xfrm_policy_message(&policy, (uint16_t)job, 0);
 	if (!message) {
 		perror("mnlxt_xfrm_policy_message");
 		goto err;

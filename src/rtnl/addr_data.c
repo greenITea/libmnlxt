@@ -193,14 +193,14 @@ int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_typ
 int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	int rc = MNL_CB_ERROR;
 	mnlxt_message_t *msg = NULL;
-	mnlxt_rt_addr_t *addr = NULL;
+	mnlxt_rt_addr_t *rt_addr = NULL;
 
-	if (!data) {
+	if (NULL == data) {
 		errno = EINVAL;
 		goto end;
 	}
 
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 		data->error_str = "invalid arguments";
 		goto end;
@@ -225,16 +225,16 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	addr = mnlxt_rt_addr_new();
-	if (!addr) {
+	rt_addr = mnlxt_rt_addr_new();
+	if (NULL == rt_addr) {
 		data->error_str = "mnlxt_rt_addr_new failed";
 		goto end;
 	}
 
-	mnlxt_rt_addr_set_prefixlen(addr, ifam->ifa_prefixlen);
-	mnlxt_rt_addr_set_flags(addr, ifam->ifa_flags);
-	mnlxt_rt_addr_set_ifindex(addr, ifam->ifa_index);
-	mnlxt_rt_addr_set_scope(addr, ifam->ifa_scope);
+	mnlxt_rt_addr_set_prefixlen(rt_addr, ifam->ifa_prefixlen);
+	mnlxt_rt_addr_set_flags(rt_addr, ifam->ifa_flags);
+	mnlxt_rt_addr_set_ifindex(rt_addr, ifam->ifa_index);
+	mnlxt_rt_addr_set_scope(rt_addr, ifam->ifa_scope);
 
 	struct nlattr *attr;
 	mnl_attr_for_each(attr, nlh, sizeof(*ifam)) {
@@ -251,7 +251,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_ADDRESS validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_addr_set_addr(addr, ifam->ifa_family, mnl_attr_get_payload(attr))) {
+			if (-1 == mnlxt_rt_addr_set_addr(rt_addr, ifam->ifa_family, mnl_attr_get_payload(attr))) {
 				data->error_str = "mnlxt_rt_addr_set_addr failed";
 				goto end;
 			}
@@ -261,7 +261,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_LOCAL validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_addr_set_local(addr, ifam->ifa_family, mnl_attr_get_payload(attr))) {
+			if (-1 == mnlxt_rt_addr_set_local(rt_addr, ifam->ifa_family, mnl_attr_get_payload(attr))) {
 				data->error_str = "mnlxt_rt_addr_set_local failed";
 				goto end;
 			}
@@ -271,7 +271,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_LABEL validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_addr_set_label(addr, mnl_attr_get_str(attr))) {
+			if (-1 == mnlxt_rt_addr_set_label(rt_addr, mnl_attr_get_str(attr))) {
 				data->error_str = "mnlxt_rt_addr_set_label failed";
 				goto end;
 			}
@@ -285,8 +285,8 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_CACHEINFO validation failed";
 				goto end;
 			}
-			memcpy(&addr->cacheinfo, mnl_attr_get_payload(attr), sizeof(struct ifa_cacheinfo));
-			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
+			memcpy(&rt_addr->cacheinfo, mnl_attr_get_payload(attr), sizeof(struct ifa_cacheinfo));
+			MNLXT_SET_PROP_FLAG(rt_addr, MNLXT_RT_ADDR_CACHEINFO);
 			break;
 		case IFA_MULTICAST:
 			break;
@@ -296,7 +296,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_FLAGS validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_addr_set_flags(addr, mnl_attr_get_u32(attr))) {
+			if (-1 == mnlxt_rt_addr_set_flags(rt_addr, mnl_attr_get_u32(attr))) {
 				data->error_str = "mnlxt_rt_addr_set_flags failed";
 				goto end;
 			}
@@ -307,23 +307,19 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		}
 	}
 
-	msg = mnlxt_rt_message_new(nlh->nlmsg_type, addr);
-	if (!msg) {
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, 0, rt_addr);
+	if (NULL == msg) {
 		data->error_str = "mnlxt_rt_message_new failed";
 		goto end;
 	}
 
 	mnlxt_data_add(data, msg);
-	addr = NULL;
+	rt_addr = NULL;
 	msg = NULL;
 	rc = MNL_CB_OK;
 end:
-	if (addr) {
-		mnlxt_rt_addr_free(addr);
-	}
-	if (msg) {
-		mnlxt_message_free(msg);
-	}
+	mnlxt_rt_addr_free(rt_addr);
+	mnlxt_message_free(msg);
 	return rc;
 }
 
@@ -353,9 +349,9 @@ int mnlxt_rt_addr_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
-int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type) {
+int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type, uint16_t flags) {
 	int rc = -1;
-	mnlxt_message_t *message = mnlxt_rt_addr_message(&rt_addr, type);
+	mnlxt_message_t *message = mnlxt_rt_addr_message(&rt_addr, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
 		mnlxt_rt_addr_remove(message);
@@ -364,15 +360,12 @@ int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type) {
+mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **rt_addr, uint16_t type, uint16_t flags) {
 	mnlxt_message_t *message = NULL;
-	if (!addr || !*addr || !(RTM_NEWADDR == type || RTM_DELADDR == type)) {
+	if (NULL == rt_addr || NULL == *rt_addr || !(RTM_NEWADDR == type || RTM_DELADDR == type)) {
 		errno = EINVAL;
-	} else {
-		message = mnlxt_rt_message_new(type, *addr);
-		if (message) {
-			*addr = NULL;
-		}
+	} else if (NULL != (message = mnlxt_rt_message_new(type, flags, *rt_addr))) {
+		*rt_addr = NULL;
 	}
 	return message;
 }

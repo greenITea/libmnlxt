@@ -390,17 +390,19 @@ mnlxt_rt_route_t *mnlxt_rt_route_remove(mnlxt_message_t *message);
  * Creates a mnlxt message and stores the given route information into it
  * @param route double pointer to a route information structure mnlxt_rt_route_t
  * @param type message type (RTM_NEWROUTE or RTM_DELROUTE)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt route will be reset) else NULL
  */
-mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type);
+mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type, uint16_t flags);
 
 /**
  * Sends a netlink request with the given route information
  * @param rt_route pointer to a route information structure mnlxt_rt_route_t
  * @param type request type (RTM_NEWROUTE or RTM_DELROUTE)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type);
+int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type, uint16_t flags);
 /**
  * Gets information of all routes configured on system
  * @param data pointer to mnlxt data to store information into

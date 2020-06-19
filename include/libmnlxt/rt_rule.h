@@ -357,17 +357,19 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_remove(mnlxt_message_t *message);
  * Creates a mnlxt message and stores the given rule information into it
  * @param rule double pointer to a rule information structure mnlxt_rt_rule_t
  * @param type message type (RTM_NEWRULE or RTM_DELRULE)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt rule will be reset) else NULL
  */
-mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type);
+mnlxt_message_t *mnlxt_rt_rule_message(mnlxt_rt_rule_t **rule, uint16_t type, uint16_t flags);
 
 /**
  * Sends a netlink request with the given rule information
  * @param rt_rule pointer to a rule information structure mnlxt_rt_rule_t
  * @param type request type (RTM_NEWRULE or RTM_DELRULE)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type);
+int mnlxt_rt_rule_request(mnlxt_rt_rule_t *rt_rule, uint16_t type, uint16_t flags);
 /**
  * Gets information of all network rules configured on system
  * @param data pointer to mnlxt data to store information into

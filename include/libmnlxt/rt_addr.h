@@ -336,17 +336,19 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_remove(mnlxt_message_t *message);
  * Creates a mnxt message and stores the given address information into it
  * @param addr double pointer to an address information structure mnlxt_rt_addr_t
  * @param type message type (RTM_NEWADDR or RTM_DELADDR)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt address will be reset) else NULL
  */
-mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type);
+mnlxt_message_t *mnlxt_rt_addr_message(mnlxt_rt_addr_t **addr, uint16_t type, uint16_t flags);
 
 /**
  * Sends a netlink request with the given address information
  * @param rt_addr pointer to an address information structure mnlxt_rt_addr_t
  * @param type request type (RTM_NEWADDR or RTM_DELADDR)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type);
+int mnlxt_rt_addr_request(mnlxt_rt_addr_t *rt_addr, uint16_t type, uint16_t flags);
 /**
  * Gets information of all addresses configured on system
  * @param data pointer to mnlxt data to store information into

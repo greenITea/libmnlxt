@@ -88,18 +88,17 @@ int mnlxt_xfrm_message_request(mnlxt_message_t *message) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_xfrm_message_new(uint16_t type, void *payload) {
+mnlxt_message_t *mnlxt_xfrm_message_new(uint16_t type, uint16_t flags, void *payload) {
 	const mnlxt_data_cb_t *data_cb;
 	mnlxt_message_t *msg = NULL;
 
-	if (NULL != (data_cb = mnlxt_xfrm_type_handler(type))) {
-		if (NULL != (msg = mnlxt_message_new())) {
-			msg->nlmsg_type = type;
-			msg->payload = payload;
-			msg->handler = data_cb;
-		} else {
-			errno = ENOMEM;
-		}
+	if (NULL == (data_cb = mnlxt_xfrm_type_handler(type))) {
+		errno = EINVAL;
+	} else if (NULL != (msg = mnlxt_message_new())) {
+		msg->nlmsg_type = type;
+		msg->flags = flags;
+		msg->payload = payload;
+		msg->handler = data_cb;
 	}
 
 	return msg;

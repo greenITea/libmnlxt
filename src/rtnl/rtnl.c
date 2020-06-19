@@ -57,11 +57,13 @@ int mnlxt_rt_data_dump(mnlxt_data_t *data, int type, unsigned char family) {
 		struct rtgenmsg *rtg;
 		char buf[sizeof(struct nlmsghdr) + sizeof(struct rtgenmsg) + 64];
 
-		if (NULL != (nlh = mnl_nlmsg_put_header(buf)))
+		if (NULL != (nlh = mnl_nlmsg_put_header(buf))) {
 			nlh->nlmsg_type = type;
+		}
 
-		if (NULL != (rtg = mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtgenmsg))))
+		if (NULL != (rtg = mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtgenmsg)))) {
 			rtg->rtgen_family = family;
+		}
 
 		data->handlers = data_handlers;
 		data->nhandlers = data_nhandlers;
@@ -94,7 +96,6 @@ int mnlxt_rt_message_request(mnlxt_message_t *message) {
 
 	if (NULL == message) {
 		errno = EINVAL;
-
 	} else if (NULL != (data_cb = mnlxt_rt_type_handler(message->nlmsg_type))) {
 		message->handler = data_cb;
 		rc = mnlxt_message_request(message, NETLINK_ROUTE);
@@ -103,18 +104,17 @@ int mnlxt_rt_message_request(mnlxt_message_t *message) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, void *payload) {
+mnlxt_message_t *mnlxt_rt_message_new(uint16_t type, uint16_t flags, void *payload) {
 	const mnlxt_data_cb_t *data_cb;
 	mnlxt_message_t *msg = NULL;
 
-	if (NULL != (data_cb = mnlxt_rt_type_handler(type))) {
-		if (NULL != (msg = mnlxt_message_new())) {
-			msg->nlmsg_type = type;
-			msg->payload = payload;
-			msg->handler = data_cb;
-		} else {
-			errno = ENOMEM;
-		}
+	if (NULL == (data_cb = mnlxt_rt_type_handler(type))) {
+		errno = EINVAL;
+	} else if (NULL != (msg = mnlxt_message_new())) {
+		msg->nlmsg_type = type;
+		msg->flags = flags;
+		msg->payload = payload;
+		msg->handler = data_cb;
 	}
 
 	return msg;

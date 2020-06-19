@@ -219,12 +219,12 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	mnlxt_rt_route_t *route = NULL;
 	mnlxt_message_t *msg = NULL;
 
-	if (!data) {
+	if (NULL == data) {
 		errno = EINVAL;
 		goto end;
 	}
 
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 		data->error_str = "invalid arguments";
 		goto end;
@@ -338,8 +338,8 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		}
 	}
 
-	msg = mnlxt_rt_message_new(nlh->nlmsg_type, route);
-	if (!msg) {
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, 0, route);
+	if (NULL == msg) {
 		data->error_str = "mnlxt_rt_message_new failed";
 		goto end;
 	}
@@ -349,12 +349,9 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	msg = NULL;
 	rc = MNL_CB_OK;
 end:
-	if (route) {
-		mnlxt_rt_route_free(route);
-	}
-	if (msg) {
-		mnlxt_message_free(msg);
-	}
+	mnlxt_rt_route_free(route);
+	mnlxt_message_free(msg);
+
 	return rc;
 }
 
@@ -383,9 +380,9 @@ int mnlxt_rt_route_dump(mnlxt_data_t *data, unsigned char family) {
 	return rc;
 }
 
-int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type) {
+int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type, uint16_t flags) {
 	int rc = -1;
-	mnlxt_message_t *message = mnlxt_rt_route_message(&rt_route, type);
+	mnlxt_message_t *message = mnlxt_rt_route_message(&rt_route, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
 		mnlxt_rt_route_remove(message);
@@ -394,15 +391,12 @@ int mnlxt_rt_route_request(mnlxt_rt_route_t *rt_route, uint16_t type) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type) {
+mnlxt_message_t *mnlxt_rt_route_message(mnlxt_rt_route_t **route, uint16_t type, uint16_t flags) {
 	mnlxt_message_t *message = NULL;
 	if (!route || !*route || !(RTM_NEWROUTE == type || RTM_DELROUTE == type)) {
 		errno = EINVAL;
-	} else {
-		message = mnlxt_rt_message_new(type, *route);
-		if (message) {
-			*route = NULL;
-		}
+	} else if (NULL != (message = mnlxt_rt_message_new(type, flags, *route))) {
+		*route = NULL;
 	}
 	return message;
 }

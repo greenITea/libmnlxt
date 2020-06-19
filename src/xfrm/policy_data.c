@@ -320,12 +320,12 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	struct xfrm_user_tmpl *tmpls = NULL;
 	struct xfrm_userpolicy_type *upt = NULL;
 
-	if (!data) {
+	if (NULL == data) {
 		errno = EINVAL;
 		goto end;
 	}
 
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 		data->error_str = "invalid arguments";
 		goto end;
@@ -348,18 +348,18 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	}
 
 	policy = mnlxt_xfrm_policy_new();
-	if (!policy) {
+	if (NULL == policy) {
 		data->error_str = "mnlxt_xfrm_policy_new failed";
 		goto end;
 	}
 
-	if (xpinfo) {
+	if (NULL != xpinfo) {
 		mnlxt_xfrm_policy_selector_set(policy, &xpinfo->sel);
 		mnlxt_xfrm_policy_set_index(policy, xpinfo->index);
 		mnlxt_xfrm_policy_set_dir(policy, xpinfo->dir);
 		mnlxt_xfrm_policy_set_action(policy, xpinfo->action);
 		mnlxt_xfrm_policy_set_priority(policy, xpinfo->priority);
-	} else if (xpid) {
+	} else if (NULL != xpid) {
 		mnlxt_xfrm_policy_selector_set(policy, &xpid->sel);
 		mnlxt_xfrm_policy_set_index(policy, xpid->index);
 		mnlxt_xfrm_policy_set_dir(policy, xpid->dir);
@@ -412,8 +412,8 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		}
 	}
 
-	msg = mnlxt_xfrm_message_new(nlh->nlmsg_type, policy);
-	if (!msg) {
+	msg = mnlxt_xfrm_message_new(nlh->nlmsg_type, 0, policy);
+	if (NULL == msg) {
 		data->error_str = "mnlxt_xfrm_message_new failed";
 		goto end;
 	}
@@ -423,12 +423,9 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	msg = NULL;
 	rc = MNL_CB_OK;
 end:
-	if (policy) {
-		mnlxt_xfrm_policy_free(policy);
-	}
-	if (msg) {
-		mnlxt_message_free(msg);
-	}
+	mnlxt_xfrm_policy_free(policy);
+	mnlxt_message_free(msg);
+
 	return rc;
 }
 
@@ -451,9 +448,9 @@ int mnlxt_xfrm_policy_dump(mnlxt_data_t *data) {
 	return mnlxt_xfrm_data_dump(data, XFRM_MSG_GETPOLICY);
 }
 
-int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type) {
+int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type, uint16_t flags) {
 	int rc = -1;
-	mnlxt_message_t *message = mnlxt_xfrm_policy_message(&xfrm_policy, type);
+	mnlxt_message_t *message = mnlxt_xfrm_policy_message(&xfrm_policy, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_xfrm_message_request(message);
 		mnlxt_xfrm_policy_remove(message);
@@ -462,16 +459,13 @@ int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type) {
+mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type, uint16_t flags) {
 	mnlxt_message_t *message = NULL;
-	if (!policy || !*policy
+	if (NULL == policy || NULL == *policy
 			|| !(XFRM_MSG_NEWPOLICY == type || XFRM_MSG_UPDPOLICY == type || XFRM_MSG_DELPOLICY == type)) {
 		errno = EINVAL;
-	} else {
-		message = mnlxt_xfrm_message_new(type, *policy);
-		if (message) {
-			*policy = NULL;
-		}
+	} else if (NULL != (message = mnlxt_xfrm_message_new(type, flags, *policy))) {
+		*policy = NULL;
 	}
 	return message;
 }

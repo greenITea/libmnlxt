@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 		mnlxt_rt_link_set_flags_off(rt_link, IFF_UP);
 	}
 #endif
-	message = mnlxt_rt_link_message(&rt_link, RTM_SETLINK);
+	message = mnlxt_rt_link_message(&rt_link, RTM_SETLINK, 0);
 	if (NULL == message) {
 		perror("mnlxt_rt_addr_message");
 		goto err;

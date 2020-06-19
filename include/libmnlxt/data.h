@@ -17,6 +17,8 @@ typedef struct mnlxt_message_s {
 	struct mnlxt_message_s *next;
 	/** NETLINK-Message type, which it was part of */
 	uint16_t nlmsg_type;
+	/** Optional NETLINK-Request flags (NLM_F_* see linux/netlink.h) */
+	uint16_t flags;
 	/** Message body */
 	void *payload;
 	/** Message data handler */

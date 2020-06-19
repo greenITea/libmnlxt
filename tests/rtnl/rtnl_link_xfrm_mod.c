@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (-1 == mnlxt_rt_link_request(rt_link, (uint16_t)action)) {
+	if (-1 == mnlxt_rt_link_request(rt_link, (uint16_t)action, 0)) {
 		perror("mnlxt_rt_link_request");
 		goto err;
 	}

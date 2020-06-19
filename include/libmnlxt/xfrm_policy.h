@@ -395,17 +395,19 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_remove(mnlxt_message_t *message);
  * Creates a mnxt message and stores the given address information into it
  * @param policy double pointer to xfrm policy
  * @param type message type (XFRM_MSG_NEWPOLICY, XFRM_MSG_UPDPOLICY or XFRM_MSG_DELPOLICY see linux/xfrm.h)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set 0 for default.
  * @return pointer to mnlxt message on success (pointer to the given xfrm policy will be reset) else NULL
  */
-mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type);
+mnlxt_message_t *mnlxt_xfrm_policy_message(mnlxt_xfrm_policy_t **policy, uint16_t type, uint16_t flags);
 
 /**
  * Sends a netlink request with the given xfrm policy
  * @param xfrm_policy pointer to xfrm policy
  * @param type request type (XFRM_MSG_NEWPOLICY, XFRM_MSG_UPDPOLICY or XFRM_MSG_DELPOLICY)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set 0 for default.
  * @return
  */
-int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type);
+int mnlxt_xfrm_policy_request(mnlxt_xfrm_policy_t *xfrm_policy, uint16_t type, uint16_t flags);
 /**
  * Gets information of all policies configured on system
  * @param data pointer to mnlxt data to store information into

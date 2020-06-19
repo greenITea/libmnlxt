@@ -468,15 +468,16 @@ mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message);
  * @param type message type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
  * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt link will be reset) else NULL
  */
-mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type);
+mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type, uint16_t flags);
 
 /**
  * Sends a netlink request with information from the given link instance
  * @param rt_link pointer to a link instance mnlxt_rt_link_t
  * @param type request type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
+ * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_request(mnlxt_rt_link_t *link, uint16_t type);
+int mnlxt_rt_link_request(mnlxt_rt_link_t *link, uint16_t type, uint16_t flags);
 /**
  * Gets information of all links configured on system
  * @param data pointer to mnlxt data to store information into

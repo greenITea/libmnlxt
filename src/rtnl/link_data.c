@@ -15,10 +15,8 @@
 #include <libmnlxt/rt.h>
 
 static const char *info_kinds[MNLXT_RT_LINK_INFO_KIND_MAX] = {
-	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge",
-	[MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
-	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond",
-	[MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
+	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge", [MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
+	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond", [MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
 	[MNLXT_RT_LINK_INFO_KIND_XFRM] = "xfrm",
 };
 
@@ -495,13 +493,13 @@ end:
 int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	int rc = MNL_CB_ERROR;
 	mnlxt_message_t *msg = NULL;
-	mnlxt_rt_link_t *link = NULL;
-	if (!data) {
+	mnlxt_rt_link_t *rt_link = NULL;
+	if (NULL == data) {
 		errno = EINVAL;
 		goto end;
 	}
 
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 		data->error_str = "invalid arguments";
 		goto end;
@@ -514,18 +512,18 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		goto end;
 	}
 
-	link = mnlxt_rt_link_new();
-	if (!link) {
+	rt_link = mnlxt_rt_link_new();
+	if (NULL == rt_link) {
 		data->error_str = "nl_link_new failed";
 		goto end;
 	}
 
 	struct ifinfomsg *ifm = mnl_nlmsg_get_payload(nlh);
 
-	mnlxt_rt_link_set_flags(link, ifm->ifi_flags);
-	mnlxt_rt_link_set_index(link, ifm->ifi_index);
-	mnlxt_rt_link_set_type(link, ifm->ifi_type);
-	mnlxt_rt_link_set_family(link, ifm->ifi_family);
+	mnlxt_rt_link_set_flags(rt_link, ifm->ifi_flags);
+	mnlxt_rt_link_set_index(rt_link, ifm->ifi_index);
+	mnlxt_rt_link_set_type(rt_link, ifm->ifi_type);
+	mnlxt_rt_link_set_family(rt_link, ifm->ifi_family);
 
 	struct nlattr *attr;
 	mnl_attr_for_each(attr, nlh, sizeof(*ifm)) {
@@ -542,7 +540,7 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFLA_MTU validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_mtu(link, mnl_attr_get_u32(attr))) {
+			if (-1 == mnlxt_rt_link_set_mtu(rt_link, mnl_attr_get_u32(attr))) {
 				data->error_str = "mnlxt_rt_link_set_mtu failed";
 				goto end;
 			}
@@ -552,17 +550,17 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFLA_IFNAME validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_name(link, mnl_attr_get_str(attr))) {
+			if (-1 == mnlxt_rt_link_set_name(rt_link, mnl_attr_get_str(attr))) {
 				data->error_str = "mnlxt_rt_link_set_name failed";
 				goto end;
 			}
 			break;
 		case IFLA_ADDRESS: /* hardware address interface L2 address */
-			if (0 > mnl_attr_validate2(attr, MNL_TYPE_BINARY, sizeof(link->mac))) {
+			if (0 > mnl_attr_validate2(attr, MNL_TYPE_BINARY, sizeof(rt_link->mac))) {
 				data->error_str = "IFLA_ADDRESS validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_hwaddr(link, mnl_attr_get_payload(attr))) {
+			if (-1 == mnlxt_rt_link_set_hwaddr(rt_link, mnl_attr_get_payload(attr))) {
 				data->error_str = "mnlxt_rt_link_set_hwaddr failed";
 				goto end;
 			}
@@ -576,7 +574,7 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFLA_LINK validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_parent(link, mnl_attr_get_u32(attr))) {
+			if (-1 == mnlxt_rt_link_set_parent(rt_link, mnl_attr_get_u32(attr))) {
 				data->error_str = "mnlxt_rt_link_set_parent failed";
 				goto end;
 			}
@@ -591,7 +589,7 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFLA_OPERSTATE validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_state(link, mnl_attr_get_u8(attr))) {
+			if (-1 == mnlxt_rt_link_set_state(rt_link, mnl_attr_get_u8(attr))) {
 				data->error_str = "mnlxt_rt_link_set_state failed";
 				goto end;
 			}
@@ -601,13 +599,13 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFLA_MASTER validation failed";
 				goto end;
 			}
-			if (-1 == mnlxt_rt_link_set_master(link, mnl_attr_get_u32(attr))) {
+			if (-1 == mnlxt_rt_link_set_master(rt_link, mnl_attr_get_u32(attr))) {
 				data->error_str = "mnlxt_rt_link_set_master failed";
 				goto end;
 			}
 			break;
 		case IFLA_LINKINFO:
-			if (-1 == mnlxt_rt_link_info_attr(attr, data, link)) {
+			if (-1 == mnlxt_rt_link_info_attr(attr, data, rt_link)) {
 				goto end;
 			}
 			break;
@@ -616,23 +614,20 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 		}
 	}
 
-	msg = mnlxt_rt_message_new(nlh->nlmsg_type, link);
-	if (!msg) {
+	msg = mnlxt_rt_message_new(nlh->nlmsg_type, 0, rt_link);
+	if (NULL == msg) {
 		data->error_str = "mnlxt_rt_message_new failed";
 		goto end;
 	}
 
 	mnlxt_data_add(data, msg);
-	link = NULL;
+	rt_link = NULL;
 	msg = NULL;
 	rc = MNL_CB_OK;
 end:
-	if (link) {
-		mnlxt_rt_link_free(link);
-	}
-	if (msg) {
-		mnlxt_message_free(msg);
-	}
+	mnlxt_rt_link_free(rt_link);
+	mnlxt_message_free(msg);
+
 	return rc;
 }
 
@@ -674,9 +669,9 @@ int mnlxt_rt_link_dump(mnlxt_data_t *data) {
 	return mnlxt_rt_data_dump(data, RTM_GETLINK, AF_PACKET);
 }
 
-int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type) {
+int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type, uint16_t flags) {
 	int rc = -1;
-	mnlxt_message_t *message = mnlxt_rt_link_message(&rt_link, type);
+	mnlxt_message_t *message = mnlxt_rt_link_message(&rt_link, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
 		mnlxt_rt_link_remove(message);
@@ -685,15 +680,12 @@ int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type) {
 	return rc;
 }
 
-mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type) {
+mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **rt_link, uint16_t type, uint16_t flags) {
 	mnlxt_message_t *message = NULL;
-	if (!link || !*link || !(RTM_NEWLINK == type || RTM_DELLINK == type || RTM_SETLINK == type)) {
+	if (NULL == rt_link || NULL == *rt_link || !(RTM_NEWLINK == type || RTM_DELLINK == type || RTM_SETLINK == type)) {
 		errno = EINVAL;
-	} else {
-		message = mnlxt_rt_message_new(type, *link);
-		if (message) {
-			*link = NULL;
-		}
+	} else if (NULL != (message = mnlxt_rt_message_new(type, flags, *rt_link))) {
+		*rt_link = NULL;
 	}
 	return message;
 }
