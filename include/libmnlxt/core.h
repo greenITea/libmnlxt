@@ -16,7 +16,7 @@
 /**
  * Converts bit number to flag
  */
-#define MNLXT_FLAG(bit) (0x1 << bit)
+#define MNLXT_FLAG(bit) (0x1L << bit)
 
 /**
  * Function to free message payload

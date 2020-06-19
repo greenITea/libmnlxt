@@ -47,38 +47,29 @@ void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index
 	}
 }
 
-int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t info_kind) {
-	int rc = -1;
-	if (link) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INFO)) {
-			if (link->info.kind == info_kind) {
-				rc = 0;
-			} else {
-				errno = EINVAL;
-			}
-		} else {
-			link->info.kind = info_kind;
-			MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_INFO);
-			/* TODO: create ext */
-			rc = 0;
-		}
-	} else {
+int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t info_kind) {
+	mnlxt_rt_link_info_kind_t kind;
+	int rc = mnlxt_rt_link_get_info_kind(rt_link, &kind);
+	if (0 == rc && kind != info_kind) {
 		errno = EINVAL;
+		rc = -1;
+	} else if (1 == rc) {
+		rt_link->info.kind = info_kind;
+		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_INFO);
+		rc = 0;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t *info_kind) {
+int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t *info_kind) {
 	int rc = -1;
-	if (link && info_kind) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INFO)) {
-			*info_kind = link->info.kind;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == rt_link || NULL == info_kind) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_INFO)) {
+		rc = 1;
+	} else {
+		*info_kind = rt_link->info.kind;
+		rc = 0;
 	}
 	return rc;
 }
@@ -419,31 +410,86 @@ int mnlxt_rt_link_set_updown(mnlxt_rt_link_t *link, int up) {
 	return mnlxt_rt_link_set_selected_flags(link, IFF_UP, up);
 }
 
-int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *link, uint16_t id) {
+int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *rt_link, uint16_t id) {
 	int rc = -1;
-	if (-1 != mnlxt_rt_link_set_info_kind(link, MNLXT_RT_LINK_INFO_KIND_VLAN)) {
-		link->info.prop_flags |= 0x1 << MNLXT_RT_LINK_VLAN_ID;
-		link->info.data.vlan.id = id;
+	if (0 == mnlxt_rt_link_set_info_kind(rt_link, MNLXT_RT_LINK_INFO_KIND_VLAN)) {
+		MNLXT_SET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_VLAN_ID);
+		rt_link->info.data.vlan.id = id;
 		rc = 0;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *link, uint16_t *id) {
+int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *rt_link, uint16_t *id) {
 	int rc = -1;
-	if (link && id) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INFO)) {
-			if (MNLXT_RT_LINK_INFO_KIND_VLAN == link->info.kind && (link->info.prop_flags & (0x1 << MNLXT_RT_LINK_VLAN_ID))) {
-				*id = link->info.data.vlan.id;
-				rc = 0;
-			} else {
-				errno = EINVAL;
-			}
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == rt_link || NULL == id) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_INFO)) {
+		rc = 1;
+	} else if (MNLXT_RT_LINK_INFO_KIND_VLAN != rt_link->info.kind) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_VLAN_ID)) {
+		rc = 1;
+	} else {
+		*id = rt_link->info.data.vlan.id;
+		rc = 0;
+	}
+	return rc;
+}
+
+int mnlxt_rt_link_set_xfrm_ifindex(mnlxt_rt_link_t *rt_link, uint32_t if_index) {
+	int rc = -1;
+	if (0 == mnlxt_rt_link_set_info_kind(rt_link, MNLXT_RT_LINK_INFO_KIND_XFRM)) {
+		MNLXT_SET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_XFRM_IFINDEX);
+		rt_link->info.data.xfrm.if_index = if_index;
+		rc = 0;
+		if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_PARENT)) {
+			rc = mnlxt_rt_link_set_parent(rt_link, if_index);
+		}
+	}
+	return rc;
+}
+
+int mnlxt_rt_link_get_xfrm_ifindex(const mnlxt_rt_link_t *rt_link, uint32_t *if_index) {
+	int rc = -1;
+	if (NULL == rt_link || NULL == if_index) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_INFO)) {
+		rc = 1;
+	} else if (MNLXT_RT_LINK_INFO_KIND_XFRM != rt_link->info.kind) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_XFRM_IFINDEX)) {
+		rc = 1;
+	} else {
+		*if_index = rt_link->info.data.xfrm.if_index;
+		rc = 0;
+	}
+	return rc;
+}
+
+int mnlxt_rt_link_set_xfrm_id(mnlxt_rt_link_t *rt_link, uint32_t id) {
+	int rc = -1;
+	if (0 == mnlxt_rt_link_set_info_kind(rt_link, MNLXT_RT_LINK_INFO_KIND_XFRM)) {
+		MNLXT_SET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_XFRM_ID);
+		rt_link->info.data.xfrm.id = id;
+		rc = 0;
+	}
+	return rc;
+}
+
+int mnlxt_rt_link_get_xfrm_id(const mnlxt_rt_link_t *rt_link, uint32_t *id) {
+	int rc = -1;
+	if (NULL == rt_link || NULL == id) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_INFO)) {
+		rc = 1;
+	} else if (MNLXT_RT_LINK_INFO_KIND_XFRM != rt_link->info.kind) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG((&rt_link->info), MNLXT_RT_LINK_XFRM_ID)) {
+		rc = 1;
+	} else {
+		*id = rt_link->info.data.xfrm.id;
+		rc = 0;
 	}
 	return rc;
 }

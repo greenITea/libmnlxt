@@ -11,61 +11,121 @@
 #include <errno.h>
 #include <string.h>
 
+#include "internal.h"
 #include <libmnlxt/rt.h>
 
-static const char *info_kinds[] = {
+static const char *info_kinds[MNLXT_RT_LINK_INFO_KIND_MAX] = {
 	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge",
 	[MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
 	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond",
 	[MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
+	[MNLXT_RT_LINK_INFO_KIND_XFRM] = "xfrm",
 };
 
-static int mnlxt_rt_link_vlan_match(const mnlxt_rt_link_vlan_t *vlan, uint16_t prop_flags,
-																		const mnlxt_rt_link_vlan_t *match, uint16_t match_flags) {
+static int mnlxt_rt_link_vlan_cmp(const mnlxt_rt_link_vlan_t *vlan1, uint16_t vlan_flags1,
+																	const mnlxt_rt_link_vlan_t *vlan2, uint16_t vlan_flags2, uint16_t filter) {
 	int i = -1;
-	if (vlan && match) {
+	if (NULL == vlan1 || NULL == vlan2) {
+		errno = EINVAL;
+	} else {
 		int flag = 0x1;
 		for (i = 0; i < MNLXT_RT_LINK_VLAN_MAX; ++i) {
-			if (match_flags & flag) {
-				if (prop_flags & flag) {
-					switch (i) {
-					case MNLXT_RT_LINK_VLAN_ID:
-						if (vlan->id != match->id) {
-							goto fail;
-						}
+			if (0 == (flag & filter)) {
+				continue;
+			}
+			if (0 == (vlan_flags1 & flag)) {
+				if (0 == (vlan_flags2 & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (vlan_flags2 & flag)) {
+				goto failed;
+			} else {
+				switch (i) {
+				case MNLXT_RT_LINK_VLAN_ID:
+					if (vlan1->id != vlan2->id) {
+						goto failed;
 					}
+					break;
 				}
 			}
 		}
 		return 0;
-	fail:
+	failed:
 		++i;
 	}
 	return i;
 }
 
-static int mnlxt_rt_link_info_match(const mnlxt_rt_link_info_t *link_info, const mnlxt_rt_link_info_t *info_match) {
-	int rc = 1;
-	if (link_info && info_match) {
-		if (link_info->kind == info_match->kind) {
-			switch (link_info->kind) {
-			case MNLXT_RT_LINK_INFO_KIND_BOND:
-				/*TODO*/ rc = 0;
-				break;
-			case MNLXT_RT_LINK_INFO_KIND_BR:
-				/*TODO*/ rc = 0;
-				break;
-			case MNLXT_RT_LINK_INFO_KIND_VLAN:
-				rc = mnlxt_rt_link_vlan_match(&link_info->data.vlan, link_info->prop_flags, &info_match->data.vlan,
-																			info_match->prop_flags);
-				break;
-			case MNLXT_RT_LINK_INFO_KIND_TUN:
-				/*TODO*/ rc = 0;
-				break;
+static int mnlxt_rt_link_xfrm_match(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flags1,
+																		const mnlxt_rt_link_xfrm_t *xfrm2, uint16_t xfrm_flags2, uint16_t filter) {
+	int i = -1;
+	if (NULL == xfrm1 || NULL == xfrm2) {
+		errno = EINVAL;
+	} else {
+		int flag = 0x1;
+		for (i = 0; i < MNLXT_RT_LINK_XFRM_MAX; ++i) {
+			if (0 == (flag & filter)) {
+				continue;
+			}
+			if (0 == (xfrm_flags1 & flag)) {
+				if (0 == (xfrm_flags2 & flag)) {
+					/* both not set */
+					continue;
+				}
+				goto failed;
+			} else if (0 == (xfrm_flags2 & flag)) {
+				goto failed;
+			} else {
+				switch (i) {
+				case MNLXT_RT_LINK_XFRM_IFINDEX:
+					if (xfrm1->if_index != xfrm2->if_index) {
+						goto failed;
+					}
+					break;
+				case MNLXT_RT_LINK_XFRM_ID:
+					if (xfrm1->id != xfrm2->id) {
+						goto failed;
+					}
+					break;
+				}
 			}
 		}
+		return 0;
+	failed:
+		++i;
+	}
+	return i;
+}
+
+static int mnlxt_rt_link_info_cmp(const mnlxt_rt_link_info_t *link_info1, const mnlxt_rt_link_info_t *link_info2,
+																	uint16_t filter) {
+	int rc = -1;
+	if (NULL == link_info1 || NULL == link_info2 || MNLXT_RT_LINK_INFO_KIND_MAX <= link_info1->kind) {
+		errno = EINVAL;
+	} else if (link_info1->kind != link_info2->kind) {
+		rc = 1;
 	} else {
-		rc = -1;
+		switch (link_info1->kind) {
+		case MNLXT_RT_LINK_INFO_KIND_BOND:
+			/*TODO*/ rc = 0;
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_BR:
+			/*TODO*/ rc = 0;
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_VLAN:
+			rc = mnlxt_rt_link_vlan_cmp(&link_info1->data.vlan, link_info1->prop_flags, &link_info2->data.vlan,
+																	link_info2->prop_flags, filter);
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_TUN:
+			/*TODO*/ rc = 0;
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_XFRM:
+			rc = mnlxt_rt_link_xfrm_match(&link_info1->data.xfrm, link_info1->prop_flags, &link_info2->data.xfrm,
+																		link_info2->prop_flags, filter);
+			break;
+		}
 	}
 	return rc;
 }
@@ -122,7 +182,7 @@ static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_lin
 	case MNLXT_RT_LINK_FLAGS:
 		/* calculate common flag mask */
 		flag_mask = rt_link1->flag_mask & rt_link2->flag_mask;
-		/* compare what can be compare */
+		/* compare what can be compared */
 		if ((rt_link1->flags & flag_mask) != (rt_link2->flags & flag_mask)) {
 			goto failed;
 		}
@@ -153,7 +213,7 @@ static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_lin
 		}
 		break;
 	case MNLXT_RT_LINK_INFO:
-		if (mnlxt_rt_link_info_match(&rt_link1->info, &rt_link2->info)) {
+		if (rt_link1->info.kind != rt_link2->info.kind) {
 			goto failed;
 		}
 		break;
@@ -169,6 +229,9 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *rt_link, const mnlxt_rt_link_t *m
 		errno = EINVAL;
 	} else {
 		rc = mnlxt_rt_link_compare(rt_link, match, match->prop_flags);
+		if (0 == rc && MNLXT_GET_PROP_FLAG(match, MNLXT_RT_LINK_INFO)) {
+			rc = mnlxt_rt_link_info_cmp(&rt_link->info, &match->info, match->info.prop_flags);
+		}
 	}
 	return rc;
 }
@@ -202,25 +265,43 @@ int mnlxt_rt_link_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t
 	return rc;
 }
 
+int mnlxt_rt_link_info_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t *rt_link2, uint16_t filter) {
+	int rc = -1;
+	if (NULL == rt_link1 || NULL == rt_link2) {
+		errno = EINVAL;
+	} else {
+		rc = mnlxt_rt_link_info_cmp(&rt_link1->info, &rt_link2->info, filter);
+	}
+	return rc;
+}
+
 static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	int rc = -1;
 	mnlxt_rt_link_info_kind_t info_kind = -1;
-	struct nlattr *nest1, *nest2;
+	struct nlattr *nest_info, *nest_data;
 
 	if (0 == mnlxt_rt_link_get_info_kind(link, &info_kind)) {
 		const char *kind = mnlxt_rt_link_info_kind_get_string(info_kind);
 		if (kind) {
-			nest1 = mnl_attr_nest_start(nlh, IFLA_LINKINFO);
+			nest_info = mnl_attr_nest_start(nlh, IFLA_LINKINFO);
 			mnl_attr_put_str(nlh, IFLA_INFO_KIND, kind);
+			nest_data = mnl_attr_nest_start(nlh, IFLA_INFO_DATA);
 			if (MNLXT_RT_LINK_INFO_KIND_VLAN == info_kind) {
 				uint16_t id = 0;
 				if (0 == mnlxt_rt_link_get_vlan_id(link, &id)) {
-					nest2 = mnl_attr_nest_start(nlh, IFLA_INFO_DATA);
 					mnl_attr_put_u16(nlh, IFLA_VLAN_ID, id);
-					mnl_attr_nest_end(nlh, nest2);
+				}
+			} else if (MNLXT_RT_LINK_INFO_KIND_XFRM == info_kind) {
+				uint32_t u32 = 0;
+				if (0 == mnlxt_rt_link_get_xfrm_id(link, &u32)) {
+					mnl_attr_put_u32(nlh, IFLA_XFRM_IF_ID, u32);
+				}
+				if (0 == mnlxt_rt_link_get_xfrm_ifindex(link, &u32)) {
+					mnl_attr_put_u32(nlh, IFLA_XFRM_LINK, u32);
 				}
 			}
-			mnl_attr_nest_end(nlh, nest1);
+			mnl_attr_nest_end(nlh, nest_data);
+			mnl_attr_nest_end(nlh, nest_info);
 			rc = 0;
 		}
 	}
@@ -317,6 +398,41 @@ end:
 	return rc;
 }
 
+static int mnlxt_rt_link_info_data_xfrm(const struct nlattr *link_xfrm_attr, mnlxt_data_t *data,
+																				mnlxt_rt_link_t *rt_link) {
+	int rc = -1;
+	const struct nlattr *attr;
+
+	mnl_attr_for_each_nested(attr, link_xfrm_attr) {
+		int type = mnl_attr_get_type(attr);
+		switch (type) {
+		case IFLA_XFRM_LINK:
+			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
+				data->error_str = "IFLA_XFRM_LINK validation failed";
+				goto end;
+			}
+			if (-1 == mnlxt_rt_link_set_xfrm_ifindex(rt_link, mnl_attr_get_u32(attr))) {
+				data->error_str = "mnlxt_rt_link_set_xfrm_ifindex failed";
+				goto end;
+			}
+			break;
+		case IFLA_XFRM_IF_ID:
+			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
+				data->error_str = "IFLA_XFRM_IF_ID validation failed";
+				goto end;
+			}
+			if (-1 == mnlxt_rt_link_set_xfrm_id(rt_link, mnl_attr_get_u32(attr))) {
+				data->error_str = "mnlxt_rt_link_set_xfrm_id failed";
+				goto end;
+			}
+			break;
+		}
+	}
+	rc = 0;
+end:
+	return rc;
+}
+
 static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_data_t *data, mnlxt_rt_link_t *link) {
 	int rc = -1;
 	const struct nlattr *attr, *data_attr = NULL;
@@ -364,6 +480,9 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_TUN:
 			/*TODO*/ rc = 0;
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_XFRM:
+			rc = mnlxt_rt_link_info_data_xfrm(data_attr, data, link);
 			break;
 		}
 	} else {

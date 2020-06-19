@@ -128,6 +128,23 @@ void mnlxt_rt_link_print(mnlxt_rt_link_t *link) {
 			} else {
 				printf("no vlan id \n");
 			}
+		} else if (MNLXT_RT_LINK_INFO_KIND_XFRM == info_kind) {
+			ret = mnlxt_rt_link_get_xfrm_ifindex(link, &u32);
+			if (0 == ret) {
+				printf("xfrm ifindex: %d\n", u32);
+			} else if (-1 == ret) {
+				printf("error getting xfrm ifindex, %m\n");
+			} else {
+				printf("no xfrm ifindex \n");
+			}
+			ret = mnlxt_rt_link_get_xfrm_id(link, &u32);
+			if (0 == ret) {
+				printf("xfrm id: %d\n", u32);
+			} else if (-1 == ret) {
+				printf("error getting xfrm id, %m\n");
+			} else {
+				printf("no xfrm id \n");
+			}
 		}
 	} else if (-1 == ret) {
 		printf("error getting info kind, %m\n");
