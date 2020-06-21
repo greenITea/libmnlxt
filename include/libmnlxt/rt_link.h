@@ -18,8 +18,8 @@
 #include <libmnlxt/data.h>
 
 typedef enum {
-	MNLXT_RT_LINK_TYPE = 0,
-	MNLXT_RT_LINK_FAMILY,
+	MNLXT_RT_LINK_FAMILY = 0,
+	MNLXT_RT_LINK_TYPE,
 	MNLXT_RT_LINK_NAME,
 	MNLXT_RT_LINK_INDEX,
 	MNLXT_RT_LINK_FLAGS,
@@ -132,227 +132,229 @@ mnlxt_rt_link_t *mnlxt_rt_link_new();
 mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *rt_link, uint64_t filter);
 /**
  * Frees memory allocated by a link instance
- * @param link pointer to link instance to free
+ * @param rt_link pointer to link instance to free
  */
-void mnlxt_rt_link_free(mnlxt_rt_link_t *link);
+void mnlxt_rt_link_free(mnlxt_rt_link_t *rt_link);
 /**
  * Callback wrapper for mnlxt_rt_link_free
- * @param link void pointer to link instance to free
+ * @param rt_link void pointer to link instance to free
  */
 void mnlxt_rt_link_FREE(void *link);
+#if 0
 /**
  * Revoke link type data on link instance
- * @param link pointer to link instance
- * @param index one of MNLXT_RT_LINK_*
+ * @param rt_link pointer to link instance
+ * @param data one of MNLXT_RT_LINK_*
  */
-void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index);
+void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data);
+#endif
 /**
  * Gets link type from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param type pointer to buffer to save link type
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *link, uint16_t *type);
+int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *rt_link, uint16_t *type);
 /**
  * Sets link type on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param type link type
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_type(mnlxt_rt_link_t *link, uint16_t type);
+int mnlxt_rt_link_set_type(mnlxt_rt_link_t *rt_link, uint16_t type);
 /**
  * Gets link family from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param family pointer to buffer to save link family
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *link, uint8_t *family);
+int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *rt_link, uint8_t *family);
 /**
  * Sets family on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param family link family
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_family(mnlxt_rt_link_t *link, uint8_t family);
+int mnlxt_rt_link_set_family(mnlxt_rt_link_t *rt_link, uint8_t family);
 /**
  * Gets link name from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param name pointer to buffer to store pointer to name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name);
+int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, const char **name);
 /**
  * Sets link name on link instance by copying the string. The maximal length of the name is limited to 15 symbols.
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param name pointer to link name
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_name(mnlxt_rt_link_t *link, const char *name);
+int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const char *name);
 /**
  * Gets link index from link instance
- * @param link pointer to link instance
- * @param index pointer to buffer to save link index
+ * @param rt_link pointer to link instance
+ * @param if_index pointer to buffer to save link index
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *link, uint32_t *index);
+int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *rt_link, uint32_t *if_index);
 /**
  * Sets link index on link instance
- * @param link pointer to link instance
- * @param index link index
+ * @param rt_link pointer to link instance
+ * @param if_index link index
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_index(mnlxt_rt_link_t *link, uint32_t index);
+int mnlxt_rt_link_set_index(mnlxt_rt_link_t *rt_link, uint32_t if_index);
 /**
  * Gets link flags from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param flags pointer to buffer to save link flags
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *link, uint32_t *flags);
+int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *rt_link, uint32_t *flags);
 /**
  * Sets all link flags at once on link instance.
  * For setting some particular flags on network device use @mnlxt_rt_link_set_flags_up
  * or @mnlxt_rt_link_set_flags_down instead.
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param flags link flags
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags);
+int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *rt_link, uint32_t flags);
 /**
  * Sets selected link flags to on/1 on link instance.
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param flags flags to be set
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_flags_on(mnlxt_rt_link_t *link, uint32_t flags);
+int mnlxt_rt_link_set_flags_on(mnlxt_rt_link_t *rt_link, uint32_t flags);
 /**
  * Sets selected link flags to off/0 on link instance.
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param flags flags to be set
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_flags_off(mnlxt_rt_link_t *link, uint32_t flags);
+int mnlxt_rt_link_set_flags_off(mnlxt_rt_link_t *rt_link, uint32_t flags);
 #if 0 /* not in use yet */
 /**
  * Resets (previously set to 1 or 0) link flags on link instance.
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param flags flags to reset
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_reset_flags(mnlxt_rt_link_t *link, uint32_t flags);
+int mnlxt_rt_link_reset_flags(mnlxt_rt_link_t *rt_link, uint32_t flags);
 #endif
 /**
  * Gets mtu from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param mtu pointer to buffer to save link mtu
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *link, uint32_t *mtu);
+int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *rt_link, uint32_t *mtu);
 /**
  * Sets mtu on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param mtu link mtu
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *link, uint32_t mtu);
+int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *rt_link, uint32_t mtu);
 /**
  * Gets link master from link instance
- * @param link pointer to link instance
- * @param master pointer to buffer to save link master's index
+ * @param rt_link pointer to link instance
+ * @param if_index pointer to buffer to save link master's index
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *link, uint32_t *master);
+int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *rt_link, uint32_t *if_index);
 /**
  * Sets master on link instance
- * @param link pointer to link instance
- * @param master link master's index
+ * @param rt_link pointer to link instance
+ * @param if_index link master's index
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_master(mnlxt_rt_link_t *link, uint32_t master);
+int mnlxt_rt_link_set_master(mnlxt_rt_link_t *rt_link, uint32_t if_index);
 /**
  * Gets link state from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param state pointer to buffer to save link state
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *link, uint8_t *state);
+int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *rt_link, uint8_t *state);
 /**
  * Sets state on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param state link state
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_state(mnlxt_rt_link_t *link, uint8_t state);
+int mnlxt_rt_link_set_state(mnlxt_rt_link_t *rt_link, uint8_t state);
 /**
  * Gets link address from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param mac pointer to buffer to save link address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *link, eth_addr_t *mac);
+int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, eth_addr_t *mac);
 /**
  * Sets address on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param mac link address
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *link, eth_addr_t mac);
+int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, eth_addr_t mac);
 /**
  * Gets link UP/DOWN state from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param up pointer to buffer to save link state
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up);
+int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *rt_link, int *up);
 /**
  * Sets UP/DOWN state on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param up link state (0 for DOWN, else UP)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_updown(mnlxt_rt_link_t *link, int up);
+int mnlxt_rt_link_set_updown(mnlxt_rt_link_t *rt_link, int up);
 /**
  * Gets link parent from link instance
- * @param link pointer to link instance
- * @param index pointer to buffer to save link parent's index
+ * @param rt_link pointer to link instance
+ * @param if_index pointer to buffer to save link parent's index
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *link, uint32_t *index);
+int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *rt_link, uint32_t *if_index);
 /**
  * Sets parent on link instance
- * @param link pointer to link instance
- * @param index link parent's index
+ * @param rt_link pointer to link instance
+ * @param if_index link parent's index
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *link, uint32_t index);
+int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *rt_link, uint32_t if_index);
 /**
  * Gets information kind from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param info_kind pointer to buffer to save information kind
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t *info_kind);
+int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t *info_kind);
 /**
  * Sets information kind on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param info_kind information kind
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *link, mnlxt_rt_link_info_kind_t info_kind);
+int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t info_kind);
 /**
  * Gets vlan id from link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param id pointer to buffer to save vlan's id
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *link, uint16_t *id);
+int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *rt_link, uint16_t *id);
 /**
  * Sets vlan id on link instance
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @param id vlan id
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *link, uint16_t id);
+int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *rt_link, uint16_t id);
 /**
  * Gets underlying interface for XFRM link
  * @param rt_link pointer to link instance
@@ -384,11 +386,11 @@ int mnlxt_rt_link_set_xfrm_id(mnlxt_rt_link_t *rt_link, uint32_t id);
 
 /**
  * Checks if a link matches another one
- * @param link pointer to link to check
+ * @param rt_link pointer to link to check
  * @param match pointer to link to match
  * @return 0 for matching, -1 for error, else MNLXT_RT_LINK_* + 1 for property which does not match
  */
-int mnlxt_rt_link_match(const mnlxt_rt_link_t *link, const mnlxt_rt_link_t *match);
+int mnlxt_rt_link_match(const mnlxt_rt_link_t *rt_link, const mnlxt_rt_link_t *match);
 /**
  * Compares two link instances.
  * This function excludes comparison of link info properties. Use @mnlxt_rt_link_info_compare to do it.
@@ -411,14 +413,14 @@ int mnlxt_rt_link_info_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_l
 /**
  * Initializes netlink message from link instance
  * @param nlh pointer to netlink message header to initialize
- * @param link pointer to link instance
+ * @param rt_link pointer to link instance
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link);
+int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_link);
 /**
  * Callback Wrapper for mnlxt_rt_link_put
  * @param nlh pointer to netlink message header to initialize
- * @param link link instance given by void pointer
+ * @param rt_link link instance given by void pointer
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
@@ -464,7 +466,7 @@ mnlxt_rt_link_t *mnlxt_rt_link_get(const mnlxt_message_t *message);
 mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message);
 /**
  * Creates a mnlxt message and stores the given link instance into it
- * @param link double pointer to a link instance mnlxt_rt_link_t
+ * @param rt_link double pointer to a link instance mnlxt_rt_link_t
  * @param type message type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
  * @return pointer to mnlxt message on success (pointer to the given mnlxt_rt link will be reset) else NULL
  */
@@ -477,7 +479,7 @@ mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type, ui
  * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_request(mnlxt_rt_link_t *link, uint16_t type, uint16_t flags);
+int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type, uint16_t flags);
 /**
  * Gets information of all links configured on system
  * @param data pointer to mnlxt data to store information into

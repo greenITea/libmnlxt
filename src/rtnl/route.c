@@ -16,6 +16,24 @@
 
 #include "internal.h"
 
+#define route_ad_init(member) ad_init(mnlxt_rt_route_t, member)
+
+static struct access_data route_data[MNLXT_RT_ROUTE_MAX] = {
+	[MNLXT_RT_ROUTE_FAMILY] = route_ad_init(family),
+	[MNLXT_RT_ROUTE_TYPE] = route_ad_init(type),
+	[MNLXT_RT_ROUTE_TABLE] = route_ad_init(table),
+	[MNLXT_RT_ROUTE_PROTOCOL] = route_ad_init(protocol),
+	[MNLXT_RT_ROUTE_SCOPE] = route_ad_init(scope),
+	[MNLXT_RT_ROUTE_PRIORITY] = route_ad_init(priority),
+	[MNLXT_RT_ROUTE_IIFINDEX] = route_ad_init(iif_index),
+	[MNLXT_RT_ROUTE_OIFINDEX] = route_ad_init(oif_index),
+	[MNLXT_RT_ROUTE_SRC_PREFIX] = route_ad_init(src_prefix),
+	[MNLXT_RT_ROUTE_DST_PREFIX] = route_ad_init(dst_prefix),
+	[MNLXT_RT_ROUTE_SRC] = {},		 // special case
+	[MNLXT_RT_ROUTE_DST] = {},		 // special case
+	[MNLXT_RT_ROUTE_GATEWAY] = {}, // special case
+};
+
 mnlxt_rt_route_t *mnlxt_rt_route_new() {
 	return calloc(1, sizeof(mnlxt_rt_route_t));
 }
@@ -32,7 +50,7 @@ mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *src, uint64_t fil
 }
 
 void mnlxt_rt_route_free(mnlxt_rt_route_t *route) {
-	if (route) {
+	if (NULL != route) {
 		free(route);
 	}
 }
@@ -41,9 +59,54 @@ void mnlxt_rt_route_FREE(void *route) {
 	mnlxt_rt_route_free((mnlxt_rt_route_t *)route);
 }
 
+static int mnlxt_rt_route_set_ptr(mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == route || MNLXT_RT_ROUTE_MAX <= (unsigned)data || route_data[data].size != size
+			|| 0 == route_data[data].size) {
+		errno = EINVAL;
+	} else {
+		MNLXT_SET_PROP_FLAG(route, data);
+		memcpy(((char *)route + route_data[data].offset), ptr, size);
+		rc = 0;
+	}
+	return rc;
+}
+
+static inline int mnlxt_rt_route_set_u32(mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, uint32_t u32) {
+	return mnlxt_rt_route_set_ptr(route, data, &u32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_route_set_u8(mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, uint8_t u8) {
+	return mnlxt_rt_route_set_ptr(route, data, &u8, sizeof(uint8_t));
+}
+
+static int mnlxt_rt_route_get_ptr(const mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == route || MNLXT_RT_ROUTE_MAX <= (unsigned)data || route_data[data].size != size
+			|| 0 == route_data[data].size) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(route, data)) {
+		rc = 1;
+	} else {
+		memcpy(ptr, ((char *)route + route_data[data].offset), size);
+		rc = 0;
+	}
+	return rc;
+}
+
+static inline int mnlxt_rt_route_get_u32(const mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, uint32_t *pu32) {
+	return mnlxt_rt_route_get_ptr(route, data, pu32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_route_get_u8(const mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, uint8_t *pu8) {
+	return mnlxt_rt_route_get_ptr(route, data, pu8, sizeof(uint8_t));
+}
+
 int mnlxt_rt_route_set_family(mnlxt_rt_route_t *route, uint8_t family) {
 	int rc = -1;
-	if (route) {
+	if (NULL == route) {
+		errno = EINVAL;
+	} else {
 		if (AF_INET == family || AF_INET6 == family) {
 			if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_FAMILY)) {
 				if (family == route->family) {
@@ -55,222 +118,97 @@ int mnlxt_rt_route_set_family(mnlxt_rt_route_t *route, uint8_t family) {
 				rc = 0;
 			}
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_get_family(const mnlxt_rt_route_t *route, uint8_t *family) {
-	int rc = -1;
-	if (route && family) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_FAMILY)) {
-			*family = route->family;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_FAMILY, family);
 }
 
 int mnlxt_rt_route_set_protocol(mnlxt_rt_route_t *route, uint8_t protocol) {
-	int rc = -1;
-	if (route) {
-		route->protocol = protocol;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_PROTOCOL);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_PROTOCOL, protocol);
 }
 
 int mnlxt_rt_route_get_protocol(const mnlxt_rt_route_t *route, uint8_t *protocol) {
-	int rc = -1;
-	if (route && protocol) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_PROTOCOL)) {
-			*protocol = route->protocol;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_PROTOCOL, protocol);
 }
 
 int mnlxt_rt_route_set_table(mnlxt_rt_route_t *route, uint8_t table) {
-	int rc = -1;
-	if (route) {
-		route->table = table;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_TABLE);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_TABLE, table);
 }
 
 int mnlxt_rt_route_get_table(const mnlxt_rt_route_t *route, uint8_t *table) {
-	int rc = -1;
-	if (route && table) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_TABLE)) {
-			*table = route->table;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_TABLE, table);
 }
 
 int mnlxt_rt_route_set_scope(mnlxt_rt_route_t *route, uint8_t scope) {
-	int rc = -1;
-	if (route) {
-		route->scope = scope;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_SCOPE);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_SCOPE, scope);
 }
 
 int mnlxt_rt_route_get_scope(const mnlxt_rt_route_t *route, uint8_t *scope) {
-	int rc = -1;
-	if (route && scope) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_SCOPE)) {
-			*scope = route->scope;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_SCOPE, scope);
 }
 
 int mnlxt_rt_route_set_type(mnlxt_rt_route_t *route, uint8_t type) {
-	int rc = -1;
-	if (route) {
-		route->type = type;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_TYPE);
-		rc = 0;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_TYPE, type);
 }
 
 int mnlxt_rt_route_get_type(const mnlxt_rt_route_t *route, uint8_t *type) {
-	int rc = -1;
-	if (route && type) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_TYPE)) {
-			*type = route->type;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_TYPE, type);
 }
 
 int mnlxt_rt_route_set_src_prefix(mnlxt_rt_route_t *route, uint8_t prefixlen) {
-	int rc = -1;
-	if (route) {
-		route->src_prefix = prefixlen;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC_PREFIX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_SRC_PREFIX, prefixlen);
 }
 
 int mnlxt_rt_route_get_src_prefix(const mnlxt_rt_route_t *route, uint8_t *prefixlen) {
-	int rc = -1;
-	if (route && prefixlen) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC_PREFIX)) {
-			*prefixlen = route->src_prefix;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_SRC_PREFIX, prefixlen);
 }
 
 int mnlxt_rt_route_set_dst_prefix(mnlxt_rt_route_t *route, uint8_t prefixlen) {
-	int rc = -1;
-	if (route) {
-		route->dst_prefix = prefixlen;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST_PREFIX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u8(route, MNLXT_RT_ROUTE_DST_PREFIX, prefixlen);
 }
 
 int mnlxt_rt_route_get_dst_prefix(const mnlxt_rt_route_t *route, uint8_t *prefixlen) {
-	int rc = -1;
-	if (route && prefixlen) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST_PREFIX)) {
-			*prefixlen = route->dst_prefix;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u8(route, MNLXT_RT_ROUTE_DST_PREFIX, prefixlen);
 }
 
 int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
-	if (route && buf) {
+	if (NULL == route || NULL == buf) {
+		errno = EINVAL;
+	} else {
 		rc = mnlxt_rt_route_set_family(route, family);
 		if (0 == rc) {
 			memcpy(&route->src, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
 			MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC);
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_get_src(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
-	if (route && buf) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC)) {
-			*buf = &route->src;
-			if (family) {
-				*family = route->family;
-			}
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == route || NULL == buf) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC)) {
+		rc = 1;
+	} else {
+		*buf = &route->src;
+		if (NULL != family) {
+			*family = route->family;
+		}
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
-	if (route && buf) {
+	if (NULL == route || NULL == buf) {
+		errno = EINVAL;
+	} else {
 		rc = mnlxt_rt_route_set_family(route, family);
 		if (0 == rc) {
 			if ((AF_INET == family && INADDR_ANY != buf->in.s_addr)
@@ -280,137 +218,76 @@ int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_
 				MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST);
 			}
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_get_dst(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
-	if (route && buf) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST)) {
-			*buf = &route->dst;
-			if (family) {
-				*family = route->family;
-			}
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == route || NULL == buf) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST)) {
+		rc = 1;
+	} else {
+		*buf = &route->dst;
+		if (NULL != family) {
+			*family = route->family;
+		}
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
-	if (route && buf) {
+	if (NULL == route || NULL == buf) {
+		errno = EINVAL;
+	} else {
 		rc = mnlxt_rt_route_set_family(route, family);
 		if (0 == rc) {
 			memcpy(&route->gateway, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
 			MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_GATEWAY);
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_get_gateway(const mnlxt_rt_route_t *route, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
-	if (route && buf) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_GATEWAY)) {
-			*buf = &route->gateway;
-			if (family) {
-				*family = route->family;
-			}
-			rc = 0;
-		} else {
-			rc = 1;
+	if (NULL == route || NULL == buf) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_GATEWAY)) {
+		rc = 1;
+	} else {
+		*buf = &route->gateway;
+		if (NULL != family) {
+			*family = route->family;
 		}
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_route_set_priority(mnlxt_rt_route_t *route, uint32_t priority) {
-	int rc = -1;
-	if (route) {
-		route->priority = priority;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_PRIORITY);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u32(route, MNLXT_RT_ROUTE_PRIORITY, priority);
 }
 
 int mnlxt_rt_route_get_priority(const mnlxt_rt_route_t *route, uint32_t *priority) {
-	int rc = -1;
-	if (route && priority) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_PRIORITY)) {
-			*priority = route->priority;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u32(route, MNLXT_RT_ROUTE_PRIORITY, priority);
 }
 
 int mnlxt_rt_route_set_oifindex(mnlxt_rt_route_t *route, uint32_t if_index) {
-	int rc = -1;
-	if (route) {
-		route->oif_index = if_index;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_OIFINDEX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u32(route, MNLXT_RT_ROUTE_OIFINDEX, if_index);
 }
 
 int mnlxt_rt_route_get_oifindex(const mnlxt_rt_route_t *route, uint32_t *if_index) {
-	int rc = -1;
-	if (route && if_index) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_OIFINDEX)) {
-			*if_index = route->oif_index;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u32(route, MNLXT_RT_ROUTE_OIFINDEX, if_index);
 }
 
 int mnlxt_rt_route_set_iifindex(mnlxt_rt_route_t *route, uint32_t if_index) {
-	int rc = -1;
-	if (route) {
-		route->iif_index = if_index;
-		MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_IIFINDEX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_set_u32(route, MNLXT_RT_ROUTE_IIFINDEX, if_index);
 }
 
 int mnlxt_rt_route_get_iifindex(const mnlxt_rt_route_t *route, uint32_t *if_index) {
-	int rc = -1;
-	if (route && if_index) {
-		if (MNLXT_GET_PROP_FLAG(route, MNLXT_RT_ROUTE_IIFINDEX)) {
-			*if_index = route->iif_index;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_route_get_u32(route, MNLXT_RT_ROUTE_IIFINDEX, if_index);
 }

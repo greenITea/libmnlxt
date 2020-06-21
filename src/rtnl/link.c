@@ -16,6 +16,22 @@
 
 #include "internal.h"
 
+#define link_ad_init(member) ad_init(mnlxt_rt_link_t, member)
+
+static struct access_data link_data[MNLXT_RT_LINK_MAX] = {
+	[MNLXT_RT_LINK_TYPE] = link_ad_init(type),
+	[MNLXT_RT_LINK_FAMILY] = link_ad_init(family),
+	[MNLXT_RT_LINK_NAME] = {}, // special case
+	[MNLXT_RT_LINK_INDEX] = link_ad_init(index),
+	[MNLXT_RT_LINK_FLAGS] = link_ad_init(flags),
+	[MNLXT_RT_LINK_HWADDR] = link_ad_init(mac),
+	[MNLXT_RT_LINK_MTU] = link_ad_init(mtu),
+	[MNLXT_RT_LINK_MASTER] = link_ad_init(master),
+	[MNLXT_RT_LINK_STATE] = link_ad_init(state),
+	[MNLXT_RT_LINK_PARENT] = link_ad_init(parent),
+	[MNLXT_RT_LINK_INFO] = {}, // special case
+};
+
 mnlxt_rt_link_t *mnlxt_rt_link_new() {
 	return calloc(1, sizeof(mnlxt_rt_link_t));
 }
@@ -31,20 +47,71 @@ mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *src, uint64_t filter
 	return dst;
 }
 
-void mnlxt_rt_link_free(mnlxt_rt_link_t *link) {
-	if (link) {
-		free(link);
+void mnlxt_rt_link_free(mnlxt_rt_link_t *rt_link) {
+	if (NULL != rt_link) {
+		free(rt_link);
 	}
 }
 
-void mnlxt_rt_link_FREE(void *link) {
-	mnlxt_rt_link_free((mnlxt_rt_link_t *)link);
+void mnlxt_rt_link_FREE(void *rt_link) {
+	mnlxt_rt_link_free((mnlxt_rt_link_t *)rt_link);
+}
+#if 0
+void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data) {
+	if (NULL != rt_link && MNLXT_RT_LINK_MAX > data) {
+		MNLXT_UNSET_PROP_FLAG(rt_link, data);
+	}
+}
+#endif
+static int mnlxt_rt_link_set_ptr(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == rt_link || MNLXT_RT_LINK_MAX <= (unsigned)data || link_data[data].size != size
+			|| 0 == link_data[data].size) {
+		errno = EINVAL;
+	} else {
+		MNLXT_SET_PROP_FLAG(rt_link, data);
+		memcpy(((char *)rt_link + link_data[data].offset), ptr, size);
+		rc = 0;
+	}
+	return rc;
 }
 
-void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *link, mnlxt_rt_link_data_t index) {
-	if (link && MNLXT_RT_LINK_MAX > index) {
-		MNLXT_UNSET_PROP_FLAG(link, index);
+static inline int mnlxt_rt_link_set_u32(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint32_t u32) {
+	return mnlxt_rt_link_set_ptr(rt_link, data, &u32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_link_set_u16(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint16_t u16) {
+	return mnlxt_rt_link_set_ptr(rt_link, data, &u16, sizeof(uint16_t));
+}
+
+static inline int mnlxt_rt_link_set_u8(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint8_t u8) {
+	return mnlxt_rt_link_set_ptr(rt_link, data, &u8, sizeof(uint8_t));
+}
+
+static int mnlxt_rt_link_get_ptr(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == rt_link || MNLXT_RT_LINK_MAX <= (unsigned)data || link_data[data].size != size
+			|| 0 == link_data[data].size) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, data)) {
+		rc = 1;
+	} else {
+		memcpy(ptr, ((char *)rt_link + link_data[data].offset), size);
+		rc = 0;
 	}
+	return rc;
+}
+
+static inline int mnlxt_rt_link_get_u32(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint32_t *pu32) {
+	return mnlxt_rt_link_get_ptr(rt_link, data, pu32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_link_get_u16(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint16_t *pu16) {
+	return mnlxt_rt_link_get_ptr(rt_link, data, pu16, sizeof(uint16_t));
+}
+
+static inline int mnlxt_rt_link_get_u8(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data, uint8_t *pu8) {
+	return mnlxt_rt_link_get_ptr(rt_link, data, pu8, sizeof(uint8_t));
 }
 
 int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t info_kind) {
@@ -74,186 +141,88 @@ int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_in
 	return rc;
 }
 
-int mnlxt_rt_link_set_type(mnlxt_rt_link_t *link, uint16_t type) {
+int mnlxt_rt_link_set_type(mnlxt_rt_link_t *rt_link, uint16_t type) {
+	return mnlxt_rt_link_set_u16(rt_link, MNLXT_RT_LINK_TYPE, type);
+}
+
+int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *rt_link, uint16_t *type) {
+	return mnlxt_rt_link_get_u16(rt_link, MNLXT_RT_LINK_TYPE, type);
+}
+
+int mnlxt_rt_link_set_family(mnlxt_rt_link_t *rt_link, uint8_t family) {
+	return mnlxt_rt_link_set_u8(rt_link, MNLXT_RT_LINK_FAMILY, family);
+}
+
+int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *rt_link, uint8_t *family) {
+	return mnlxt_rt_link_get_u8(rt_link, MNLXT_RT_LINK_FAMILY, family);
+}
+
+int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, const char **name) {
 	int rc = -1;
-	if (link) {
-		link->type = type;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_TYPE);
+	if (NULL == rt_link || NULL == name) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_NAME)) {
+		rc = 1;
+	} else {
+		*name = rt_link->name;
 		rc = 0;
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_get_type(const mnlxt_rt_link_t *link, uint16_t *type) {
+int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const char *name) {
 	int rc = -1;
-	if (link && type) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_TYPE)) {
-			*type = link->type;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	size_t len;
+	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= (len = strlen(name))) {
 		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_set_family(mnlxt_rt_link_t *link, uint8_t family) {
-	int rc = -1;
-	if (link) {
-		link->family = family;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_FAMILY);
+	} else {
+		memcpy(rt_link->name, name, len + 1);
+		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_NAME);
 		rc = 0;
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *link, uint8_t *family) {
-	int rc = -1;
-	if (link && family) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_FAMILY)) {
-			*family = link->family;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
+int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *rt_link, uint32_t *index) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_INDEX, index);
+}
+
+int mnlxt_rt_link_set_index(mnlxt_rt_link_t *rt_link, uint32_t index) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_INDEX, index);
+}
+
+int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *rt_link, uint32_t *if_index) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_PARENT, if_index);
+}
+
+int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *rt_link, uint32_t if_index) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_PARENT, if_index);
+}
+
+int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *rt_link, uint32_t *flags) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_FLAGS, flags);
+}
+
+int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *rt_link, uint32_t flags) {
+	int rc = mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_FLAGS, flags);
+	if (0 == rc) {
+		rt_link->flag_mask = (uint32_t)-1;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *link, const char **name) {
+static int mnlxt_rt_link_set_selected_flags(mnlxt_rt_link_t *rt_link, uint32_t flags, int on) {
 	int rc = -1;
-	if (link && name) {
-		if ((MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_NAME))) {
-			*name = link->name;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_set_name(mnlxt_rt_link_t *link, const char *name) {
-	int rc = -1;
-	if (link && name) {
-		size_t len = strlen(name);
-		if (len < sizeof(link->name)) {
-			memcpy(link->name, name, len + 1);
-			MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_NAME);
-			rc = 0;
-		} else {
-			errno = EINVAL;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_get_index(const mnlxt_rt_link_t *link, uint32_t *index) {
-	int rc = -1;
-	if (link && index) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_INDEX)) {
-			*index = link->index;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_set_index(mnlxt_rt_link_t *link, uint32_t index) {
-	int rc = -1;
-	if (link) {
-		link->index = index;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_INDEX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_get_parent(const mnlxt_rt_link_t *link, uint32_t *index) {
-	int rc = -1;
-	if (link && index) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_PARENT)) {
-			*index = link->parent;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_set_parent(mnlxt_rt_link_t *link, uint32_t index) {
-	int rc = -1;
-	if (link) {
-		link->parent = index;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_PARENT);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_get_flags(const mnlxt_rt_link_t *link, uint32_t *flags) {
-	int rc = -1;
-	if (link && flags) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS)) {
-			*flags = link->flags;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-int mnlxt_rt_link_set_flags(mnlxt_rt_link_t *link, uint32_t flags) {
-	int rc = -1;
-	if (link) {
-		link->flags = flags;
-		link->flag_mask = (uint32_t)-1;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
-}
-
-static int mnlxt_rt_link_set_selected_flags(mnlxt_rt_link_t *link, uint32_t flags, int on) {
-	int rc = -1;
-	if (NULL == link || 0 == flags) {
+	if (NULL == rt_link || 0 == flags) {
 		errno = EINVAL;
 	} else {
 		if (on) {
-			link->flags |= flags;
+			rt_link->flags |= flags;
 		} else {
-			link->flags &= ~flags;
+			rt_link->flags &= ~flags;
 		}
-		link->flag_mask |= flags;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_FLAGS);
+		rt_link->flag_mask |= flags;
+		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_FLAGS);
 	}
 	return rc;
 }
@@ -280,117 +249,44 @@ int mnlxt_rt_link_reset_flags(mnlxt_rt_link_t *link, uint32_t flags) {
 	return rc;
 }
 #endif
-int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *link, uint32_t *mtu) {
-	int rc = -1;
-	if (link && mtu) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_MTU)) {
-			*mtu = link->mtu;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+
+int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *rt_link, uint32_t *mtu) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_MTU, mtu);
 }
 
-int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *link, uint32_t mtu) {
-	int rc = -1;
-	if (link) {
-		link->mtu = mtu;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_MTU);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *rt_link, uint32_t mtu) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_MTU, mtu);
 }
 
-int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *link, uint32_t *master) {
-	int rc = -1;
-	if (link && master) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_MASTER)) {
-			*master = link->master;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *rt_link, uint32_t *if_index) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_MASTER, if_index);
 }
 
-int mnlxt_rt_link_set_master(mnlxt_rt_link_t *link, uint32_t master) {
-	int rc = -1;
-	if (link) {
-		link->master = master;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_MASTER);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_set_master(mnlxt_rt_link_t *rt_link, uint32_t if_index) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_MASTER, if_index);
 }
 
-int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *link, uint8_t *state) {
-	int rc = -1;
-	if (link && state) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_STATE)) {
-			*state = link->state;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_get_state(const mnlxt_rt_link_t *rt_link, uint8_t *state) {
+	return mnlxt_rt_link_get_u8(rt_link, MNLXT_RT_LINK_STATE, state);
 }
 
-int mnlxt_rt_link_set_state(mnlxt_rt_link_t *link, uint8_t state) {
-	int rc = -1;
-	if (link) {
-		link->state = state;
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_STATE);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_set_state(mnlxt_rt_link_t *rt_link, uint8_t state) {
+	return mnlxt_rt_link_set_u8(rt_link, MNLXT_RT_LINK_STATE, state);
 }
 
-int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *link, eth_addr_t *mac) {
-	int rc = -1;
-	if (link && mac) {
-		if (MNLXT_GET_PROP_FLAG(link, MNLXT_RT_LINK_HWADDR)) {
-			memcpy(*mac, link->mac, sizeof(link->mac));
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, eth_addr_t *mac) {
+	return mnlxt_rt_link_get_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(eth_addr_t));
 }
 
-int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *link, eth_addr_t mac) {
-	int rc = -1;
-	if (link && mac) {
-		memcpy(link->mac, mac, sizeof(link->mac));
-		MNLXT_SET_PROP_FLAG(link, MNLXT_RT_LINK_HWADDR);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, eth_addr_t mac) {
+	return mnlxt_rt_link_set_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(eth_addr_t));
 }
 
 int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up) {
 	int rc = -1;
-	if (up) {
+	if (NULL == up) {
+		errno = EINVAL;
+	} else {
 		uint32_t flags = 0;
 		rc = mnlxt_rt_link_get_flags(link, &flags);
 		if (0 == rc) {
@@ -400,8 +296,6 @@ int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up) {
 				*up = 0;
 			}
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }

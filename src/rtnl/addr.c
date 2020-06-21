@@ -18,6 +18,20 @@
 
 #include "internal.h"
 
+#define addr_ad_init(member) ad_init(mnlxt_rt_addr_t, member)
+
+static struct access_data addr_data[MNLXT_RT_ADDR_MAX] = {
+	[MNLXT_RT_ADDR_FAMILY] = addr_ad_init(family),
+	[MNLXT_RT_ADDR_PREFIXLEN] = addr_ad_init(prefixlen),
+	[MNLXT_RT_ADDR_FLAGS] = addr_ad_init(flags),
+	[MNLXT_RT_ADDR_SCOPE] = addr_ad_init(scope),
+	[MNLXT_RT_ADDR_IFINDEX] = addr_ad_init(if_index),
+	[MNLXT_RT_ADDR_ADDR] = {},			// special case
+	[MNLXT_RT_ADDR_LOCAL] = {},			// special case
+	[MNLXT_RT_ADDR_LABEL] = {},			// special case
+	[MNLXT_RT_ADDR_CACHEINFO] = {}, // special case
+};
+
 mnlxt_rt_addr_t *mnlxt_rt_addr_new() {
 	mnlxt_rt_addr_t *addr = calloc(1, sizeof(mnlxt_rt_addr_t));
 	if (addr) {
@@ -41,7 +55,7 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *src, uint64_t filter
 			break;
 		}
 		if (NULL == (dst = mnlxt_rt_addr_new())) {
-			if (label) {
+			if (NULL != label) {
 				free(label);
 				break;
 			}
@@ -57,8 +71,8 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *src, uint64_t filter
 }
 
 void mnlxt_rt_addr_free(mnlxt_rt_addr_t *addr) {
-	if (addr) {
-		if (addr->label) {
+	if (NULL != addr) {
+		if (NULL != addr->label) {
 			free(addr->label);
 		}
 		free(addr);
@@ -69,156 +83,110 @@ void mnlxt_rt_addr_FREE(void *addr) {
 	mnlxt_rt_addr_free((mnlxt_rt_addr_t *)addr);
 }
 
+static int mnlxt_rt_addr_set_ptr(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == addr || MNLXT_RT_ADDR_MAX <= (unsigned)data || addr_data[data].size != size
+			|| 0 == addr_data[data].size) {
+		errno = EINVAL;
+	} else {
+		MNLXT_SET_PROP_FLAG(addr, data);
+		memcpy(((char *)addr + addr_data[data].offset), ptr, size);
+		rc = 0;
+	}
+	return rc;
+}
+
+static inline int mnlxt_rt_addr_set_u32(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, uint32_t u32) {
+	return mnlxt_rt_addr_set_ptr(addr, data, &u32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_addr_set_u8(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, uint8_t u8) {
+	return mnlxt_rt_addr_set_ptr(addr, data, &u8, sizeof(uint8_t));
+}
+
+static int mnlxt_rt_addr_get_ptr(const mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, void *ptr, uint8_t size) {
+	int rc = -1;
+	if (NULL == addr || MNLXT_RT_ADDR_MAX <= (unsigned)data || addr_data[data].size != size
+			|| 0 == addr_data[data].size) {
+		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, data)) {
+		rc = 1;
+	} else {
+		memcpy(ptr, ((char *)addr + addr_data[data].offset), size);
+		rc = 0;
+	}
+	return rc;
+}
+
+static inline int mnlxt_rt_addr_get_u32(const mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, uint32_t *pu32) {
+	return mnlxt_rt_addr_get_ptr(addr, data, pu32, sizeof(uint32_t));
+}
+
+static inline int mnlxt_rt_addr_get_u8(const mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, uint8_t *pu8) {
+	return mnlxt_rt_addr_get_ptr(addr, data, pu8, sizeof(uint8_t));
+}
+
 int mnlxt_rt_addr_set_family(mnlxt_rt_addr_t *addr, uint8_t family) {
 	int rc = -1;
-	if (addr) {
-		if (AF_INET == family || AF_INET6 == family) {
-			if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY)) {
-				if (family == addr->family) {
-					rc = 0;
-				} else {
-					errno = EINVAL;
-				}
-			} else {
-				addr->family = family;
-				MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY);
-				rc = 0;
-			}
+	if (NULL == addr) {
+		errno = EINVAL;
+	} else if (AF_INET != family && AF_INET6 != family) {
+		errno = EAFNOSUPPORT;
+	} else if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY)) {
+		if (family == addr->family) {
+			rc = 0;
 		} else {
-			errno = EAFNOSUPPORT;
+			errno = EINVAL;
 		}
 	} else {
-		errno = EINVAL;
+		addr->family = family;
+		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY);
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_family(const mnlxt_rt_addr_t *addr, uint8_t *family) {
-	int rc = -1;
-	if (addr && family) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FAMILY)) {
-			*family = addr->family;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_get_u8(addr, MNLXT_RT_ADDR_FAMILY, family);
 }
 
 int mnlxt_rt_addr_set_prefixlen(mnlxt_rt_addr_t *addr, uint8_t prefixlen) {
-	int rc = -1;
-	if (addr) {
-		addr->prefixlen = prefixlen;
-		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_PREFIXLEN);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_set_u8(addr, MNLXT_RT_ADDR_PREFIXLEN, prefixlen);
 }
 
 int mnlxt_rt_addr_get_prefixlen(const mnlxt_rt_addr_t *addr, uint8_t *prefixlen) {
-	int rc = -1;
-	if (addr && prefixlen) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_PREFIXLEN)) {
-			*prefixlen = addr->prefixlen;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_get_u8(addr, MNLXT_RT_ADDR_PREFIXLEN, prefixlen);
 }
 
 int mnlxt_rt_addr_set_flags(mnlxt_rt_addr_t *addr, uint32_t flags) {
-	int rc = -1;
-	if (addr) {
-		addr->flags = flags;
-		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_FLAGS);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_set_u32(addr, MNLXT_RT_ADDR_FLAGS, flags);
 }
 
 int mnlxt_rt_addr_get_flags(const mnlxt_rt_addr_t *addr, uint32_t *flags) {
-	int rc = -1;
-	if (addr && flags) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_FLAGS)) {
-			*flags = addr->flags;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_get_u32(addr, MNLXT_RT_ADDR_FLAGS, flags);
 }
 
 int mnlxt_rt_addr_set_scope(mnlxt_rt_addr_t *addr, uint8_t scope) {
-	int rc = -1;
-	if (addr) {
-		addr->scope = scope;
-		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_SCOPE);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_set_u8(addr, MNLXT_RT_ADDR_SCOPE, scope);
 }
 
 int mnlxt_rt_addr_get_scope(const mnlxt_rt_addr_t *addr, uint8_t *scope) {
-	int rc = -1;
-	if (addr && scope) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_SCOPE)) {
-			*scope = addr->scope;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_get_u8(addr, MNLXT_RT_ADDR_SCOPE, scope);
 }
 
 int mnlxt_rt_addr_set_ifindex(mnlxt_rt_addr_t *addr, uint32_t if_index) {
-	int rc = -1;
-	if (addr) {
-		addr->if_index = if_index;
-		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_IFINDEX);
-		rc = 0;
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_set_u32(addr, MNLXT_RT_ADDR_IFINDEX, if_index);
 }
 
 int mnlxt_rt_addr_get_ifindex(const mnlxt_rt_addr_t *addr, uint32_t *if_index) {
-	int rc = -1;
-	if (addr && if_index) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_IFINDEX)) {
-			*if_index = addr->if_index;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
-		errno = EINVAL;
-	}
-	return rc;
+	return mnlxt_rt_addr_get_u32(addr, MNLXT_RT_ADDR_IFINDEX, if_index);
 }
 
 int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = -1;
-	if (addr && buf) {
+	if (NULL == addr || NULL == buf) {
+		errno = EINVAL;
+	} else {
 		rc = mnlxt_rt_addr_set_family(addr, family);
 		if (0 == rc) {
 			size_t len = sizeof(addr->addr);
@@ -232,26 +200,22 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_in
 			memcpy(&addr->addr, buf, len);
 			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR);
 		}
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
-	if (addr && buf) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR)) {
-			*buf = &addr->addr;
-			if (family) {
-				*family = addr->family;
-			}
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == buf) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR)) {
+		rc = 1;
+	} else {
+		*buf = &addr->addr;
+		if (NULL != family) {
+			*family = addr->family;
+		}
+		rc = 0;
 	}
 	return rc;
 }
@@ -267,135 +231,121 @@ int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_i
 
 int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const mnlxt_inet_addr_t **buf) {
 	int rc = -1;
-	if (addr && buf) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
-			*buf = &addr->addr_local;
-			if (family) {
-				*family = addr->family;
-			}
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == buf) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
+		rc = 1;
+	} else {
+		*buf = &addr->addr_local;
+		if (NULL != family) {
+			*family = addr->family;
+		}
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 	int rc = -1;
+	char *label_copy;
 	if (NULL == addr || NULL == label) {
 		errno = EINVAL;
-	} else {
-		char *label_copy = strndup(label, IFNAMSIZ - 1);
-		if (NULL != label_copy) {
-			if (addr->label) {
-				free(addr->label);
-			}
-			addr->label = label_copy;
-			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL);
-			rc = 0;
+	} else if (NULL != (label_copy = strndup(label, IFNAMSIZ - 1))) {
+		if (NULL != addr->label) {
+			free(addr->label);
 		}
+		addr->label = label_copy;
+		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL);
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label) {
 	int rc = -1;
-	if (addr && label) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL) && addr->label) {
-			*label = addr->label;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == label) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL) || NULL == addr->label) {
+		rc = 1;
+	} else {
+		*label = addr->label;
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_valid_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *valid_lft) {
 	int rc = -1;
-	if (addr && valid_lft) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
-			*valid_lft = addr->cacheinfo.ifa_valid;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == valid_lft) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+		rc = 1;
+	} else {
+		*valid_lft = addr->cacheinfo.ifa_valid;
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_set_valid_lifetime(mnlxt_rt_addr_t *addr, uint32_t valid_lft) {
 	int rc = -1;
-	if (addr) {
+	if (NULL == addr) {
+		errno = EINVAL;
+	} else {
 		addr->cacheinfo.ifa_valid = valid_lft;
 		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
 		rc = 0;
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_preferred_lifetime(const mnlxt_rt_addr_t *addr, uint32_t *preferred_lft) {
 	int rc = -1;
-	if (addr && preferred_lft) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
-			*preferred_lft = addr->cacheinfo.ifa_prefered;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == preferred_lft) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+		rc = 1;
+	} else {
+		*preferred_lft = addr->cacheinfo.ifa_prefered;
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_set_preferred_lifetime(mnlxt_rt_addr_t *addr, uint32_t preferred_lft) {
 	int rc = -1;
-	if (addr) {
+	if (NULL == addr) {
+		errno = EINVAL;
+	} else {
 		addr->cacheinfo.ifa_prefered = preferred_lft;
 		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO);
 		rc = 0;
-	} else {
-		errno = EINVAL;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_create_time(const mnlxt_rt_addr_t *addr, uint32_t *create_time) {
 	int rc = -1;
-	if (addr && create_time) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
-			*create_time = addr->cacheinfo.cstamp;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == create_time) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+		rc = 1;
+	} else {
+		*create_time = addr->cacheinfo.cstamp;
+		rc = 0;
 	}
 	return rc;
 }
 
 int mnlxt_rt_addr_get_last_update_time(const mnlxt_rt_addr_t *addr, uint32_t *update_time) {
 	int rc = -1;
-	if (addr && update_time) {
-		if (MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
-			*update_time = addr->cacheinfo.tstamp;
-			rc = 0;
-		} else {
-			rc = 1;
-		}
-	} else {
+	if (NULL == addr || NULL == update_time) {
 		errno = EINVAL;
+	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_CACHEINFO)) {
+		rc = 1;
+	} else {
+		*update_time = addr->cacheinfo.tstamp;
+		rc = 0;
 	}
 	return rc;
 }

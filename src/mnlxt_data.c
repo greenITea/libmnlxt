@@ -14,8 +14,6 @@
 
 #include <libmnlxt/data.h>
 
-#include "internal.h"
-
 const char *mnlxt_message_type(const mnlxt_message_t *msg) {
 	const char *type = NULL;
 	if (msg && msg->handler) {

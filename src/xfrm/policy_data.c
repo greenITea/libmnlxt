@@ -14,6 +14,8 @@
 
 #include <libmnlxt/xfrm.h>
 
+#include "internal.h"
+
 static int mnlxt_xfrm_policy_cmp(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2,
 																 mnlxt_xfrm_policy_data_t data) {
 	int rc = data + 1;
@@ -286,7 +288,7 @@ static int mnlxt_xfrm_policy_tmpl(mnlxt_xfrm_policy_t *policy, uint16_t num, str
 	int rc = -1;
 	if (0 < num && tmpls && policy) {
 		mnlxt_xfrm_tmpl_t *conns = calloc(num, sizeof(mnlxt_xfrm_tmpl_t));
-		if (conns) {
+		if (NULL != conns) {
 			int i = 0;
 			struct xfrm_user_tmpl *tmpl = tmpls;
 			mnlxt_xfrm_tmpl_t *conn = conns;
@@ -304,6 +306,7 @@ static int mnlxt_xfrm_policy_tmpl(mnlxt_xfrm_policy_t *policy, uint16_t num, str
 			}
 			policy->tmpls = conns;
 			policy->tmpl_num = num;
+			MNLXT_SET_PROP_FLAG(policy, MNLXT_XFRM_POLICY_TMPLS);
 			rc = 0;
 		}
 	}
