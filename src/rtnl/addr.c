@@ -14,8 +14,6 @@
 
 #include <libmnlxt/rt_addr.h>
 
-#include <linux/if.h>
-
 #include "internal.h"
 
 #define addr_ad_init(member) ad_init(mnlxt_rt_addr_t, member)
@@ -245,12 +243,12 @@ int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const 
 	return rc;
 }
 
-int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
+int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const mnlxt_if_name_t label) {
 	int rc = -1;
 	char *label_copy;
 	if (NULL == addr || NULL == label) {
 		errno = EINVAL;
-	} else if (NULL != (label_copy = strndup(label, IFNAMSIZ - 1))) {
+	} else if (NULL != (label_copy = strndup(label, sizeof(mnlxt_if_name_t) - 1))) {
 		if (NULL != addr->label) {
 			free(addr->label);
 		}
@@ -261,14 +259,14 @@ int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label) {
 	return rc;
 }
 
-int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label) {
+int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, mnlxt_if_name_t label) {
 	int rc = -1;
 	if (NULL == addr || NULL == label) {
 		errno = EINVAL;
 	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL) || NULL == addr->label) {
 		rc = 1;
 	} else {
-		*label = addr->label;
+		strncpy(label, addr->label, sizeof(mnlxt_if_name_t));
 		rc = 0;
 	}
 	return rc;

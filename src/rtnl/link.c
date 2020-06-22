@@ -157,20 +157,20 @@ int mnlxt_rt_link_get_family(const mnlxt_rt_link_t *rt_link, uint8_t *family) {
 	return mnlxt_rt_link_get_u8(rt_link, MNLXT_RT_LINK_FAMILY, family);
 }
 
-int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, const char **name) {
+int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, mnlxt_if_name_t name) {
 	int rc = -1;
 	if (NULL == rt_link || NULL == name) {
 		errno = EINVAL;
 	} else if (!MNLXT_GET_PROP_FLAG(rt_link, MNLXT_RT_LINK_NAME)) {
 		rc = 1;
 	} else {
-		*name = rt_link->name;
+		strncpy(name, rt_link->name, sizeof(mnlxt_if_name_t));
 		rc = 0;
 	}
 	return rc;
 }
 
-int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const char *name) {
+int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const mnlxt_if_name_t name) {
 	int rc = -1;
 	size_t len;
 	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= (len = strlen(name))) {
@@ -274,12 +274,12 @@ int mnlxt_rt_link_set_state(mnlxt_rt_link_t *rt_link, uint8_t state) {
 	return mnlxt_rt_link_set_u8(rt_link, MNLXT_RT_LINK_STATE, state);
 }
 
-int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, eth_addr_t *mac) {
-	return mnlxt_rt_link_get_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(eth_addr_t));
+int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, mnlxt_eth_addr_t *mac) {
+	return mnlxt_rt_link_get_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(mnlxt_eth_addr_t));
 }
 
-int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, eth_addr_t mac) {
-	return mnlxt_rt_link_set_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(eth_addr_t));
+int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, mnlxt_eth_addr_t mac) {
+	return mnlxt_rt_link_set_ptr(rt_link, MNLXT_RT_LINK_HWADDR, mac, sizeof(mnlxt_eth_addr_t));
 }
 
 int mnlxt_rt_link_get_updown(const mnlxt_rt_link_t *link, int *up) {

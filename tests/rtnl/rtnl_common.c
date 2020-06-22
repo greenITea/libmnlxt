@@ -32,10 +32,10 @@ void mnlxt_rt_link_print(mnlxt_rt_link_t *link) {
 		return;
 	}
 
-	const char *str;
-	ret = mnlxt_rt_link_get_name(link, &str);
+	mnlxt_if_name_t if_name;
+	ret = mnlxt_rt_link_get_name(link, if_name);
 	if (0 == ret) {
-		printf("name: %s\n", str);
+		printf("name: %s\n", if_name);
 	} else {
 		printf("missing name, %m\n");
 		return;
@@ -224,8 +224,8 @@ void mnlxt_rt_addr_print(mnlxt_rt_addr_t *addr) {
 		printf("mnlxt_rt_addr_get_addr failed, %m\n");
 	}
 
-	const char *label;
-	ret = mnlxt_rt_addr_get_label(addr, &label);
+	mnlxt_if_name_t label;
+	ret = mnlxt_rt_addr_get_label(addr, label);
 	if (0 == ret) {
 		printf("label: %s\n", label);
 	} else if (-1 == ret) {
@@ -391,15 +391,15 @@ void mnlxt_rt_rule_print(mnlxt_rt_rule_t *rule) {
 	}
 	int family = u8;
 
-	const char *str;
-	ret = mnlxt_rt_rule_get_iif_name(rule, &str);
+	mnlxt_if_name_t str;
+	ret = mnlxt_rt_rule_get_iif_name(rule, str);
 	if (0 == ret) {
 		printf("\niif: %s\n", str);
 	} else if (-1 == ret) {
 		printf("error getting iif, %m\n");
 	}
 
-	ret = mnlxt_rt_rule_get_oif_name(rule, &str);
+	ret = mnlxt_rt_rule_get_oif_name(rule, str);
 	if (0 == ret) {
 		printf("\noif: %s\n", str);
 	} else if (-1 == ret) {

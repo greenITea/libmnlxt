@@ -16,6 +16,7 @@
 #include <linux/rtnetlink.h>
 
 #include <libmnlxt/data.h>
+#include <libmnlxt/rt_link.h>
 
 #define MNLXT_RT_ADDR_LIFE_TIME_INFINITY 0xFFFFFFFFU
 
@@ -205,14 +206,14 @@ int mnlxt_rt_addr_get_local(const mnlxt_rt_addr_t *addr, uint8_t *family, const 
  * @param label label to set
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const char *label);
+int mnlxt_rt_addr_set_label(mnlxt_rt_addr_t *addr, const mnlxt_if_name_t label);
 /**
  * Gets label from address information
  * @param addr pointer to address information structure
- * @param label pointer to store pointer to label
+ * @param label pointer to buffer to store label
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, const char **label);
+int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, mnlxt_if_name_t label);
 
 /**
  * Get valid lifetime from address information cache

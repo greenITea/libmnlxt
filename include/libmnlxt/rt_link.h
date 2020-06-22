@@ -32,7 +32,13 @@ typedef enum {
 #define MNLXT_RT_LINK_MAX MNLXT_RT_LINK_INFO + 1
 } mnlxt_rt_link_data_t;
 
-typedef uint8_t eth_addr_t[ETH_ALEN];
+/** Hardware address type definition */
+typedef uint8_t mnlxt_eth_addr_t[ETH_ALEN];
+/** Hardware address type backwards compatibility */
+typedef mnlxt_eth_addr_t eth_addr_t;
+
+/** Interface name type definition */
+typedef char mnlxt_if_name_t[IFNAMSIZ];
 
 typedef enum {
 	MNLXT_RT_LINK_VLAN_ID = 0
@@ -94,9 +100,9 @@ typedef struct {
 	 */
 	uint8_t state;
 	/** Hardware address */
-	eth_addr_t mac;
+	mnlxt_eth_addr_t mac;
 	/** Interface name */
-	char name[IFNAMSIZ];
+	mnlxt_if_name_t name;
 	/** Interface index */
 	uint32_t index;
 	/** link flags, see linux/if.h and linux/if_tun.h
@@ -179,17 +185,17 @@ int mnlxt_rt_link_set_family(mnlxt_rt_link_t *rt_link, uint8_t family);
 /**
  * Gets link name from link instance
  * @param rt_link pointer to link instance
- * @param name pointer to buffer to store pointer to name
+ * @param name pointer to buffer to store name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, const char **name);
+int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, mnlxt_if_name_t name);
 /**
  * Sets link name on link instance by copying the string. The maximal length of the name is limited to 15 symbols.
  * @param rt_link pointer to link instance
  * @param name pointer to link name
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const char *name);
+int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const mnlxt_if_name_t name);
 /**
  * Gets link index from link instance
  * @param rt_link pointer to link instance
@@ -291,14 +297,14 @@ int mnlxt_rt_link_set_state(mnlxt_rt_link_t *rt_link, uint8_t state);
  * @param mac pointer to buffer to save link address
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, eth_addr_t *mac);
+int mnlxt_rt_link_get_hwaddr(const mnlxt_rt_link_t *rt_link, mnlxt_eth_addr_t *mac);
 /**
  * Sets address on link instance
  * @param rt_link pointer to link instance
  * @param mac link address
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, eth_addr_t mac);
+int mnlxt_rt_link_set_hwaddr(mnlxt_rt_link_t *rt_link, mnlxt_eth_addr_t mac);
 /**
  * Gets link UP/DOWN state from link instance
  * @param rt_link pointer to link instance

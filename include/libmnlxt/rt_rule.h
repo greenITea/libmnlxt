@@ -14,6 +14,7 @@
 #include <linux/fib_rules.h>
 
 #include <libmnlxt/rt_addr.h>
+#include <libmnlxt/rt_link.h>
 
 typedef enum {
 	MNLXT_RT_RULE_FAMILY = 0,
@@ -232,28 +233,28 @@ int mnlxt_rt_rule_get_priority(const mnlxt_rt_rule_t *rule, uint32_t *priority);
  * @param iif_name name of input interface
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const char *iif_name);
+int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const mnlxt_if_name_t iif_name);
 /**
  * Gets name of input interface from rule information
  * @param rule pointer to rule information structure
- * @param iif_name pointer to buffer to save pointer to input interface name
+ * @param iif_name pointer to buffer to save input interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_iif_name(const mnlxt_rt_rule_t *rule, const char **iif_name);
+int mnlxt_rt_rule_get_iif_name(const mnlxt_rt_rule_t *rule, mnlxt_if_name_t iif_name);
 /**
  * Sets name of output interface on rule information
  * @param rule pointer to rule information structure
  * @param oif_name name of output interface
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const char *oif_name);
+int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const mnlxt_if_name_t oif_name);
 /**
  * Gets name of output interface from rule information
  * @param rule pointer to rule information structure
- * @param oif_name pointer to buffer to save pointer to output interface name
+ * @param oif_name pointer to buffer to save output interface name
  * @return 0 on success, 1 on not set, else -1
  */
-int mnlxt_rt_rule_get_oif_name(const mnlxt_rt_rule_t *rule, const char **oif_name);
+int mnlxt_rt_rule_get_oif_name(const mnlxt_rt_rule_t *rule, mnlxt_if_name_t oif_name);
 /**
  * Sets firewall mark on rule information
  * @param rule pointer to rule information structure
