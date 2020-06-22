@@ -1,11 +1,27 @@
 20.01.2020 - v0.1.2
  * First official release
+
 29.04.2020 - v0.2.0
- * New function family mnlxt_*_compare() for comparing netlink information structures
+ * New function family mnlxt_*_compare() for comparing Netlink data structures
  * New function family mnlxt_*_request() - simple way to send Netlink message
  * New function family mnlxt_*_clone() for creating copies of Netlink information structures
  * New function family mnlxt_*_remove() for detaching message content from mnlxt_message_t structure
  * Fix error in case of an unsupported IFLA_INFO_KIND. Error message sill be generated in error_str
  * Some small documentation improvement and refactoring
+
 04.05.2020 - v0.2.1
  * Fix handling of NULL-pointer arguments in mnlxt_*_match() functions
+
+22.06.2020 - v0.3.0
+* New, Support for XFRM interfaces
+* New argument 'flags' for netlink-request tuning in functions mnlxt_*_request(), mnlxt_*_message(),
+ mnlxt_rt_message_new() and mnlxt_xfrm_message_new()
+* New type definition mnlxt_if_name_t for interface names
+* New function mnlxt_rt_link_info_compare() for comparing of link info data
+* Fix/excluding comparison of link info data from link comparison by mnlxt_rt_link_compare()
+* Fix memory leak by resetting of i/o interfaces on routing rule or by freeing of routing rule with
+ the interfaces set
+* Change name/label type from const char** to mnlxt_if_name_t in functions mnlxt_rt_addr_get_label(),
+ mnlxt_rt_link_get_name(), mnlxt_rt_rule_get_iif_name() and mnlxt_rt_rule_get_oif_name()
+* Disable function mnlxt_rt_link_data_revoke()
+* Code refactoring
