@@ -27,7 +27,7 @@ static int mnlxt_rt_link_vlan_cmp(const mnlxt_rt_link_vlan_t *vlan1, uint16_t vl
 		errno = EINVAL;
 	} else {
 		int flag = 0x1;
-		for (i = 0; i < MNLXT_RT_LINK_VLAN_MAX; ++i) {
+		for (i = 0; i < MNLXT_RT_LINK_VLAN_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -63,7 +63,7 @@ static int mnlxt_rt_link_xfrm_match(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t 
 		errno = EINVAL;
 	} else {
 		int flag = 0x1;
-		for (i = 0; i < MNLXT_RT_LINK_XFRM_MAX; ++i) {
+		for (i = 0; i < MNLXT_RT_LINK_XFRM_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
