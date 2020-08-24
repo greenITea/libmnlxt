@@ -223,6 +223,7 @@ static int mnlxt_rt_link_set_selected_flags(mnlxt_rt_link_t *rt_link, uint32_t f
 		}
 		rt_link->flag_mask |= flags;
 		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_FLAGS);
+		rc = 0;
 	}
 	return rc;
 }
