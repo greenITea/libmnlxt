@@ -107,8 +107,8 @@ int mnlxt_rt_route_compare(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_rou
 	if (NULL == rt_route1 || NULL == rt_route2) {
 		errno = EINVAL;
 	} else {
-		for (i = 0; i < MNLXT_RT_ROUTE_MAX; ++i) {
-			uint64_t flag = MNLXT_FLAG(i);
+		uint64_t flag = 1;
+		for (i = 0; i < MNLXT_RT_ROUTE_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -153,10 +153,10 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route) {
 	int rc = -1;
 	if (route && nlh) {
 		struct rtmsg *rtm = mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtmsg));
-		int flag = 0x1;
+		uint32_t flag = 1;
 		size_t family_size = (AF_INET == route->family ? sizeof(route->src.in) : sizeof(route->src));
 		int i = 0;
-		for (; i < MNLXT_RT_ROUTE_MAX; ++i) {
+		for (; i < MNLXT_RT_ROUTE_MAX; ++i, flag <<= 1) {
 			if (route->prop_flags & flag) {
 				switch (i) {
 				case MNLXT_RT_ROUTE_FAMILY:
@@ -200,7 +200,6 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route) {
 					break;
 				}
 			}
-			flag <<= 1;
 		}
 		rc = 0;
 	} else {

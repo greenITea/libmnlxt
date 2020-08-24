@@ -117,8 +117,8 @@ int mnlxt_xfrm_policy_compare(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xf
 	if (NULL == policy1 || NULL == policy2) {
 		errno = EINVAL;
 	} else {
-		for (i = 0; i < MNLXT_XFRM_POLICY_MAX; ++i) {
-			uint64_t flag = MNLXT_FLAG(i);
+		uint64_t flag = 1;
+		for (i = 0; i < MNLXT_XFRM_POLICY_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -188,9 +188,9 @@ int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *polic
 		goto failed;
 	}
 	int i;
-	int flag = 0x1;
+	uint16_t flag = 1;
 	size_t addr_size = (AF_INET == policy->family ? sizeof(policy->src.addr.in) : sizeof(policy->src.addr));
-	for (i = 0; i < MNLXT_XFRM_POLICY_MAX; ++i) {
+	for (i = 0; i < MNLXT_XFRM_POLICY_MAX; ++i, flag <<= 1) {
 		if (policy->prop_flags & flag) {
 			switch (i) {
 			case MNLXT_XFRM_POLICY_FAMILY:
@@ -248,7 +248,6 @@ int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *polic
 				break;
 			}
 		}
-		flag <<= 1;
 	}
 	rc = 0;
 failed:
