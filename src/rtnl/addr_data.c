@@ -92,8 +92,8 @@ int mnlxt_rt_addr_compare(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t
 	if (NULL == rt_addr1 || NULL == rt_addr2) {
 		errno = EINVAL;
 	} else {
-		for (i = 0; i < MNLXT_RT_ADDR_MAX; ++i) {
-			uint64_t flag = MNLXT_FLAG(i);
+		uint64_t flag = 1;
+		for (i = 0; i < MNLXT_RT_ADDR_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -139,9 +139,9 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr) {
 	if (addr && nlh) {
 		struct ifaddrmsg *ifam = mnl_nlmsg_put_extra_header(nlh, sizeof(struct ifaddrmsg));
 		int i;
-		int flag = 0x1;
+		uint16_t flag = 1;
 		size_t addr_size = (AF_INET == addr->family ? sizeof(addr->addr.in) : sizeof(addr->addr));
-		for (i = 0; i < MNLXT_RT_ADDR_MAX; ++i) {
+		for (i = 0; i < MNLXT_RT_ADDR_MAX; ++i, flag <<= 1) {
 			if (addr->prop_flags & flag) {
 				switch (i) {
 				case MNLXT_RT_ADDR_FAMILY:
@@ -176,7 +176,6 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr) {
 					break;
 				}
 			}
-			flag <<= 1;
 		}
 		rc = 0;
 	} else {

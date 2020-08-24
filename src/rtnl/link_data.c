@@ -26,7 +26,7 @@ static int mnlxt_rt_link_vlan_cmp(const mnlxt_rt_link_vlan_t *vlan1, uint16_t vl
 	if (NULL == vlan1 || NULL == vlan2) {
 		errno = EINVAL;
 	} else {
-		int flag = 0x1;
+		uint16_t flag = 1;
 		for (i = 0; i < MNLXT_RT_LINK_VLAN_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
@@ -62,7 +62,7 @@ static int mnlxt_rt_link_xfrm_match(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t 
 	if (NULL == xfrm1 || NULL == xfrm2) {
 		errno = EINVAL;
 	} else {
-		int flag = 0x1;
+		uint16_t flag = 1;
 		for (i = 0; i < MNLXT_RT_LINK_XFRM_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
@@ -239,8 +239,8 @@ int mnlxt_rt_link_compare(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_link_t
 	if (NULL == rt_link1 || NULL == rt_link2) {
 		errno = EINVAL;
 	} else {
-		for (i = 0; i < MNLXT_RT_LINK_MAX; ++i) {
-			uint64_t flag = MNLXT_FLAG(i);
+		uint64_t flag = 1;
+		for (i = 0; i < MNLXT_RT_LINK_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -310,9 +310,9 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	int rc = -1;
 	if (link && nlh) {
 		struct ifinfomsg *ifm = mnl_nlmsg_put_extra_header(nlh, sizeof(struct ifinfomsg));
-		int flag = 0x1;
+		uint16_t flag = 1;
 		int i = 0;
-		for (; i < MNLXT_RT_LINK_MAX; ++i) {
+		for (; i < MNLXT_RT_LINK_MAX; ++i, flag <<= 1) {
 			if (link->prop_flags & flag) {
 				switch (i) {
 				case MNLXT_RT_LINK_TYPE:
@@ -351,7 +351,6 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 					break;
 				}
 			}
-			flag <<= 1;
 		}
 		rc = 0;
 	} else {

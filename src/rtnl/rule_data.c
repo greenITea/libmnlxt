@@ -106,8 +106,8 @@ int mnlxt_rt_rule_compare(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t
 	if (NULL == rt_rule1 || NULL == rt_rule2) {
 		errno = EINVAL;
 	} else {
-		for (i = 0; i < MNLXT_RT_RULE_MAX; ++i) {
-			uint64_t flag = MNLXT_FLAG(i);
+		uint64_t flag = 1;
+		for (i = 0; i < MNLXT_RT_RULE_MAX; ++i, flag <<= 1) {
 			if (0 == (flag & filter)) {
 				continue;
 			}
@@ -152,10 +152,10 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule) {
 	int rc = -1;
 	if (rule && nlh) {
 		struct fib_rule_hdr *rule_hdr = mnl_nlmsg_put_extra_header(nlh, sizeof(struct fib_rule_hdr));
-		int flag = 0x1;
+		uint16_t flag = 1;
 		size_t addr_size = (AF_INET == rule->family ? sizeof(rule->src.in) : sizeof(rule->src));
 		int i = 0;
-		for (; i < MNLXT_RT_RULE_MAX; ++i) {
+		for (; i < MNLXT_RT_RULE_MAX; ++i, flag <<= 1) {
 			if (rule->prop_flags & flag) {
 				switch (i) {
 				case MNLXT_RT_RULE_FAMILY:
@@ -199,7 +199,6 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule) {
 					break;
 				}
 			}
-			flag <<= 1;
 		}
 		rc = 0;
 	} else {
