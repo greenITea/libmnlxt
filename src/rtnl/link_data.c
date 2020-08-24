@@ -56,8 +56,8 @@ static int mnlxt_rt_link_vlan_cmp(const mnlxt_rt_link_vlan_t *vlan1, uint16_t vl
 	return i;
 }
 
-static int mnlxt_rt_link_xfrm_match(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flags1,
-																		const mnlxt_rt_link_xfrm_t *xfrm2, uint16_t xfrm_flags2, uint16_t filter) {
+static int mnlxt_rt_link_xfrm_cmp(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flags1,
+																	const mnlxt_rt_link_xfrm_t *xfrm2, uint16_t xfrm_flags2, uint16_t filter) {
 	int i = -1;
 	if (NULL == xfrm1 || NULL == xfrm2) {
 		errno = EINVAL;
@@ -120,8 +120,8 @@ static int mnlxt_rt_link_info_cmp(const mnlxt_rt_link_info_t *link_info1, const 
 			/*TODO*/ rc = 0;
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
-			rc = mnlxt_rt_link_xfrm_match(&link_info1->data.xfrm, link_info1->prop_flags, &link_info2->data.xfrm,
-																		link_info2->prop_flags, filter);
+			rc = mnlxt_rt_link_xfrm_cmp(&link_info1->data.xfrm, link_info1->prop_flags, &link_info2->data.xfrm,
+																	link_info2->prop_flags, filter);
 			break;
 		}
 	}
