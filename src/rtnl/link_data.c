@@ -229,6 +229,8 @@ int mnlxt_rt_link_match(const mnlxt_rt_link_t *rt_link, const mnlxt_rt_link_t *m
 		rc = mnlxt_rt_link_compare(rt_link, match, match->prop_flags);
 		if (0 == rc && MNLXT_GET_PROP_FLAG(match, MNLXT_RT_LINK_INFO)) {
 			rc = mnlxt_rt_link_info_cmp(&rt_link->info, &match->info, match->info.prop_flags);
+			if (0 < rc)
+				rc = MNLXT_RT_LINK_INFO + 1;
 		}
 	}
 	return rc;
