@@ -11,7 +11,9 @@
 #include <errno.h>
 #include <string.h>
 
+#include "config.h"
 #include "internal.h"
+
 #include <libmnlxt/rt.h>
 
 static const char *info_kinds[MNLXT_RT_LINK_INFO_KIND_MAX] = {
@@ -291,6 +293,7 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *l
 				if (0 == mnlxt_rt_link_get_vlan_id(link, &id)) {
 					mnl_attr_put_u16(nlh, IFLA_VLAN_ID, id);
 				}
+#ifdef HAVE_IFLA_XFRM
 			} else if (MNLXT_RT_LINK_INFO_KIND_XFRM == info_kind) {
 				uint32_t u32 = 0;
 				if (0 == mnlxt_rt_link_get_xfrm_id(link, &u32)) {
@@ -299,6 +302,7 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *l
 				if (0 == mnlxt_rt_link_get_xfrm_ifindex(link, &u32)) {
 					mnl_attr_put_u32(nlh, IFLA_XFRM_LINK, u32);
 				}
+#endif
 			}
 			mnl_attr_nest_end(nlh, nest_data);
 			mnl_attr_nest_end(nlh, nest_info);
@@ -397,6 +401,7 @@ end:
 	return rc;
 }
 
+#ifdef HAVE_IFLA_XFRM
 static int mnlxt_rt_link_info_data_xfrm(const struct nlattr *link_xfrm_attr, mnlxt_data_t *data,
 																				mnlxt_rt_link_t *rt_link) {
 	int rc = -1;
@@ -431,6 +436,7 @@ static int mnlxt_rt_link_info_data_xfrm(const struct nlattr *link_xfrm_attr, mnl
 end:
 	return rc;
 }
+#endif
 
 static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_data_t *data, mnlxt_rt_link_t *link) {
 	int rc = -1;
@@ -481,7 +487,9 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 			/*TODO*/ rc = 0;
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
+#ifdef HAVE_IFLA_XFRM
 			rc = mnlxt_rt_link_info_data_xfrm(data_attr, data, link);
+#endif
 			break;
 		}
 	} else {

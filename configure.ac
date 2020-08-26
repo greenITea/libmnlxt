@@ -31,7 +31,6 @@ AC_COMPILE_IFELSE(
     AC_DEFINE_UNQUOTED([HAVE_IFA_FLAGS], 1, [Define to 1 if IFA_FLAGS is usable.])
   ],[
     AC_MSG_RESULT([no])
-    AC_DEFINE_UNQUOTED([HAVE_IFA_FLAGS], 0, [Define to 1 if IFA_FLAGS is usable.])
   ]
 )
 
@@ -44,6 +43,14 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memset strchr strdup strtol])
+AC_CHECK_DECL([IFLA_XFRM_MAX],
+  [
+    AC_MSG_RESULT([yes])
+    AC_DEFINE_UNQUOTED([HAVE_IFLA_XFRM], 1, [Define to 1 if XFRM interface support is available.])
+  ],[
+    AC_MSG_RESULT([no])
+  ],[#include <linux/if_link.h>]
+)
 
 CFLAGS="$CFLAGS -Wall -Werror"
 

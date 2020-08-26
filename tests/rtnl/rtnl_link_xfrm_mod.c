@@ -18,6 +18,9 @@
 
 #include <libmnlxt/mnlxt.h>
 
+#include "config.h"
+
+#ifdef HAVE_IFLA_XFRM
 static void usage(const char *progname) {
 	printf("usage: %s add|del|set name dev id mtu\n"
 				 "\t name	interface name\n"
@@ -109,3 +112,10 @@ err:
 
 	return rc;
 }
+#else
+
+int main(int argc, char **argv) {
+	fprintf(stderr, "No support for XFRM interfaces\n");
+	return EXIT_SUCCESS;
+}
+#endif

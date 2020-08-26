@@ -13,104 +13,11 @@
 #include <string.h>
 
 #include <arpa/inet.h>
-
 #include <net/if.h>
 
 #include <libmnlxt/mnlxt.h>
 
-int validate_ip_prefix(mnlxt_inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr, const char *prefixstr) {
-	int rc = -1;
-	struct in6_addr addr = {};
-	int fam = 0, pref = 0;
-	if (prefixstr) {
-		char *endptr = NULL;
-		pref = strtol(prefixstr, &endptr, 10);
-		if (!endptr || '\0' != *endptr) {
-			fprintf(stderr, "Invalid prefix: '%s'", prefixstr);
-			goto end;
-		}
-	}
-	int ret = inet_pton(AF_INET6, ipstr, &addr);
-	if (1 == ret) {
-		/* IPv6 address format */
-		if (IN6_IS_ADDR_V4MAPPED(&addr)) {
-			/* IPv4 address */
-			fam = AF_INET;
-			addr.__in6_u.__u6_addr32[0] = addr.__in6_u.__u6_addr32[3];
-			if (!pref) {
-				pref = 32;
-			} else if (96 <= pref && 128 >= pref) {
-				pref -= 96;
-			} else {
-				fprintf(stderr, "Invalid IPv4 in IPv6 mapped prefix: '%s'", prefixstr);
-				goto end;
-			}
-		} else {
-			/* IPV6 address */
-			fam = AF_INET6;
-			if (!pref) {
-				pref = 128;
-			} else if (0 > pref || 128 < pref) {
-				fprintf(stderr, "Invalid IPv6 prefix: '%s'", prefixstr);
-				goto end;
-			}
-		}
-	} else if (0 == ret) {
-		/* IPv4 address format */
-		if (1 == inet_pton(AF_INET, ipstr, &addr)) {
-			fam = AF_INET;
-			if (!pref) {
-				pref = 32;
-			} else if (0 <= pref && 32 >= pref) {
-				/* TODO: check IPv4-address/prefix combination */
-			} else {
-				fprintf(stderr, "Invalid IPv4 prefix: '%s'", prefixstr);
-				goto end;
-			}
-		} else {
-			/* invalid IP address format */
-			fprintf(stderr, "Invalid IP address: '%s'", ipstr);
-			goto end;
-		}
-	} else {
-		/* invalid IP address format */
-		fprintf(stderr, "Invalid IP address: '%s'", ipstr);
-		goto end;
-	}
-	if (ipaddr) {
-		if (AF_INET == fam && INADDR_ANY == addr.__in6_u.__u6_addr32[0]) {
-			/* 0.0.0.0/0 */
-			pref = 0;
-		}
-		memcpy(ipaddr, &addr, (AF_INET == fam ? sizeof(ipaddr->in) : sizeof(ipaddr->in6)));
-	}
-	if (family) {
-		*family = fam;
-	}
-	if (prefix) {
-		*prefix = pref;
-	}
-	rc = 0;
-end:
-	return rc;
-}
-
-int validate_ip(mnlxt_inet_addr_t *ipaddr, int *prefix, int *family, const char *ipstr) {
-	int rc = -1;
-	if (ipstr) {
-		char *slash = strchr(ipstr, '/');
-		if (slash) {
-			size_t len = slash - ipstr;
-			char buf[len + 1];
-			memcpy(buf, ipstr, len);
-			buf[len] = '\0';
-			rc = validate_ip_prefix(ipaddr, prefix, family, buf, slash + 1);
-		} else {
-			rc = validate_ip_prefix(ipaddr, prefix, family, ipstr, NULL);
-		}
-	}
-	return rc;
-}
+#include "rtnl_common.h"
 
 static void usage(const char *progname) {
 	printf("usage: %s add|del addr iface\n"
