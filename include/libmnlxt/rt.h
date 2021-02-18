@@ -17,6 +17,7 @@
 #include <libmnlxt/data.h>
 #include <libmnlxt/rt_addr.h>
 #include <libmnlxt/rt_link.h>
+#include <libmnlxt/rt_link_tun.h>
 #include <libmnlxt/rt_route.h>
 #include <libmnlxt/rt_rule.h>
 

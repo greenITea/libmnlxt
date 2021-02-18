@@ -5,6 +5,7 @@ libmnlxt_la_SOURCES  = mnlxt.c mnlxt_data.c rtnl/rtnl.c
 if ENABLE_RTM
   libmnlxt_la_SOURCES += rtnl/addr.c rtnl/addr_data.c
   libmnlxt_la_SOURCES += rtnl/link.c rtnl/link_data.c
+  libmnlxt_la_SOURCES += rtnl/link_tun.c rtnl/link_tun_tools.c rtnl/link_data_tun.c
   libmnlxt_la_SOURCES += rtnl/route.c rtnl/route_data.c
   libmnlxt_la_SOURCES += rtnl/rule.c rtnl/rule_data.c
 endif

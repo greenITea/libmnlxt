@@ -70,10 +70,27 @@ typedef enum {
 } mnlxt_rt_link_info_kind_t;
 
 typedef struct {
+	/** IFF_TUN or IFF_TAP, see linux/if_tun.h */
+	uint8_t type;
+	/** tun-flags, see libmnlxt/rt_link_tun.h
+	 * MNLXT_RT_LINK_TUN_FLAG_PI
+	 * MNLXT_RT_LINK_TUN_FLAG_VNET_HDR
+	 * MNLXT_RT_LINK_TUN_FLAG_PERSIST
+	 * MNLXT_RT_LINK_TUN_FLAG_MULTI_QUEUE
+	 */
+	uint16_t flags;
+	/** User ID */
+	uid_t uid;
+	/** Group ID */
+	gid_t gid;
+} mnlxt_rt_link_tun_t;
+
+typedef struct {
 	uint16_t prop_flags;
 	mnlxt_rt_link_info_kind_t kind;
 	union {
 		mnlxt_rt_link_vlan_t vlan;
+		mnlxt_rt_link_tun_t tun;
 		mnlxt_rt_link_xfrm_t xfrm;
 	} data;
 } mnlxt_rt_link_info_t;

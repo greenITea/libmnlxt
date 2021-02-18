@@ -9,6 +9,7 @@
  */
 
 #include <arpa/inet.h>
+#include <linux/if_tun.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -146,6 +147,35 @@ void mnlxt_rt_link_print(mnlxt_rt_link_t *link) {
 				printf("error getting xfrm id, %m\n");
 			} else {
 				printf("no xfrm id \n");
+			}
+		} else if (MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
+			ret = mnlxt_rt_link_get_tun_type(link, &u8);
+			if (0 == ret) {
+				printf("mode: ");
+				if (u8 & IFF_TUN) {
+					printf("tun\n");
+				} else if (u8 & IFF_TAP) {
+					printf("tap\n");
+				} else {
+					printf("unknown\n");
+				}
+			}
+			ret = mnlxt_rt_link_get_tun_flags(link, &u16);
+			if (0 == ret) {
+				printf("tun flags: 0x%X\n", u16);
+				printf("mode: ");
+			} else if (-1 == ret) {
+				printf("error getting tun flags, %m\n");
+			} else {
+				printf("no tun flags\n");
+			}
+			ret = mnlxt_rt_link_get_tun_uid(link, &u32);
+			if (0 == ret) {
+				printf("tun user: %d\n", u32);
+			}
+			ret = mnlxt_rt_link_get_tun_gid(link, &u32);
+			if (0 == ret) {
+				printf("tun group: %d\n", u32);
 			}
 		}
 	} else if (-1 == ret) {

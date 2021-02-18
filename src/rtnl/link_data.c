@@ -13,8 +13,9 @@
 
 #include "config.h"
 #include "internal.h"
+#include "private/link_data_tun.h"
 
-#include <libmnlxt/rt.h>
+#include "libmnlxt/rt.h"
 
 static const char *info_kinds[MNLXT_RT_LINK_INFO_KIND_MAX] = {
 	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge", [MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
@@ -119,7 +120,8 @@ static int mnlxt_rt_link_info_cmp(const mnlxt_rt_link_info_t *link_info1, const 
 																	link_info2->prop_flags, filter);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_TUN:
-			/*TODO*/ rc = 0;
+			rc = mnlxt_rt_link_tun_cmp(&link_info1->data.tun, link_info1->prop_flags, &link_info2->data.tun,
+																 link_info2->prop_flags, filter);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
 			rc = mnlxt_rt_link_xfrm_cmp(&link_info1->data.xfrm, link_info1->prop_flags, &link_info2->data.xfrm,
@@ -303,6 +305,10 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *l
 					mnl_attr_put_u32(nlh, IFLA_XFRM_LINK, u32);
 				}
 #endif
+			} else if (MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
+#if 0 /* tun/tap creation via rtnetlink is not supported yet */
+				mnlxt_rt_link_tun_info_put(nlh, link);
+#endif
 			}
 			mnl_attr_nest_end(nlh, nest_data);
 			mnl_attr_nest_end(nlh, nest_info);
@@ -484,7 +490,7 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 			rc = mnlxt_rt_link_info_data_vlan(data_attr, data, link);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_TUN:
-			/*TODO*/ rc = 0;
+			rc = mnlxt_rt_link_info_data_tun(data_attr, data, link);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
 #ifdef HAVE_IFLA_XFRM
@@ -680,12 +686,28 @@ int mnlxt_rt_link_dump(mnlxt_data_t *data) {
 
 int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type, uint16_t flags) {
 	int rc = -1;
+	mnlxt_rt_link_info_kind_t info_kind = -1;
+	if (0 == mnlxt_rt_link_get_info_kind(rt_link, &info_kind) && MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
+		/* rtnetlink doesn't support creating or deleting of TUN/TAP-devices */
+		if (RTM_NEWLINK == type) {
+			if (0 != mnlxt_rt_link_tun_create(rt_link)) {
+				goto out;
+			} else {
+				/* change request type and continue with rtnetlink-request */
+				type = RTM_SETLINK;
+			}
+		} else if (RTM_DELLINK == type) {
+			rc = mnlxt_rt_link_tun_delete(rt_link);
+			goto out;
+		}
+	}
 	mnlxt_message_t *message = mnlxt_rt_link_message(&rt_link, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
 		mnlxt_rt_link_remove(message);
 		mnlxt_message_free(message);
 	}
+out:
 	return rc;
 }
 
