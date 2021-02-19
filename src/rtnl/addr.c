@@ -12,9 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/rt_addr.h>
-
-#include "internal.h"
+#include "libmnlxt/rt_addr.h"
+#include "private/internal.h"
 
 #define addr_ad_init(member) ad_init(mnlxt_rt_addr_t, member)
 

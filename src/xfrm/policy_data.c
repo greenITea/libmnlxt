@@ -12,9 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/xfrm.h>
-
-#include "internal.h"
+#include "libmnlxt/xfrm.h"
+#include "private/internal.h"
 
 static int mnlxt_xfrm_policy_cmp(const mnlxt_xfrm_policy_t *policy1, const mnlxt_xfrm_policy_t *policy2,
 																 mnlxt_xfrm_policy_data_t data) {

@@ -10,9 +10,8 @@
 
 #include <errno.h>
 
-#include <libmnlxt/xfrm.h>
-
-#include "internal.h"
+#include "libmnlxt/xfrm.h"
+#include "private/internal.h"
 
 static const mnlxt_data_cb_t data_handlers[] = {
 	[XFRM_MSG_NEWPOLICY]

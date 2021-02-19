@@ -40,20 +40,9 @@ typedef mnlxt_eth_addr_t eth_addr_t;
 /** Interface name type definition */
 typedef char mnlxt_if_name_t[IFNAMSIZ];
 
-typedef enum {
-	MNLXT_RT_LINK_VLAN_ID = 0
-#define MNLXT_RT_LINK_VLAN_MAX MNLXT_RT_LINK_VLAN_ID + 1
-} mnlxt_rt_link_vlan_data_t;
-
 typedef struct {
 	uint16_t id;
 } mnlxt_rt_link_vlan_t;
-
-typedef enum {
-	MNLXT_RT_LINK_XFRM_IFINDEX = 0,
-	MNLXT_RT_LINK_XFRM_ID
-#define MNLXT_RT_LINK_XFRM_MAX MNLXT_RT_LINK_XFRM_ID + 1
-} mnlxt_rt_link_xfrm_data_t;
 
 typedef struct {
 	uint32_t if_index;
@@ -366,48 +355,6 @@ int mnlxt_rt_link_get_info_kind(const mnlxt_rt_link_t *rt_link, mnlxt_rt_link_in
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_info_kind(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_info_kind_t info_kind);
-/**
- * Gets vlan id from link instance
- * @param rt_link pointer to link instance
- * @param id pointer to buffer to save vlan's id
- * @return 0 on success, 1 on not set, else -1
- */
-int mnlxt_rt_link_get_vlan_id(const mnlxt_rt_link_t *rt_link, uint16_t *id);
-/**
- * Sets vlan id on link instance
- * @param rt_link pointer to link instance
- * @param id vlan id
- * @return 0 on success, else -1
- */
-int mnlxt_rt_link_set_vlan_id(mnlxt_rt_link_t *rt_link, uint16_t id);
-/**
- * Gets underlying interface for XFRM link
- * @param rt_link pointer to link instance
- * @param if_index buffer pointer to save interface index
- * @return 0 on success, 1 on not set, else -1
- */
-int mnlxt_rt_link_get_xfrm_ifindex(const mnlxt_rt_link_t *rt_link, uint32_t *if_index);
-/**
- * Sets underlying interface for XFRM link
- * @param rt_link pointer to link instance
- * @param if_index index of underlying interface
- * @return 0 on success, else -1
- */
-int mnlxt_rt_link_set_xfrm_ifindex(mnlxt_rt_link_t *rt_link, uint32_t if_index);
-/**
- * Gets interface ID for XFRM link
- * @param rt_link pointer to link instance
- * @param id buffer pointer to save interface ID
- * @return 0 on success, 1 on not set, else -1
- */
-int mnlxt_rt_link_get_xfrm_id(const mnlxt_rt_link_t *rt_link, uint32_t *id);
-/**
- * Sets interface ID for XFRM link
- * @param rt_link pointer to link instance
- * @param id interface ID
- * @return 0 on success, else -1
- */
-int mnlxt_rt_link_set_xfrm_id(mnlxt_rt_link_t *rt_link, uint32_t id);
 
 /**
  * Checks if a link matches another one

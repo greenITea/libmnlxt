@@ -18,6 +18,8 @@
 #include <libmnlxt/rt_addr.h>
 #include <libmnlxt/rt_link.h>
 #include <libmnlxt/rt_link_tun.h>
+#include <libmnlxt/rt_link_vlan.h>
+#include <libmnlxt/rt_link_xfrm.h>
 #include <libmnlxt/rt_route.h>
 #include <libmnlxt/rt_rule.h>
 

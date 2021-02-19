@@ -12,8 +12,8 @@
 #include <linux/if_tun.h>
 #include <stdlib.h>
 
-#include "internal.h"
 #include "libmnlxt/rt_link_tun.h"
+#include "private/internal.h"
 
 static int mnlxt_rt_link_check_tun_kind(const mnlxt_rt_link_t *rt_link) {
 	mnlxt_rt_link_info_kind_t info_kind = -1;

@@ -13,7 +13,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <libmnlxt/core.h>
+#include "libmnlxt/core.h"
 
 int mnlxt_connect(mnlxt_handle_t *handle, int bus, int groups) {
 	int rc = -1;

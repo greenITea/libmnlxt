@@ -12,9 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/rt_route.h>
-
-#include "internal.h"
+#include "libmnlxt/rt_route.h"
+#include "private/internal.h"
 
 #define route_ad_init(member) ad_init(mnlxt_rt_route_t, member)
 

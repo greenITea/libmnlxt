@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <libmnlxt/rt.h>
+#include "libmnlxt/rt.h"
 
 static int mnlxt_rt_route_cmp(const mnlxt_rt_route_t *rt_route1, const mnlxt_rt_route_t *rt_route2,
 															mnlxt_rt_route_data_t data) {

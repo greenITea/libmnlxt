@@ -11,11 +11,9 @@
 #include <errno.h>
 #include <string.h>
 
-#include <libmnlxt/rt.h>
-
-#include "internal.h"
-
 #include "config.h"
+#include "libmnlxt/rt.h"
+#include "private/internal.h"
 
 static int mnlxt_rt_addr_cmp(const mnlxt_rt_addr_t *rt_addr1, const mnlxt_rt_addr_t *rt_addr2,
 														 mnlxt_rt_addr_data_t data) {

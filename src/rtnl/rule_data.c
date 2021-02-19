@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <libmnlxt/rt.h>
+#include "libmnlxt/rt.h"
 
 static int mnlxt_rt_rule_cmp(const mnlxt_rt_rule_t *rt_rule1, const mnlxt_rt_rule_t *rt_rule2,
 														 mnlxt_rt_rule_data_t data) {

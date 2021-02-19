@@ -2,7 +2,9 @@
 pkginclude_HEADERS = libmnlxt/mnlxt.h libmnlxt/core.h libmnlxt/data.h
 
 if ENABLE_RTM
-  pkginclude_HEADERS += libmnlxt/rt.h libmnlxt/rt_addr.h libmnlxt/rt_link.h libmnlxt/rt_route.h libmnlxt/rt_rule.h
+  pkginclude_HEADERS += libmnlxt/rt.h libmnlxt/rt_addr.h libmnlxt/rt_link.h
+  pkginclude_HEADERS += libmnlxt/rt_link_tun.h libmnlxt/rt_link_vlan.h
+  pkginclude_HEADERS += libmnlxt/rt_link_xfrm.h libmnlxt/rt_route.h libmnlxt/rt_rule.h
 endif
 
 if ENABLE_XFRM

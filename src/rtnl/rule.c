@@ -12,11 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/rt_rule.h>
+#include "libmnlxt/rt_rule.h"
+#include "private/internal.h"
 
 #include <linux/if.h>
-
-#include "internal.h"
 
 #define rule_ad_init(member) ad_init(mnlxt_rt_rule_t, member)
 

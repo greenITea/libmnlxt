@@ -12,93 +12,17 @@
 #include <string.h>
 
 #include "config.h"
-#include "internal.h"
-#include "private/link_data_tun.h"
-
 #include "libmnlxt/rt.h"
+#include "private/internal.h"
+#include "private/link_data_tun.h"
+#include "private/link_data_vlan.h"
+#include "private/link_data_xfrm.h"
 
 static const char *info_kinds[MNLXT_RT_LINK_INFO_KIND_MAX] = {
 	[MNLXT_RT_LINK_INFO_KIND_BR] = "bridge", [MNLXT_RT_LINK_INFO_KIND_VLAN] = "vlan",
 	[MNLXT_RT_LINK_INFO_KIND_BOND] = "bond", [MNLXT_RT_LINK_INFO_KIND_TUN] = "tun",
 	[MNLXT_RT_LINK_INFO_KIND_XFRM] = "xfrm",
 };
-
-static int mnlxt_rt_link_vlan_cmp(const mnlxt_rt_link_vlan_t *vlan1, uint16_t vlan_flags1,
-																	const mnlxt_rt_link_vlan_t *vlan2, uint16_t vlan_flags2, uint16_t filter) {
-	int i = -1;
-	if (NULL == vlan1 || NULL == vlan2) {
-		errno = EINVAL;
-	} else {
-		uint16_t flag = 1;
-		for (i = 0; i < MNLXT_RT_LINK_VLAN_MAX; ++i, flag <<= 1) {
-			if (0 == (flag & filter)) {
-				continue;
-			}
-			if (0 == (vlan_flags1 & flag)) {
-				if (0 == (vlan_flags2 & flag)) {
-					/* both not set */
-					continue;
-				}
-				goto failed;
-			} else if (0 == (vlan_flags2 & flag)) {
-				goto failed;
-			} else {
-				switch (i) {
-				case MNLXT_RT_LINK_VLAN_ID:
-					if (vlan1->id != vlan2->id) {
-						goto failed;
-					}
-					break;
-				}
-			}
-		}
-		return 0;
-	failed:
-		++i;
-	}
-	return i;
-}
-
-static int mnlxt_rt_link_xfrm_cmp(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flags1,
-																	const mnlxt_rt_link_xfrm_t *xfrm2, uint16_t xfrm_flags2, uint16_t filter) {
-	int i = -1;
-	if (NULL == xfrm1 || NULL == xfrm2) {
-		errno = EINVAL;
-	} else {
-		uint16_t flag = 1;
-		for (i = 0; i < MNLXT_RT_LINK_XFRM_MAX; ++i, flag <<= 1) {
-			if (0 == (flag & filter)) {
-				continue;
-			}
-			if (0 == (xfrm_flags1 & flag)) {
-				if (0 == (xfrm_flags2 & flag)) {
-					/* both not set */
-					continue;
-				}
-				goto failed;
-			} else if (0 == (xfrm_flags2 & flag)) {
-				goto failed;
-			} else {
-				switch (i) {
-				case MNLXT_RT_LINK_XFRM_IFINDEX:
-					if (xfrm1->if_index != xfrm2->if_index) {
-						goto failed;
-					}
-					break;
-				case MNLXT_RT_LINK_XFRM_ID:
-					if (xfrm1->id != xfrm2->id) {
-						goto failed;
-					}
-					break;
-				}
-			}
-		}
-		return 0;
-	failed:
-		++i;
-	}
-	return i;
-}
 
 static int mnlxt_rt_link_info_cmp(const mnlxt_rt_link_info_t *link_info1, const mnlxt_rt_link_info_t *link_info2,
 																	uint16_t filter) {
@@ -291,22 +215,13 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *l
 			mnl_attr_put_str(nlh, IFLA_INFO_KIND, kind);
 			nest_data = mnl_attr_nest_start(nlh, IFLA_INFO_DATA);
 			if (MNLXT_RT_LINK_INFO_KIND_VLAN == info_kind) {
-				uint16_t id = 0;
-				if (0 == mnlxt_rt_link_get_vlan_id(link, &id)) {
-					mnl_attr_put_u16(nlh, IFLA_VLAN_ID, id);
-				}
+				mnlxt_rt_link_vlan_info_put(nlh, link);
 #ifdef HAVE_IFLA_XFRM
 			} else if (MNLXT_RT_LINK_INFO_KIND_XFRM == info_kind) {
-				uint32_t u32 = 0;
-				if (0 == mnlxt_rt_link_get_xfrm_id(link, &u32)) {
-					mnl_attr_put_u32(nlh, IFLA_XFRM_IF_ID, u32);
-				}
-				if (0 == mnlxt_rt_link_get_xfrm_ifindex(link, &u32)) {
-					mnl_attr_put_u32(nlh, IFLA_XFRM_LINK, u32);
-				}
+				mnlxt_rt_link_xfrm_info_put(nlh, link);
 #endif
-			} else if (MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
 #if 0 /* tun/tap creation via rtnetlink is not supported yet */
+			} else if (MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
 				mnlxt_rt_link_tun_info_put(nlh, link);
 #endif
 			}
@@ -371,74 +286,6 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	return rc;
 }
 
-static int mnlxt_rt_link_info_data_vlan(const struct nlattr *link_vlan_attr, mnlxt_data_t *data,
-																				mnlxt_rt_link_t *link) {
-	int rc = -1;
-	const struct nlattr *attr;
-
-	mnl_attr_for_each_nested(attr, link_vlan_attr) {
-		int type = mnl_attr_get_type(attr);
-		switch (type) {
-		case IFLA_VLAN_ID:
-			if (0 > mnl_attr_validate(attr, MNL_TYPE_U16)) {
-				data->error_str = "IFLA_VLAN_ID validation failed";
-				goto end;
-			}
-			if (-1 == mnlxt_rt_link_set_vlan_id(link, mnl_attr_get_u32(attr))) {
-				data->error_str = "mnlxt_rt_link_set_vlan_id failed";
-				goto end;
-			}
-			break;
-			/*
-			 * IFLA_VLAN_FLAGS,
-			 * IFLA_VLAN_EGRESS_QOS,
-			 * IFLA_VLAN_INGRESS_QOS,
-			 * IFLA_VLAN_PROTOCOL
-			 */
-		}
-	}
-	rc = 0;
-end:
-	return rc;
-}
-
-#ifdef HAVE_IFLA_XFRM
-static int mnlxt_rt_link_info_data_xfrm(const struct nlattr *link_xfrm_attr, mnlxt_data_t *data,
-																				mnlxt_rt_link_t *rt_link) {
-	int rc = -1;
-	const struct nlattr *attr;
-
-	mnl_attr_for_each_nested(attr, link_xfrm_attr) {
-		int type = mnl_attr_get_type(attr);
-		switch (type) {
-		case IFLA_XFRM_LINK:
-			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
-				data->error_str = "IFLA_XFRM_LINK validation failed";
-				goto end;
-			}
-			if (-1 == mnlxt_rt_link_set_xfrm_ifindex(rt_link, mnl_attr_get_u32(attr))) {
-				data->error_str = "mnlxt_rt_link_set_xfrm_ifindex failed";
-				goto end;
-			}
-			break;
-		case IFLA_XFRM_IF_ID:
-			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
-				data->error_str = "IFLA_XFRM_IF_ID validation failed";
-				goto end;
-			}
-			if (-1 == mnlxt_rt_link_set_xfrm_id(rt_link, mnl_attr_get_u32(attr))) {
-				data->error_str = "mnlxt_rt_link_set_xfrm_id failed";
-				goto end;
-			}
-			break;
-		}
-	}
-	rc = 0;
-end:
-	return rc;
-}
-#endif
-
 static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_data_t *data, mnlxt_rt_link_t *link) {
 	int rc = -1;
 	const struct nlattr *attr, *data_attr = NULL;
@@ -482,14 +329,14 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 			/*TODO*/ rc = 0;
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_VLAN:
-			rc = mnlxt_rt_link_info_data_vlan(data_attr, data, link);
+			rc = mnlxt_rt_link_vlan_info_data(data_attr, data, link);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_TUN:
-			rc = mnlxt_rt_link_info_data_tun(data_attr, data, link);
+			rc = mnlxt_rt_link_tun_info_data(data_attr, data, link);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
 #ifdef HAVE_IFLA_XFRM
-			rc = mnlxt_rt_link_info_data_xfrm(data_attr, data, link);
+			rc = mnlxt_rt_link_xfrm_info_data(data_attr, data, link);
 #endif
 			break;
 		}

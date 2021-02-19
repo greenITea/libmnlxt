@@ -96,7 +96,7 @@ void mnlxt_rt_link_tun_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_
 }
 #endif
 
-int mnlxt_rt_link_info_data_tun(const struct nlattr *link_tun_attr, mnlxt_data_t *data, mnlxt_rt_link_t *rt_link) {
+int mnlxt_rt_link_tun_info_data(const struct nlattr *link_tun_attr, mnlxt_data_t *data, mnlxt_rt_link_t *rt_link) {
 	int rc = -1;
 	const struct nlattr *attr;
 	uint32_t flags = 0;

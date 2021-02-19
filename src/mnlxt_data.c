@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/data.h>
+#include "libmnlxt/data.h"
 
 const char *mnlxt_message_type(const mnlxt_message_t *msg) {
 	const char *type = NULL;

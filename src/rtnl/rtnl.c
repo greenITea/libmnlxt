@@ -10,9 +10,8 @@
 
 #include <errno.h>
 
-#include <libmnlxt/rt.h>
-
-#include "internal.h"
+#include "libmnlxt/rt.h"
+#include "private/internal.h"
 
 static const mnlxt_data_cb_t data_handlers[] = {
 	[RTM_NEWLINK] = {"NEWLINK", mnlxt_rt_link_DATA, mnlxt_rt_link_PUT, mnlxt_rt_link_FREE, NLM_F_CREATE},

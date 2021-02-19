@@ -12,9 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libmnlxt/xfrm_policy.h>
-
-#include "internal.h"
+#include "libmnlxt/xfrm_policy.h"
+#include "private/internal.h"
 
 #define policy_ad_init(member) ad_init(mnlxt_xfrm_policy_t, member)
 
