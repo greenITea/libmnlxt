@@ -254,10 +254,6 @@ failed:
 	return rc;
 }
 
-int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, const void *policy, uint16_t nlmsg_type) {
-	return mnlxt_xfrm_policy_put(nlh, (mnlxt_xfrm_policy_t *)policy, nlmsg_type);
-}
-
 static void mnlxt_xfrm_policy_selector_set(mnlxt_xfrm_policy_t *policy, struct xfrm_selector *sel) {
 	if (policy && sel) {
 		uint8_t family = sel->family;
@@ -431,9 +427,6 @@ end:
 	return rc;
 }
 
-int mnlxt_xfrm_policy_DATA(const struct nlmsghdr *nlh, void *data) {
-	return mnlxt_xfrm_policy_data(nlh, (mnlxt_data_t *)data);
-}
 mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator) {
 	mnlxt_xfrm_policy_t *policy = NULL;
 	if (iterator) {

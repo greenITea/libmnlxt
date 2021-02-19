@@ -55,10 +55,6 @@ void mnlxt_rt_route_free(mnlxt_rt_route_t *route) {
 	}
 }
 
-void mnlxt_rt_route_FREE(void *route) {
-	mnlxt_rt_route_free((mnlxt_rt_route_t *)route);
-}
-
 static int mnlxt_rt_route_set_ptr(mnlxt_rt_route_t *route, mnlxt_rt_route_data_t data, void *ptr, uint8_t size) {
 	int rc = -1;
 	if (NULL == route || MNLXT_RT_ROUTE_MAX <= (unsigned)data || route_data[data].size != size

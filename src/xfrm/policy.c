@@ -80,10 +80,6 @@ void mnlxt_xfrm_policy_free(mnlxt_xfrm_policy_t *policy) {
 	}
 }
 
-void mnlxt_xfrm_policy_FREE(void *policy) {
-	mnlxt_xfrm_policy_free((mnlxt_xfrm_policy_t *)policy);
-}
-
 static int mnlxt_xfrm_policy_set_ptr(mnlxt_xfrm_policy_t *policy, mnlxt_xfrm_policy_data_t data, void *ptr,
 																		 uint8_t size) {
 	int rc = -1;

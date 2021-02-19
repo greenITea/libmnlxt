@@ -125,7 +125,9 @@ void mnlxt_rt_route_free(mnlxt_rt_route_t *rtnl_route);
  * Callback wrapper for mnlxt_rt_route_free
  * @param route route information structure to free given by void pointer
  */
-void mnlxt_rt_route_FREE(void *route);
+static inline void mnlxt_rt_route_FREE(void *route) {
+	mnlxt_rt_route_free((mnlxt_rt_route_t *)route);
+}
 /**
  * Sets route family on route information
  * @param route pointer to route information structure
@@ -346,7 +348,10 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_type);
+static inline int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_type) {
+	(void)nlmsg_type;
+	return mnlxt_rt_route_put(nlh, (mnlxt_rt_route_t *)route);
+}
 
 /**
  * Parses netlink message into route information and stores it into netlink data
@@ -361,7 +366,9 @@ int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
  * @param data mnlxt data by void pointer
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
-int mnlxt_rt_route_DATA(const struct nlmsghdr *nlh, void *data);
+static inline int mnlxt_rt_route_DATA(const struct nlmsghdr *nlh, void *data) {
+	return mnlxt_rt_route_data(nlh, (mnlxt_data_t *)data);
+}
 
 /**
  * Iterates over route informations stored in mnlxt data

@@ -114,7 +114,9 @@ void mnlxt_xfrm_policy_free(mnlxt_xfrm_policy_t *policy);
  * Callback wrapper for mnlxt_xfrm_policy_free
  * @param policy void pointer to xfrm policy structure to free
  */
-void mnlxt_xfrm_policy_FREE(void *policy);
+static inline void mnlxt_xfrm_policy_FREE(void *policy) {
+	mnlxt_xfrm_policy_free((mnlxt_xfrm_policy_t *)policy);
+}
 /**
  * Sets IP address family on xfrm policy
  * @param policy pointer to xfrm policy structure
@@ -351,7 +353,9 @@ int mnlxt_xfrm_policy_put(struct nlmsghdr *nlh, const mnlxt_xfrm_policy_t *polic
  * @param nlmsg_type netlink message type
  * @return 0 on success, else -1
  */
-int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, const void *policy, uint16_t nlmsg_type);
+static inline int mnlxt_xfrm_policy_PUT(struct nlmsghdr *nlh, const void *policy, uint16_t nlmsg_type) {
+	return mnlxt_xfrm_policy_put(nlh, (mnlxt_xfrm_policy_t *)policy, nlmsg_type);
+}
 
 /**
  * Parses netlink message into xfrm policy structure and stores it into mnlxt data
@@ -366,7 +370,9 @@ int mnlxt_xfrm_policy_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
  * @param data pointer to mnlxt data
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
-int mnlxt_xfrm_policy_DATA(const struct nlmsghdr *nlh, void *data);
+static inline int mnlxt_xfrm_policy_DATA(const struct nlmsghdr *nlh, void *data) {
+	return mnlxt_xfrm_policy_data(nlh, (mnlxt_data_t *)data);
+}
 
 /**
  * Iterates over xfrm policies stored in mnlxt data

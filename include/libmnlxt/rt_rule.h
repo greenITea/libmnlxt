@@ -96,7 +96,9 @@ void mnlxt_rt_rule_free(mnlxt_rt_rule_t *rule);
  * Callback wrapper for mnlxt_rt_rule_free
  * @param rule rule information structure to free given by void pointer
  */
-void mnlxt_rt_rule_FREE(void *rule);
+static inline void mnlxt_rt_rule_FREE(void *rule) {
+	mnlxt_rt_rule_free((mnlxt_rt_rule_t *)rule);
+}
 /**
  * Sets rule family on rule information
  * @param rule pointer to rule information structure
@@ -315,7 +317,10 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, const void *rule, uint16_t nlmsg_type);
+static inline int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, const void *rule, uint16_t nlmsg_type) {
+	(void)nlmsg_type;
+	return mnlxt_rt_rule_put(nlh, (mnlxt_rt_rule_t *)rule);
+}
 
 /**
  * Parses netlink message into rule information and stores it into mnlxt data
@@ -330,7 +335,9 @@ int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
  * @param data mnlxt data given by void pointer
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
-int mnlxt_rt_rule_DATA(const struct nlmsghdr *nlh, void *data);
+static inline int mnlxt_rt_rule_DATA(const struct nlmsghdr *nlh, void *data) {
+	return mnlxt_rt_rule_data(nlh, (mnlxt_data_t *)data);
+}
 
 /**
  * Iterates over rule informations stored in mnlxt data

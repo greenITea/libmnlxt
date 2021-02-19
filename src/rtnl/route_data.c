@@ -208,11 +208,6 @@ int mnlxt_rt_route_put(struct nlmsghdr *nlh, const mnlxt_rt_route_t *route) {
 	return rc;
 }
 
-int mnlxt_rt_route_PUT(struct nlmsghdr *nlh, const void *route, uint16_t nlmsg_type) {
-	(void)nlmsg_type;
-	return mnlxt_rt_route_put(nlh, (mnlxt_rt_route_t *)route);
-}
-
 int mnlxt_rt_route_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	int rc = MNL_CB_ERROR;
 	mnlxt_rt_route_t *route = NULL;
@@ -354,9 +349,6 @@ end:
 	return rc;
 }
 
-int mnlxt_rt_route_DATA(const struct nlmsghdr *nlh, void *data) {
-	return mnlxt_rt_route_data(nlh, (mnlxt_data_t *)data);
-}
 mnlxt_rt_route_t *mnlxt_rt_route_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator) {
 	mnlxt_rt_route_t *route = NULL;
 	if (iterator) {

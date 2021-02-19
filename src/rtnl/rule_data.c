@@ -207,11 +207,6 @@ int mnlxt_rt_rule_put(struct nlmsghdr *nlh, const mnlxt_rt_rule_t *rule) {
 	return rc;
 }
 
-int mnlxt_rt_rule_PUT(struct nlmsghdr *nlh, const void *rule, uint16_t nlmsg_type) {
-	(void)nlmsg_type;
-	return mnlxt_rt_rule_put(nlh, (mnlxt_rt_rule_t *)rule);
-}
-
 int mnlxt_rt_rule_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	int rc = MNL_CB_ERROR;
 	mnlxt_rt_rule_t *rule = NULL;
@@ -360,10 +355,6 @@ end:
 	mnlxt_message_free(msg);
 
 	return rc;
-}
-
-int mnlxt_rt_rule_DATA(const struct nlmsghdr *nlh, void *data) {
-	return mnlxt_rt_rule_data(nlh, (mnlxt_data_t *)data);
 }
 
 mnlxt_rt_rule_t *mnlxt_rt_rule_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator) {

@@ -371,11 +371,6 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 	return rc;
 }
 
-int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_type) {
-	(void)nlmsg_type;
-	return mnlxt_rt_link_put(nlh, (mnlxt_rt_link_t *)link);
-}
-
 static int mnlxt_rt_link_info_data_vlan(const struct nlattr *link_vlan_attr, mnlxt_data_t *data,
 																				mnlxt_rt_link_t *link) {
 	int rc = -1;
@@ -644,10 +639,6 @@ end:
 	mnlxt_message_free(msg);
 
 	return rc;
-}
-
-int mnlxt_rt_link_DATA(const struct nlmsghdr *nlh, void *data) {
-	return mnlxt_rt_link_data(nlh, (mnlxt_data_t *)data);
 }
 
 mnlxt_rt_link_t *mnlxt_rt_link_get(const mnlxt_message_t *message) {

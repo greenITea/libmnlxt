@@ -96,7 +96,9 @@ void mnlxt_rt_addr_free(mnlxt_rt_addr_t *addr);
  * Frees memory allocated by an address information structure (callback version)
  * @param addr address information structure to free given by a void pointer
  */
-void mnlxt_rt_addr_FREE(void *addr);
+static inline void mnlxt_rt_addr_FREE(void *addr) {
+	mnlxt_rt_addr_free((mnlxt_rt_addr_t *)addr);
+}
 /**
  * Sets address family on address information
  * @param addr pointer to address information structure
@@ -293,8 +295,10 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_type);
-
+static inline int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_type) {
+	(void)nlmsg_type;
+	return mnlxt_rt_addr_put(nlh, (mnlxt_rt_addr_t *)addr);
+}
 /**
  * Parses netlink message into address information structure and stores it into mnlxt data
  * @param nlh pointer to netlink message
@@ -308,7 +312,9 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
  * @param data mnlxt data given by void pointer
  * @return return MNL_CB_OK on success, else MNL_CB_ERROR
  */
-int mnlxt_rt_addr_DATA(const struct nlmsghdr *nlh, void *data);
+static inline int mnlxt_rt_addr_DATA(const struct nlmsghdr *nlh, void *data) {
+	return mnlxt_rt_addr_data(nlh, (mnlxt_data_t *)data);
+}
 
 /**
  * Iterates over address informations stored in mnlxt data

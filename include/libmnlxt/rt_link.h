@@ -162,7 +162,9 @@ void mnlxt_rt_link_free(mnlxt_rt_link_t *rt_link);
  * Callback wrapper for mnlxt_rt_link_free
  * @param rt_link void pointer to link instance to free
  */
-void mnlxt_rt_link_FREE(void *link);
+static inline void mnlxt_rt_link_FREE(void *rt_link) {
+	mnlxt_rt_link_free((mnlxt_rt_link_t *)rt_link);
+}
 #if 0
 /**
  * Revoke link type data on link instance
@@ -447,7 +449,10 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_link);
  * @param nlmsg_type message type (will be ignored)
  * @return 0 on success, else -1
  */
-int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_type);
+static inline int mnlxt_rt_link_PUT(struct nlmsghdr *nlh, const void *link, uint16_t nlmsg_type) {
+	(void)nlmsg_type;
+	return mnlxt_rt_link_put(nlh, (mnlxt_rt_link_t *)link);
+}
 
 /**
  * Parses netlink message into link instance and stores it into mnlxt data
@@ -462,7 +467,9 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data);
  * @param data mnlxt data given by void pointer
  * @return MNL_CB_OK on success, else MNL_CB_ERROR
  */
-int mnlxt_rt_link_DATA(const struct nlmsghdr *nlh, void *data);
+static inline int mnlxt_rt_link_DATA(const struct nlmsghdr *nlh, void *data) {
+	return mnlxt_rt_link_data(nlh, (mnlxt_data_t *)data);
+}
 
 /**
  * Iterates over links stored in mnlxt data

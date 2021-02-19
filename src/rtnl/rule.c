@@ -63,10 +63,6 @@ void mnlxt_rt_rule_free(mnlxt_rt_rule_t *rule) {
 	}
 }
 
-void mnlxt_rt_rule_FREE(void *rule) {
-	mnlxt_rt_rule_free((mnlxt_rt_rule_t *)rule);
-}
-
 static int mnlxt_rt_rule_set_ptr(mnlxt_rt_rule_t *rule, mnlxt_rt_rule_data_t data, void *ptr, uint8_t size) {
 	int rc = -1;
 	if (NULL == rule || MNLXT_RT_RULE_MAX <= (unsigned)data || rule_data[data].size != size

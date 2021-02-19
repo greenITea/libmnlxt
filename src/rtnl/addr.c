@@ -77,10 +77,6 @@ void mnlxt_rt_addr_free(mnlxt_rt_addr_t *addr) {
 	}
 }
 
-void mnlxt_rt_addr_FREE(void *addr) {
-	mnlxt_rt_addr_free((mnlxt_rt_addr_t *)addr);
-}
-
 static int mnlxt_rt_addr_set_ptr(mnlxt_rt_addr_t *addr, mnlxt_rt_addr_data_t data, void *ptr, uint8_t size) {
 	int rc = -1;
 	if (NULL == addr || MNLXT_RT_ADDR_MAX <= (unsigned)data || addr_data[data].size != size

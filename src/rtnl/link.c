@@ -53,9 +53,6 @@ void mnlxt_rt_link_free(mnlxt_rt_link_t *rt_link) {
 	}
 }
 
-void mnlxt_rt_link_FREE(void *rt_link) {
-	mnlxt_rt_link_free((mnlxt_rt_link_t *)rt_link);
-}
 #if 0
 void mnlxt_rt_link_data_revoke(mnlxt_rt_link_t *rt_link, mnlxt_rt_link_data_t data) {
 	if (NULL != rt_link && MNLXT_RT_LINK_MAX > data) {

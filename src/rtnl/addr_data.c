@@ -184,11 +184,6 @@ int mnlxt_rt_addr_put(struct nlmsghdr *nlh, const mnlxt_rt_addr_t *addr) {
 	return rc;
 }
 
-int mnlxt_rt_addr_PUT(struct nlmsghdr *nlh, const void *addr, uint16_t nlmsg_type) {
-	(void)nlmsg_type;
-	return mnlxt_rt_addr_put(nlh, (mnlxt_rt_addr_t *)addr);
-}
-
 int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 	int rc = MNL_CB_ERROR;
 	mnlxt_message_t *msg = NULL;
@@ -320,10 +315,6 @@ end:
 	mnlxt_rt_addr_free(rt_addr);
 	mnlxt_message_free(msg);
 	return rc;
-}
-
-int mnlxt_rt_addr_DATA(const struct nlmsghdr *nlh, void *data) {
-	return mnlxt_rt_addr_data(nlh, (mnlxt_data_t *)data);
 }
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_iterate(mnlxt_data_t *data, mnlxt_message_t **iterator) {
