@@ -32,3 +32,9 @@
 * Fix selecting flag inside rt_link_vlan_cmp() and rt_link_xfrm_match() functions
 * Fix unexpected return value of mnlxt_rt_link_set_selected_flags() function
 * Some refactoring
+
+22.02.2021 - v0.4.0
+* New, Support for creating/deleting TUN/TAP devices
+* Add symbol visibility control
+* Convert callback-wrapper functions to static inline
+* Some refactoring
