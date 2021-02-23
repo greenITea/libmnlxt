@@ -38,3 +38,7 @@
 * Add symbol visibility control
 * Convert callback-wrapper functions to static inline
 * Some refactoring
+
+22.02.2021 - v0.4.1
+* Use IF_NAMESIZE instead of IFNAMSIZ
+* Some refactoring

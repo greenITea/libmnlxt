@@ -22,10 +22,10 @@ libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include -I.
 #
 # * Start with version information of ‘0:0:0’ for each libtool library.
 # * Update the version information only immediately before a public release of your software. 
-#  More frequent updates are unnecessary, and only guarantee that the current interface number gets larger faster.
+# * More frequent updates are unnecessary, and only guarantee that the current interface number gets larger faster.
 # * If the library source code has changed at all since the last update, then increment revision (‘c:r:a’ becomes ‘c:r+1:a’).
 # * If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
 # * If any interfaces have been added since the last public release, then increment age.
 # * If any interfaces have been removed or changed since the last public release, then set age to 0.
 
-libmnlxt_la_LDFLAGS = -Wl,--version-script=$(srcdir)/libmnlxt.map -version-info 2:0:1
+libmnlxt_la_LDFLAGS = -Wl,--version-script=$(srcdir)/libmnlxt.map -version-info 2:1:1
