@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	} else {
 		mnlxt_rt_route_t *route = NULL;
 		mnlxt_message_t *iterator = NULL;
-		char ifname[IFNAMSIZ];
+		char ifname[IF_NAMESIZE];
 		char addr_str[INET6_ADDRSTRLEN];
 		while ((route = mnlxt_rt_route_iterate(&data, &iterator))) {
 			const mnlxt_inet_addr_t *buf = NULL;

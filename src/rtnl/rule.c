@@ -242,7 +242,7 @@ int mnlxt_rt_rule_set_iif_name(mnlxt_rt_rule_t *rule, const mnlxt_if_name_t iif_
 	char *iface = NULL;
 	if (NULL == rule || NULL == iif_name) {
 		errno = EINVAL;
-	} else if (NULL != (iface = strndup(iif_name, IFNAMSIZ - 1))) {
+	} else if (NULL != (iface = strndup(iif_name, sizeof(mnlxt_if_name_t) - 1))) {
 		if (NULL != rule->iif_name) {
 			free(rule->iif_name);
 		}
@@ -271,7 +271,7 @@ int mnlxt_rt_rule_set_oif_name(mnlxt_rt_rule_t *rule, const mnlxt_if_name_t oif_
 	char *iface = NULL;
 	if (NULL == rule || NULL == oif_name) {
 		errno = EINVAL;
-	} else if (NULL != (iface = strndup(oif_name, IFNAMSIZ - 1))) {
+	} else if (NULL != (iface = strndup(oif_name, sizeof(mnlxt_if_name_t) - 1))) {
 		if (NULL != rule->oif_name) {
 			free(rule->oif_name);
 		}

@@ -38,7 +38,7 @@ typedef uint8_t mnlxt_eth_addr_t[ETH_ALEN];
 typedef mnlxt_eth_addr_t eth_addr_t;
 
 /** Interface name type definition */
-typedef char mnlxt_if_name_t[IFNAMSIZ];
+typedef char mnlxt_if_name_t[IF_NAMESIZE];
 
 typedef struct {
 	uint16_t id;
