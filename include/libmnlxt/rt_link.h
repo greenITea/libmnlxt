@@ -450,7 +450,8 @@ mnlxt_rt_link_t *mnlxt_rt_link_remove(mnlxt_message_t *message);
 mnlxt_message_t *mnlxt_rt_link_message(mnlxt_rt_link_t **link, uint16_t type, uint16_t flags);
 
 /**
- * Sends a netlink request with information from the given link instance
+ * Sends a netlink request with information from the given link instance.
+ * In case of successful execution of RTM_NEWLINK-request, index of the new interface will be set on link instance.
  * @param rt_link pointer to a link instance mnlxt_rt_link_t
  * @param type request type (RTM_NEWLINK, RTM_DELLINK or RTM_SETLINK)
  * @param flags request flags (NLM_F_* see linux/netlink.h). Set to 0 for default.

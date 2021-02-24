@@ -542,6 +542,14 @@ int mnlxt_rt_link_request(mnlxt_rt_link_t *rt_link, uint16_t type, uint16_t flag
 	mnlxt_message_t *message = mnlxt_rt_link_message(&rt_link, type, flags);
 	if (NULL != message) {
 		rc = mnlxt_rt_message_request(message);
+		if (0 == rc && RTM_NEWLINK == type) {
+			/* add device index */
+			uint32_t if_index;
+			mnlxt_if_name_t name;
+			if (0 != mnlxt_rt_link_get_name(rt_link, name) && 0 != (if_index = if_nametoindex(name))) {
+				mnlxt_rt_link_set_index(rt_link, if_index);
+			}
+		}
 		mnlxt_rt_link_remove(message);
 		mnlxt_message_free(message);
 	}
