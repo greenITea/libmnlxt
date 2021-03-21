@@ -9,8 +9,6 @@
  */
 
 #include <errno.h>
-#include <linux/if_link.h>
-#include <linux/if_tun.h>
 
 #include "libmnlxt/rt.h"
 
@@ -65,8 +63,8 @@ int mnlxt_rt_link_tun_cmp(const mnlxt_rt_link_tun_t *tun1, uint16_t tun_flags1, 
 	return i;
 }
 
-#if 0
 void mnlxt_rt_link_tun_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_link) {
+#if 0 /* tun/tap creation via rtnetlink is not supported yet */
 	uint32_t u8 = 0;
 	uint32_t u16 = 0;
 	uint32_t u32 = 0;
@@ -93,11 +91,12 @@ void mnlxt_rt_link_tun_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_
 			mnl_attr_put_u8(nlh, IFLA_TUN_MULTI_QUEUE, 1);
 		}
 	}
-}
 #endif
+}
 
 int mnlxt_rt_link_tun_info_data(const struct nlattr *link_tun_attr, mnlxt_data_t *data, mnlxt_rt_link_t *rt_link) {
 	int rc = -1;
+#ifdef IFLA_TUN_MAX
 	const struct nlattr *attr;
 	uint32_t flags = 0;
 
@@ -178,5 +177,6 @@ int mnlxt_rt_link_tun_info_data(const struct nlattr *link_tun_attr, mnlxt_data_t
 	}
 	rc = 0;
 end:
+#endif
 	return rc;
 }

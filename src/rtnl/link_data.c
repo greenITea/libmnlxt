@@ -214,16 +214,20 @@ static int mnlxt_rt_link_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *l
 			nest_info = mnl_attr_nest_start(nlh, IFLA_LINKINFO);
 			mnl_attr_put_str(nlh, IFLA_INFO_KIND, kind);
 			nest_data = mnl_attr_nest_start(nlh, IFLA_INFO_DATA);
-			if (MNLXT_RT_LINK_INFO_KIND_VLAN == info_kind) {
+			switch (info_kind) {
+			case MNLXT_RT_LINK_INFO_KIND_BR:
+				break;
+			case MNLXT_RT_LINK_INFO_KIND_VLAN:
 				mnlxt_rt_link_vlan_info_put(nlh, link);
-#ifdef HAVE_IFLA_XFRM
-			} else if (MNLXT_RT_LINK_INFO_KIND_XFRM == info_kind) {
-				mnlxt_rt_link_xfrm_info_put(nlh, link);
-#endif
-#if 0 /* tun/tap creation via rtnetlink is not supported yet */
-			} else if (MNLXT_RT_LINK_INFO_KIND_TUN == info_kind) {
+				break;
+			case MNLXT_RT_LINK_INFO_KIND_BOND:
+				break;
+			case MNLXT_RT_LINK_INFO_KIND_TUN:
 				mnlxt_rt_link_tun_info_put(nlh, link);
-#endif
+				break;
+			case MNLXT_RT_LINK_INFO_KIND_XFRM:
+				mnlxt_rt_link_xfrm_info_put(nlh, link);
+				break;
 			}
 			mnl_attr_nest_end(nlh, nest_data);
 			mnl_attr_nest_end(nlh, nest_info);
@@ -322,22 +326,22 @@ static int mnlxt_rt_link_info_attr(const struct nlattr *link_info_attr, mnlxt_da
 	}
 	if (data_attr) {
 		switch (info_kind) {
-		case MNLXT_RT_LINK_INFO_KIND_BOND:
-			/*TODO*/ rc = 0;
-			break;
 		case MNLXT_RT_LINK_INFO_KIND_BR:
-			/*TODO*/ rc = 0;
+			/*TODO*/
+			rc = 0;
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_VLAN:
 			rc = mnlxt_rt_link_vlan_info_data(data_attr, data, link);
+			break;
+		case MNLXT_RT_LINK_INFO_KIND_BOND:
+			/*TODO*/
+			rc = 0;
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_TUN:
 			rc = mnlxt_rt_link_tun_info_data(data_attr, data, link);
 			break;
 		case MNLXT_RT_LINK_INFO_KIND_XFRM:
-#ifdef HAVE_IFLA_XFRM
 			rc = mnlxt_rt_link_xfrm_info_data(data_attr, data, link);
-#endif
 			break;
 		}
 	} else {
