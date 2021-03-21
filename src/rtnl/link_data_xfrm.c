@@ -9,9 +9,7 @@
  */
 
 #include <errno.h>
-#include <linux/if_link.h>
 
-#include "config.h"
 #include "libmnlxt/rt.h"
 
 int mnlxt_rt_link_xfrm_cmp(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flags1, const mnlxt_rt_link_xfrm_t *xfrm2,
@@ -55,8 +53,8 @@ int mnlxt_rt_link_xfrm_cmp(const mnlxt_rt_link_xfrm_t *xfrm1, uint16_t xfrm_flag
 	return i;
 }
 
-#ifdef HAVE_IFLA_XFRM
 void mnlxt_rt_link_xfrm_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt_link) {
+#ifdef IFLA_XFRM_MAX
 	uint32_t u32 = 0;
 	if (0 == mnlxt_rt_link_get_xfrm_id(rt_link, &u32)) {
 		mnl_attr_put_u32(nlh, IFLA_XFRM_IF_ID, u32);
@@ -64,10 +62,12 @@ void mnlxt_rt_link_xfrm_info_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *rt
 	if (0 == mnlxt_rt_link_get_xfrm_ifindex(rt_link, &u32)) {
 		mnl_attr_put_u32(nlh, IFLA_XFRM_LINK, u32);
 	}
+#endif
 }
 
 int mnlxt_rt_link_xfrm_info_data(const struct nlattr *link_xfrm_attr, mnlxt_data_t *data, mnlxt_rt_link_t *rt_link) {
 	int rc = -1;
+#ifdef IFLA_XFRM_MAX
 	const struct nlattr *attr;
 
 	mnl_attr_for_each_nested(attr, link_xfrm_attr) {
@@ -97,6 +97,6 @@ int mnlxt_rt_link_xfrm_info_data(const struct nlattr *link_xfrm_attr, mnlxt_data
 	}
 	rc = 0;
 end:
+#endif
 	return rc;
 }
-#endif
