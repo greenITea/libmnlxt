@@ -40,6 +40,8 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_new() {
 
 mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *src, uint64_t filter) {
 	mnlxt_rt_addr_t *dst = NULL;
+	char *label = NULL;
+
 	do {
 		if (NULL == src) {
 			errno = EINVAL;
@@ -47,22 +49,26 @@ mnlxt_rt_addr_t *mnlxt_rt_addr_clone(const mnlxt_rt_addr_t *src, uint64_t filter
 		}
 
 		uint64_t prop_flags = (uint64_t)src->prop_flags & filter;
-		char *label = NULL;
-		if ((prop_flags & MNLXT_FLAG(MNLXT_RT_ADDR_LABEL)) && src->label && NULL == (label = strdup(src->label))) {
-			break;
-		}
-		if (NULL == (dst = mnlxt_rt_addr_new())) {
-			if (NULL != label) {
-				free(label);
+		if ((prop_flags & MNLXT_FLAG(MNLXT_RT_ADDR_LABEL)) && NULL != src->label) {
+			label = strdup(src->label);
+			if (NULL == label)
 				break;
-			}
 		}
+
+		dst = mnlxt_rt_addr_new();
+		if (NULL == dst)
+			break;
+
 		if (prop_flags) {
-			memcpy(dst, src, sizeof(mnlxt_rt_addr_t));
+			*dst = *src;
 			dst->label = label;
+			label = NULL;
 			dst->prop_flags = prop_flags;
 		}
 	} while (0);
+
+	if (NULL != label)
+		free(label);
 
 	return dst;
 }

@@ -41,32 +41,39 @@ mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_new() {
 
 mnlxt_xfrm_policy_t *mnlxt_xfrm_policy_clone(const mnlxt_xfrm_policy_t *src, uint64_t filter) {
 	mnlxt_xfrm_policy_t *dst = NULL;
+	mnlxt_xfrm_tmpl_t *tmpls = NULL;
+	size_t size;
+
 	do {
 		if (NULL == src) {
 			errno = EINVAL;
 			break;
 		}
+
 		uint64_t prop_flags = (uint64_t)src->prop_flags & filter;
-		mnlxt_xfrm_tmpl_t *tmpls = NULL;
 		if ((prop_flags & MNLXT_FLAG(MNLXT_XFRM_POLICY_TMPLS)) && NULL != src->tmpls && src->tmpl_num) {
-			if (NULL == (tmpls = calloc(src->tmpl_num, sizeof(mnlxt_xfrm_tmpl_t)))) {
+			size = src->tmpl_num * sizeof(*tmpls);
+			tmpls = malloc(size);
+			if (NULL == tmpls)
 				break;
-			} else {
-				memcpy(tmpls, src->tmpls, src->tmpl_num * sizeof(mnlxt_xfrm_tmpl_t));
-			}
+			memcpy(tmpls, src->tmpls, size);
 		}
-		if (NULL == (dst = mnlxt_xfrm_policy_new())) {
-			if (NULL != tmpls) {
-				free(tmpls);
-			}
+
+		dst = mnlxt_xfrm_policy_new();
+		if (NULL == dst)
 			break;
-		}
+
 		if (prop_flags) {
-			memcpy(dst, src, sizeof(mnlxt_xfrm_policy_t));
+			*dst = *src;
 			dst->tmpls = tmpls;
+			tmpls = NULL;
 			dst->prop_flags = prop_flags;
 		}
 	} while (0);
+
+	if (NULL != tmpls)
+		free(tmpls);
+
 	return dst;
 }
 
