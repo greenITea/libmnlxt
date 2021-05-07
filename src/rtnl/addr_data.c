@@ -277,7 +277,7 @@ int mnlxt_rt_addr_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				data->error_str = "IFA_CACHEINFO validation failed";
 				goto end;
 			}
-			memcpy(&rt_addr->cacheinfo, mnl_attr_get_payload(attr), sizeof(struct ifa_cacheinfo));
+			rt_addr->cacheinfo = *(struct ifa_cacheinfo *)mnl_attr_get_payload(attr);
 			MNLXT_SET_PROP_FLAG(rt_addr, MNLXT_RT_ADDR_CACHEINFO);
 			break;
 		case IFA_MULTICAST:

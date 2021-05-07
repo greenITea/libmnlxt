@@ -40,7 +40,7 @@ mnlxt_rt_link_t *mnlxt_rt_link_clone(const mnlxt_rt_link_t *src, uint64_t filter
 	if (NULL == src) {
 		errno = EINVAL;
 	} else if (NULL != (dst = mnlxt_rt_link_new()) && filter) {
-		memcpy(dst, src, sizeof(mnlxt_rt_link_t));
+		*dst = *src;
 		dst->prop_flags = src->prop_flags & filter;
 	}
 	return dst;
@@ -168,12 +168,11 @@ int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, mnlxt_if_name_t name)
 
 int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const mnlxt_if_name_t name) {
 	int rc = -1;
-	size_t len;
-	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= (len = strlen(name))) {
+	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= strlen(name)) {
 		errno = EINVAL;
 	} else {
-		memcpy(rt_link->name, name, len + 1);
 		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_NAME);
+		*rt_link->name = *name;
 		rc = 0;
 	}
 	return rc;
