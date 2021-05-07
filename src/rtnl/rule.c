@@ -44,7 +44,7 @@ mnlxt_rt_rule_t *mnlxt_rt_rule_clone(const mnlxt_rt_rule_t *src, uint64_t filter
 	if (NULL == src) {
 		errno = EINVAL;
 	} else if (NULL != (dst = mnlxt_rt_rule_new()) && filter) {
-		memcpy(dst, src, sizeof(mnlxt_rt_rule_t));
+		*dst = *src;
 		dst->prop_flags = src->prop_flags & filter;
 	}
 	return dst;
@@ -152,7 +152,7 @@ int mnlxt_rt_rule_set_src(mnlxt_rt_rule_t *rule, uint8_t family, const mnlxt_ine
 	} else {
 		rc = mnlxt_rt_rule_set_family(rule, family);
 		if (0 == rc) {
-			memcpy(&rule->src, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
+			rule->src = *buf;
 			MNLXT_SET_PROP_FLAG(rule, MNLXT_RT_RULE_SRC);
 		}
 	}
@@ -182,7 +182,7 @@ int mnlxt_rt_rule_set_dst(mnlxt_rt_rule_t *rule, uint8_t family, const mnlxt_ine
 	} else {
 		rc = mnlxt_rt_rule_set_family(rule, family);
 		if (0 == rc) {
-			memcpy(&rule->dst, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
+			rule->dst = *buf;
 			MNLXT_SET_PROP_FLAG(rule, MNLXT_RT_RULE_DST);
 		}
 	}

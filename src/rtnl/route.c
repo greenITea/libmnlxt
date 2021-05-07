@@ -42,7 +42,7 @@ mnlxt_rt_route_t *mnlxt_rt_route_clone(const mnlxt_rt_route_t *src, uint64_t fil
 	if (NULL == src) {
 		errno = EINVAL;
 	} else if (NULL != (dst = mnlxt_rt_route_new()) && filter) {
-		dst = memcpy(dst, src, sizeof(mnlxt_rt_route_t));
+		*dst = *src;
 		dst->prop_flags = src->prop_flags & filter;
 	}
 	return dst;
@@ -176,7 +176,7 @@ int mnlxt_rt_route_set_src(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_
 	} else {
 		rc = mnlxt_rt_route_set_family(route, family);
 		if (0 == rc) {
-			memcpy(&route->src, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
+			route->src = *buf;
 			MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_SRC);
 		}
 	}
@@ -209,7 +209,7 @@ int mnlxt_rt_route_set_dst(mnlxt_rt_route_t *route, uint8_t family, const mnlxt_
 			if ((AF_INET == family && INADDR_ANY != buf->in.s_addr)
 					|| (AF_INET6 == family && !IN6_IS_ADDR_UNSPECIFIED(&buf->in6))) {
 				/* set only if destination is not the default route, else it have to be not set */
-				memcpy(&route->dst, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
+				route->dst = *buf;
 				MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_DST);
 			}
 		}
@@ -240,7 +240,7 @@ int mnlxt_rt_route_set_gateway(mnlxt_rt_route_t *route, uint8_t family, const mn
 	} else {
 		rc = mnlxt_rt_route_set_family(route, family);
 		if (0 == rc) {
-			memcpy(&route->gateway, buf, (family == AF_INET6 ? sizeof(struct in6_addr) : sizeof(struct in_addr)));
+			route->gateway = *buf;
 			MNLXT_SET_PROP_FLAG(route, MNLXT_RT_ROUTE_GATEWAY);
 		}
 	}

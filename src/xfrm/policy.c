@@ -210,7 +210,7 @@ int mnlxt_xfrm_policy_set_src_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
 	} else {
 		rc = mnlxt_xfrm_policy_set_family(policy, family);
 		if (0 == rc) {
-			memcpy(&policy->src.addr, buf, sizeof(policy->src.addr));
+			policy->src.addr = *buf;
 			MNLXT_SET_PROP_FLAG(policy, MNLXT_XFRM_POLICY_SRC_ADDR);
 		}
 	}
@@ -240,7 +240,7 @@ int mnlxt_xfrm_policy_set_dst_addr(mnlxt_xfrm_policy_t *policy, uint8_t family, 
 	} else {
 		rc = mnlxt_xfrm_policy_set_family(policy, family);
 		if (0 == rc) {
-			memcpy(&policy->dst.addr, buf, sizeof(mnlxt_inet_addr_t));
+			policy->dst.addr = *buf;
 			MNLXT_SET_PROP_FLAG(policy, MNLXT_XFRM_POLICY_DST_ADDR);
 		}
 	}
