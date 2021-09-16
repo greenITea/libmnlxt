@@ -145,24 +145,38 @@ void mnlxt_msghdr_free(struct nlmsghdr *msghdr) {
 
 static int mnlxt_data_cb(const struct nlmsghdr *nlh, void *data) {
 	int rc = MNL_CB_ERROR;
-	mnlxt_data_t *mnlxt_data = NULL;
+	mnlxt_data_t *mnlxt_data = (mnlxt_data_t *)data;
 	mnl_cb_t cb_foo = NULL;
-	if (!nlh || !data) {
+	if (NULL == nlh || NULL == mnlxt_data) {
 		errno = EINVAL;
-	} else {
-		mnlxt_data = (mnlxt_data_t *)data;
-		if (mnlxt_data->nhandlers < nlh->nlmsg_type) {
+	} else if (NLM_F_DUMP_INTR & nlh->nlmsg_flags) {
+		mnlxt_data->error_str = "dump interruption";
+		errno = EINTR;
+	} else if (mnlxt_data->nhandlers > nlh->nlmsg_type
+						 && NULL != (cb_foo = mnlxt_data->handlers[nlh->nlmsg_type].parse)) {
+		rc = cb_foo(nlh, data);
+	} else if (NLMSG_ERROR == nlh->nlmsg_type) {
+		struct nlmsgerr *err = mnl_nlmsg_get_payload(nlh);
+		if (mnl_nlmsg_size(sizeof(struct nlmsgerr)) > nlh->nlmsg_len) {
+			mnlxt_data->error_str = "invalid message";
 			errno = EBADMSG;
-			mnlxt_data->error_str = "unsupported message type";
 		} else {
-			cb_foo = mnlxt_data->handlers[nlh->nlmsg_type].parse;
-			if (cb_foo) {
-				rc = cb_foo(nlh, data);
+			if (0 != err->error) {
+				mnlxt_data->error_str = strerror(-err->error);
+				errno = -err->error;
 			} else {
-				/* unsupported message type? */
-				rc = MNL_CB_OK;
+				rc = MNL_CB_STOP;
 			}
 		}
+	} else if (NLMSG_NOOP == nlh->nlmsg_type || NLMSG_OVERRUN == nlh->nlmsg_type) {
+		rc = MNL_CB_OK;
+	} else if (NLMSG_DONE == nlh->nlmsg_type) {
+		rc = MNL_CB_STOP;
+	} else {
+		mnlxt_data->error_str = "unsupported message type";
+		errno = EBADMSG;
+		/* ignore unsupported messages and continue */
+		rc = MNL_CB_OK;
 	}
 	return rc;
 }
