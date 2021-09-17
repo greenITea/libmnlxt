@@ -219,9 +219,12 @@ void mnlxt_buffer_clean(mnlxt_buffer_t *buffer) {
 }
 
 void mnlxt_data_clean(mnlxt_data_t *data) {
-	mnlxt_message_t *msg;
-	while ((msg = mnlxt_data_remove(data, NULL))) {
-		mnlxt_message_free(msg);
+	if (NULL != data) {
+		mnlxt_message_t *msg;
+		while (NULL != (msg = mnlxt_data_remove(data, NULL))) {
+			mnlxt_message_free(msg);
+		}
+		memset(data, 0, sizeof(*data));
 	}
 }
 
