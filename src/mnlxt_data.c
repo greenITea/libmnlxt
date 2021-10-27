@@ -45,7 +45,7 @@ void mnlxt_message_free(mnlxt_message_t *message) {
 
 static int mnlxt_request(struct nlmsghdr *nlh, int bus, mnlxt_data_t *data) {
 	int rc = -1;
-	if (!nlh) {
+	if (NULL == nlh) {
 		errno = EINVAL;
 	} else {
 		mnlxt_handle_t handle = {};
@@ -69,7 +69,7 @@ static int mnlxt_request(struct nlmsghdr *nlh, int bus, mnlxt_data_t *data) {
 						mnlxt_buffer_clean(&mnlxt_buf);
 					} else if (0 > ret) {
 						/* an error by receiving message */
-						if (data) {
+						if (NULL != data) {
 							data->error_str = handle.error_str;
 						}
 						break;
@@ -79,11 +79,11 @@ static int mnlxt_request(struct nlmsghdr *nlh, int bus, mnlxt_data_t *data) {
 						break;
 					}
 				}
-			} else if (handle.error_str && data) {
+			} else if (NULL != handle.error_str && NULL != data) {
 				data->error_str = handle.error_str;
 			}
 			mnlxt_disconnect(&handle);
-			if (mnlxt_buf.buf) {
+			if (NULL != mnlxt_buf.buf) {
 				free(mnlxt_buf.buf);
 			}
 		}
@@ -183,9 +183,9 @@ static int mnlxt_data_cb(const struct nlmsghdr *nlh, void *data) {
 
 int mnlxt_data_parse(mnlxt_data_t *data, mnlxt_buffer_t *buffer) {
 	int rc = -1;
-	if (buffer && buffer->buf && buffer->len) {
+	if (NULL != buffer && NULL != buffer->buf && 0 != buffer->len) {
 		int ret;
-		if (data) {
+		if (NULL != data) {
 			if (NULL == data->handlers) {
 				data->handlers = buffer->data_handlers;
 				data->nhandlers = buffer->data_nhandlers;
@@ -195,7 +195,7 @@ int mnlxt_data_parse(mnlxt_data_t *data, mnlxt_buffer_t *buffer) {
 			ret = mnl_cb_run(buffer->buf, buffer->len, buffer->seq, buffer->portid, NULL, NULL);
 		}
 		if (MNL_CB_ERROR == ret) {
-			if (data && !data->error_str) {
+			if (NULL != data && NULL == data->error_str) {
 				data->error_str = "mnl_cb_run failed";
 			}
 		} else if (MNL_CB_STOP == ret) {
@@ -230,7 +230,7 @@ void mnlxt_data_clean(mnlxt_data_t *data) {
 
 int mnlxt_data_dump(mnlxt_data_t *data, int bus, struct nlmsghdr *nlh) {
 	int rc = -1;
-	if (!nlh || !data) {
+	if (NULL == nlh || NULL == data) {
 		errno = EINVAL;
 	} else {
 		nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
