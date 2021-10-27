@@ -28,4 +28,4 @@ libmnlxt_la_CFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include -I.
 # * If any interfaces have been added since the last public release, then increment age.
 # * If any interfaces have been removed or changed since the last public release, then set age to 0.
 
-libmnlxt_la_LDFLAGS = -Wl,--version-script=$(srcdir)/libmnlxt.map -version-info 2:1:1
+libmnlxt_la_LDFLAGS = -Wl,--version-script=$(srcdir)/libmnlxt.map -version-info 2:2:1

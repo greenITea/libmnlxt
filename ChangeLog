@@ -42,3 +42,7 @@
 22.02.2021 - v0.4.1
 * Use IF_NAMESIZE instead of IFNAMSIZ
 * Some refactoring
+
+27.10.2021 - v0.4.2
+* New, Support for netlink error messages
+* Small optimisations and fixes
