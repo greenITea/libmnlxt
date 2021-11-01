@@ -168,11 +168,12 @@ int mnlxt_rt_link_get_name(const mnlxt_rt_link_t *rt_link, mnlxt_if_name_t name)
 
 int mnlxt_rt_link_set_name(mnlxt_rt_link_t *rt_link, const mnlxt_if_name_t name) {
 	int rc = -1;
-	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= strlen(name)) {
+	size_t len;
+	if (NULL == rt_link || NULL == name || sizeof(rt_link->name) <= (len = strlen(name))) {
 		errno = EINVAL;
 	} else {
 		MNLXT_SET_PROP_FLAG(rt_link, MNLXT_RT_LINK_NAME);
-		*rt_link->name = *name;
+		memcpy(rt_link->name, name, len + 1);
 		rc = 0;
 	}
 	return rc;
