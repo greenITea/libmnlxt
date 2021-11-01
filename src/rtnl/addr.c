@@ -191,10 +191,12 @@ int mnlxt_rt_addr_set_addr(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_in
 			if (AF_INET == family) {
 				if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL)) {
 					MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL);
-					addr->addr_local = *buf;
+					addr->addr_local.in.s_addr = buf->in.s_addr;
 				}
+				addr->addr.in.s_addr = buf->in.s_addr;
+			} else {
+				addr->addr = *buf;
 			}
-			addr->addr = *buf;
 			MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_ADDR);
 		}
 	}
@@ -220,7 +222,11 @@ int mnlxt_rt_addr_get_addr(const mnlxt_rt_addr_t *addr, uint8_t *family, const m
 int mnlxt_rt_addr_set_local(mnlxt_rt_addr_t *addr, uint8_t family, const mnlxt_inet_addr_t *buf) {
 	int rc = mnlxt_rt_addr_set_family(addr, family);
 	if (0 == rc) {
-		addr->addr_local = *buf;
+		if (AF_INET == family) {
+			addr->addr.in.s_addr = buf->in.s_addr;
+		} else {
+			addr->addr_local = *buf;
+		}
 		MNLXT_SET_PROP_FLAG(addr, MNLXT_RT_ADDR_LOCAL);
 	}
 	return rc;
