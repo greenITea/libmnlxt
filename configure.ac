@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libmnlxt], [0.4.2])
+AC_INIT([libmnlxt], [0.4.3])
 AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_SRCDIR([src/mnlxt.c])
 AC_CONFIG_HEADERS([config.h])
