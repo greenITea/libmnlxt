@@ -91,6 +91,24 @@ void mnlxt_rt_link_print(mnlxt_rt_link_t *link) {
 		printf("no mtu \n");
 	}
 
+	ret = mnlxt_rt_link_get_mtu_min(link, &u32);
+	if (0 == ret) {
+		printf("mtu (min): %d\n", u32);
+	} else if (-1 == ret) {
+		printf("mtu (min): error '%m'\n");
+	} else {
+		puts("mtu (min): unknown");
+	}
+
+	ret = mnlxt_rt_link_get_mtu_max(link, &u32);
+	if (0 == ret) {
+		printf("mtu (max): %d\n", u32);
+	} else if (-1 == ret) {
+		printf("mtu (min): error '%m'\n");
+	} else {
+		puts("mtu (max): unknown");
+	}
+
 	ret = mnlxt_rt_link_get_flags(link, &u32);
 	if (0 == ret) {
 		printf("flags/mask: 0x%x/0x%x\n", u32, link->flag_mask);
