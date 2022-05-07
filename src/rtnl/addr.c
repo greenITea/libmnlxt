@@ -271,7 +271,7 @@ int mnlxt_rt_addr_get_label(const mnlxt_rt_addr_t *addr, mnlxt_if_name_t label) 
 	} else if (!MNLXT_GET_PROP_FLAG(addr, MNLXT_RT_ADDR_LABEL) || NULL == addr->label) {
 		rc = 1;
 	} else {
-		strncpy(label, addr->label, sizeof(mnlxt_if_name_t));
+		*stpncpy(label, addr->label, sizeof(mnlxt_if_name_t)) = '\0';
 		rc = 0;
 	}
 	return rc;

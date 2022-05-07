@@ -260,7 +260,7 @@ int mnlxt_rt_rule_get_iif_name(const mnlxt_rt_rule_t *rule, mnlxt_if_name_t iif_
 	} else if (!MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_IIFNAME) || NULL == rule->iif_name) {
 		rc = 1;
 	} else {
-		strncpy(iif_name, rule->iif_name, sizeof(mnlxt_if_name_t));
+		*stpncpy(iif_name, rule->iif_name, sizeof(mnlxt_if_name_t)) = '\0';
 		rc = 0;
 	}
 	return rc;
@@ -289,7 +289,7 @@ int mnlxt_rt_rule_get_oif_name(const mnlxt_rt_rule_t *rule, mnlxt_if_name_t oif_
 	} else if (!MNLXT_GET_PROP_FLAG(rule, MNLXT_RT_RULE_OIFNAME) || NULL == rule->oif_name) {
 		rc = 1;
 	} else {
-		strncpy(oif_name, rule->oif_name, sizeof(mnlxt_if_name_t));
+		*stpncpy(oif_name, rule->oif_name, sizeof(mnlxt_if_name_t)) = '\0';
 		rc = 0;
 	}
 	return rc;
