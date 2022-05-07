@@ -25,6 +25,8 @@ typedef enum {
 	MNLXT_RT_LINK_FLAGS,
 	MNLXT_RT_LINK_HWADDR,
 	MNLXT_RT_LINK_MTU,
+	MNLXT_RT_LINK_MTU_MIN,
+	MNLXT_RT_LINK_MTU_MAX,
 	MNLXT_RT_LINK_MASTER,
 	MNLXT_RT_LINK_STATE,
 	MNLXT_RT_LINK_PARENT,
@@ -123,6 +125,8 @@ typedef struct {
 	uint32_t flag_mask;
 	/** MTU value */
 	uint32_t mtu;
+	uint32_t mtu_min;
+	uint32_t mtu_max;
 	/** Master interface index */
 	uint32_t master;
 	uint32_t parent;
@@ -271,6 +275,34 @@ int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *rt_link, uint32_t *mtu);
  * @return 0 on success, else -1
  */
 int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *rt_link, uint32_t mtu);
+/**
+ * Gets minimum allowed MTU from link instance
+ * @param rt_link pointer to link instance
+ * @param mtu pointer to buffer to save link mtu
+ * @return 0 on success, 1 on not set, else -1
+ */
+int mnlxt_rt_link_get_mtu_min(const mnlxt_rt_link_t *rt_link, uint32_t *mtu);
+/**
+ * Sets minimum allowed MTU on link instance
+ * @param rt_link pointer to link instance
+ * @param mtu link mtu
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_set_mtu_min(mnlxt_rt_link_t *rt_link, uint32_t mtu);
+/**
+ * Gets maximum allowed MTU from link instance
+ * @param rt_link pointer to link instance
+ * @param mtu pointer to buffer to save link mtu
+ * @return 0 on success, 1 on not set, else -1
+ */
+int mnlxt_rt_link_get_mtu_max(const mnlxt_rt_link_t *rt_link, uint32_t *mtu);
+/**
+ * Sets maximum allowed MTU on link instance
+ * @param rt_link pointer to link instance
+ * @param mtu link mtu
+ * @return 0 on success, else -1
+ */
+int mnlxt_rt_link_set_mtu_max(mnlxt_rt_link_t *rt_link, uint32_t mtu);
 /**
  * Gets link master from link instance
  * @param rt_link pointer to link instance

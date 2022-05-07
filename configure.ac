@@ -34,6 +34,17 @@ AC_COMPILE_IFELSE(
   ]
 )
 
+AC_MSG_CHECKING([for IFLA_MIN_MTU and IFLA_MAX_MTU])
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM([#include <linux/if_link.h>],[int flags = IFLA_MIN_MTU | IFLA_MAX_MTU;])],
+  [
+    AC_MSG_RESULT([yes])
+    AC_DEFINE_UNQUOTED([HAVE_IFLA_MTU_LIMITS], 1, [Define to 1 if IFLA_MIN_MTU and IFLA_MAX_MTU are usable.])
+  ],[
+    AC_MSG_RESULT([no])
+  ]
+)
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 AC_TYPE_UINT16_T

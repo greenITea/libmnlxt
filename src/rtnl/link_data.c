@@ -123,6 +123,16 @@ static int mnlxt_rt_link_cmp(const mnlxt_rt_link_t *rt_link1, const mnlxt_rt_lin
 			goto failed;
 		}
 		break;
+	case MNLXT_RT_LINK_MTU_MIN:
+		if (rt_link1->mtu_min != rt_link2->mtu_min) {
+			goto failed;
+		}
+		break;
+	case MNLXT_RT_LINK_MTU_MAX:
+		if (rt_link1->mtu_max != rt_link2->mtu_max) {
+			goto failed;
+		}
+		break;
 	case MNLXT_RT_LINK_MASTER:
 		if (rt_link1->master != rt_link2->master) {
 			goto failed;
@@ -268,6 +278,10 @@ int mnlxt_rt_link_put(struct nlmsghdr *nlh, const mnlxt_rt_link_t *link) {
 				case MNLXT_RT_LINK_MTU:
 					mnl_attr_put_u32(nlh, IFLA_MTU, link->mtu);
 					break;
+				case MNLXT_RT_LINK_MTU_MIN:
+				case MNLXT_RT_LINK_MTU_MAX:
+					/* ignored, read only */
+					break;
 				case MNLXT_RT_LINK_MASTER:
 					mnl_attr_put_u32(nlh, IFLA_MASTER, link->master);
 					break;
@@ -406,6 +420,28 @@ int mnlxt_rt_link_data(const struct nlmsghdr *nlh, mnlxt_data_t *data) {
 				goto end;
 			}
 			break;
+#ifdef HAVE_IFLA_MTU_LIMITS
+		case IFLA_MIN_MTU:
+			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
+				data->error_str = "IFLA_MIN_MTU validation failed";
+				goto end;
+			}
+			if (-1 == mnlxt_rt_link_set_mtu_min(rt_link, mnl_attr_get_u32(attr))) {
+				data->error_str = "mnlxt_rt_link_set_mtu_min failed";
+				goto end;
+			}
+			break;
+		case IFLA_MAX_MTU:
+			if (0 > mnl_attr_validate(attr, MNL_TYPE_U32)) {
+				data->error_str = "IFLA_MAX_MTU validation failed";
+				goto end;
+			}
+			if (-1 == mnlxt_rt_link_set_mtu_max(rt_link, mnl_attr_get_u32(attr))) {
+				data->error_str = "mnlxt_rt_link_set_mtu_max failed";
+				goto end;
+			}
+			break;
+#endif
 		case IFLA_IFNAME:
 			if (0 > mnl_attr_validate(attr, MNL_TYPE_STRING)) {
 				data->error_str = "IFLA_IFNAME validation failed";

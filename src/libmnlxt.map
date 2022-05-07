@@ -84,6 +84,10 @@
 	mnlxt_rt_link_set_flags_off;
 	mnlxt_rt_link_get_mtu;
 	mnlxt_rt_link_set_mtu;
+	mnlxt_rt_link_get_mtu_min;
+	mnlxt_rt_link_set_mtu_min;
+	mnlxt_rt_link_get_mtu_max;
+	mnlxt_rt_link_set_mtu_max;
 	mnlxt_rt_link_get_master;
 	mnlxt_rt_link_set_master;
 	mnlxt_rt_link_get_state;

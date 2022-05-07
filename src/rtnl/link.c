@@ -25,6 +25,8 @@ static struct access_data link_data[MNLXT_RT_LINK_MAX] = {
 	[MNLXT_RT_LINK_FLAGS] = link_ad_init(flags),
 	[MNLXT_RT_LINK_HWADDR] = link_ad_init(mac),
 	[MNLXT_RT_LINK_MTU] = link_ad_init(mtu),
+	[MNLXT_RT_LINK_MTU_MIN] = link_ad_init(mtu_min),
+	[MNLXT_RT_LINK_MTU_MAX] = link_ad_init(mtu_max),
 	[MNLXT_RT_LINK_MASTER] = link_ad_init(master),
 	[MNLXT_RT_LINK_STATE] = link_ad_init(state),
 	[MNLXT_RT_LINK_PARENT] = link_ad_init(parent),
@@ -253,6 +255,22 @@ int mnlxt_rt_link_get_mtu(const mnlxt_rt_link_t *rt_link, uint32_t *mtu) {
 
 int mnlxt_rt_link_set_mtu(mnlxt_rt_link_t *rt_link, uint32_t mtu) {
 	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_MTU, mtu);
+}
+
+int mnlxt_rt_link_get_mtu_min(const mnlxt_rt_link_t *rt_link, uint32_t *mtu) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_MTU_MIN, mtu);
+}
+
+int mnlxt_rt_link_set_mtu_min(mnlxt_rt_link_t *rt_link, uint32_t mtu) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_MTU_MIN, mtu);
+}
+
+int mnlxt_rt_link_get_mtu_max(const mnlxt_rt_link_t *rt_link, uint32_t *mtu) {
+	return mnlxt_rt_link_get_u32(rt_link, MNLXT_RT_LINK_MTU_MAX, mtu);
+}
+
+int mnlxt_rt_link_set_mtu_max(mnlxt_rt_link_t *rt_link, uint32_t mtu) {
+	return mnlxt_rt_link_set_u32(rt_link, MNLXT_RT_LINK_MTU_MAX, mtu);
 }
 
 int mnlxt_rt_link_get_master(const mnlxt_rt_link_t *rt_link, uint32_t *if_index) {
