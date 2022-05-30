@@ -1,0 +1,15 @@
+# libmnlxt pkg-config file
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libmnlxt
+Description: Simple Netlink system library
+URL: https://github.com/greenITea/libmnlxt
+Version: @VERSION@
+Requires: libmnl
+Conflicts:
+Libs: -L${libdir} -lmnlxt
+Cflags: -I${includedir}

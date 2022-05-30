@@ -127,5 +127,6 @@ AC_ARG_ENABLE(tests,
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 libmnlxt.pc])
 AC_OUTPUT
