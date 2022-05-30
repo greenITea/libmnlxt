@@ -50,3 +50,7 @@
 01.11.2021 - v0.4.3
 * Fix the function mnlxt_rt_link_set_name() (broken in v0.4.2)
 * Small optimisations and some refactoring
+
+30.05.2022 - v0.4.4
+* New, Support for mtu_min and mtu_max
+* Add pkg-config file generating
