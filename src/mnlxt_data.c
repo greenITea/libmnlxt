@@ -162,7 +162,8 @@ static int mnlxt_data_cb(const struct nlmsghdr *nlh, void *data) {
 			errno = EBADMSG;
 		} else {
 			if (0 != err->error) {
-				mnlxt_data->error_str = strerror(-err->error);
+				strerror_r(-err->error, mnlxt_data->error_buf, sizeof(mnlxt_data->error_buf));
+				mnlxt_data->error_str = mnlxt_data->error_buf;
 				errno = -err->error;
 			} else {
 				rc = MNL_CB_STOP;
